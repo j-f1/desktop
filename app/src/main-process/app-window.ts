@@ -53,7 +53,7 @@ export class AppWindow {
     }
 
     if (__DARWIN__) {
-        windowOptions.titleBarStyle = 'hidden'
+        windowOptions.titleBarStyle = 'hidden-inset'
     } else if (__WIN32__) {
         windowOptions.frame = false
     }

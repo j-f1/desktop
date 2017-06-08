@@ -19,6 +19,10 @@
 
   color: var(--toolbar-text-color);
   background-color: var(--toolbar-background-color);
+  .platform-darwin & > :first-child button {
+    padding-left: calc(var(--spacing) + 75px);
+  }
+
 
   .sidebar-section {
     display: flex;

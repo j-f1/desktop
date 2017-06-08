@@ -83,6 +83,9 @@
     align-items: center;
 
     padding: var(--spacing);
+    .platform-darwin & {
+      padding: var(--spacing-half) var(--spacing);
+    }
     margin: 0;
     overflow: hidden;
 

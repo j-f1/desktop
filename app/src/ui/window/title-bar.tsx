@@ -102,6 +102,10 @@ export class TitleBar extends React.Component<ITitleBarProps, ITitleBarState> {
 
     const onTitlebarDoubleClick = __DARWIN__ ? this.onTitlebarDoubleClickDarwin : undefined
 
+    if (__DARWIN__) {
+      return null
+    }
+
     return (
       <div
         className={titleBarClass} id='desktop-app-title-bar'
