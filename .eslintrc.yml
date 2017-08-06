@@ -12,6 +12,11 @@ rules:
   # CUSTOM #
   ##########
   insecure-random: error
+  ts-no-use-before-define:
+    - error
+    - functions: false
+      variables: false
+      typedefs: false
 
   ###########
   # PLUGINS #
@@ -55,10 +60,6 @@ rules:
   no-eval: error
   no-sync: error
   no-unused-expressions: error
-  no-use-before-define:
-    - error
-    - functions: false
-      variables: false
   no-var: error
   prefer-const: error
   eqeqeq:
