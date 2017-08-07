@@ -58,7 +58,7 @@ class ReactNoUnboundDispatcherPropsWalker extends Lint.RuleWalker {
 
       // This is some weak sauce, why doesn't JsxAttribute specify a literal kind
       // so that it can be narrowed automatically?
-      const attribute: ts.JsxAttribute = <ts.JsxAttribute>attributeLikeElement
+      const attribute: ts.JsxAttribute = attributeLikeElement
 
       // This means that the attribute is an inferred boolean true value. See:
       //
@@ -79,7 +79,7 @@ class ReactNoUnboundDispatcherPropsWalker extends Lint.RuleWalker {
         return
       }
 
-      const propAccess: ts.PropertyAccessExpression = <ts.PropertyAccessExpression>jsxExpression.expression
+      const propAccess: ts.PropertyAccessExpression = jsxExpression.expression as ts.PropertyAccessExpression
       const propAccessText = propAccess.getText()
 
       if (/^this\.props\.dispatcher\./.test(propAccessText)) {

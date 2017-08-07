@@ -25,6 +25,7 @@ rules:
   typescript/interface-name-prefix:
     - error
     - always
+  typescript/no-angle-bracket-type-assertion: error
   typescript/explicit-member-accessibility: error
   typescript/no-unused-vars: error
   ## blocked by https://github.com/nzakas/eslint-plugin-typescript/pull/23
