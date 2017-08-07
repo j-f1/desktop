@@ -21,7 +21,7 @@ function retrieveSourceMap(source: string) {
   // This is a happy path in case we know for certain that we won't be
   // able to resolve a source map for the given location.
   if (!knownFilesWithSourceMap.some(file => source.endsWith(file))) {
-    return null
+    return null as { url: string, map: string }
   }
 
   // We get a file uri when we're inside a renderer, convert to a path
@@ -41,9 +41,9 @@ function retrieveSourceMap(source: string) {
         return { url: Path.basename(path), map: xhr.responseText }
       }
     } catch (error) {
-      return
+      return null as { url: string, map: string }
     }
-    return
+    return null as { url: string, map: string }
   }
 
   // We don't have an option here, see
