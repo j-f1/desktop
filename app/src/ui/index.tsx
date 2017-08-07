@@ -48,7 +48,6 @@ import {
 //   Focus Ring! -- A11ycasts #16: https://youtu.be/ilj2P5-5CjI
 import 'wicg-focus-ring'
 
-
 if (__DEV__) {
   installDevGlobals()
 }

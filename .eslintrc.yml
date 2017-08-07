@@ -53,6 +53,7 @@ rules:
   react/no-string-refs: error
 
   # UNICORN
+  unicorn/number-literal-case: off
   unicorn/explicit-length-check: off
   unicorn/catch-error-name: off
 
