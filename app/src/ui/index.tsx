@@ -14,11 +14,6 @@ import {
   GitHubUserDatabase,
   CloningRepositoriesStore,
   EmojiStore,
-} from '../lib/dispatcher'
-import { URLActionType } from '../lib/parse-app-url'
-import { SelectionType } from '../lib/app-state'
-import { StatsDatabase, StatsStore } from '../lib/stats'
-import {
   IssuesDatabase,
   IssuesStore,
   SignInStore,
@@ -31,15 +26,28 @@ import {
   TokenStore,
   gitAuthenticationErrorHandler,
 } from '../lib/dispatcher'
+import { URLActionType } from '../lib/parse-app-url'
+import { SelectionType } from '../lib/app-state'
+import { getGUID, StatsDatabase, StatsStore } from '../lib/stats'
 import { shellNeedsPatching, updateEnvironmentForProcess } from '../lib/shell'
 import { installDevGlobals } from './install-globals'
 import { reportUncaughtException, sendErrorReport } from './main-process-proxy'
 import { getOS } from '../lib/get-os'
-import { getGUID } from '../lib/stats'
 import {
   enableSourceMaps,
   withSourceMappedStack,
 } from '../lib/source-map-support'
+
+// We're using a polyfill for the upcoming CSS4 `:focus-ring` pseudo-selector.
+// This allows us to not have to override default accessibility driven focus
+// styles for buttons in the case when a user clicks on a button. This also
+// gives better visiblity to individuals who navigate with the keyboard.
+//
+// See:
+//   https://github.com/WICG/focus-ring
+//   Focus Ring! -- A11ycasts #16: https://youtu.be/ilj2P5-5CjI
+import 'wicg-focus-ring'
+
 
 if (__DEV__) {
   installDevGlobals()
@@ -54,16 +62,6 @@ enableSourceMaps()
 // Tell dugite where to find the git environment,
 // see https://github.com/desktop/dugite/pull/85
 process.env['LOCAL_GIT_DIRECTORY'] = Path.resolve(__dirname, 'git')
-
-// We're using a polyfill for the upcoming CSS4 `:focus-ring` pseudo-selector.
-// This allows us to not have to override default accessibility driven focus
-// styles for buttons in the case when a user clicks on a button. This also
-// gives better visiblity to individuals who navigate with the keyboard.
-//
-// See:
-//   https://github.com/WICG/focus-ring
-//   Focus Ring! -- A11ycasts #16: https://youtu.be/ilj2P5-5CjI
-require('wicg-focus-ring')
 
 const startTime = performance.now()
 

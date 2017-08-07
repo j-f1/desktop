@@ -5,9 +5,9 @@
 import 'mocha'
 import * as chai from 'chai'
 
-const chaiAsPromised = require('chai-as-promised')
+import chaiAsPromised = require('chai-as-promised')
+import path = require('path')
 const { Application } = require('spectron')
-const path = require('path')
 
 chai.should()
 chai.use(chaiAsPromised)

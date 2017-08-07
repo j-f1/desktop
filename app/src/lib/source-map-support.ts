@@ -1,8 +1,10 @@
 import * as Path from 'path'
 import * as Fs from 'fs'
 
+import sourceMapSupport = require('source-map-support')
+
+// eslint-disable-next-line import/no-commonjs
 const fileUriToPath: (uri: string) => string = require('file-uri-to-path')
-const sourceMapSupport = require('source-map-support')
 
 /**
  * This array tells the source map logic which files that we can expect to

@@ -8,7 +8,7 @@ interface IFrontMatterResult<T> {
 
 const frontMatter: <T>(
   path: string
-) => IFrontMatterResult<T> = require('front-matter')
+) => IFrontMatterResult<T> = require('front-matter') // eslint-disable-line import/no-commonjs
 
 interface IChooseALicense {
   readonly title: string

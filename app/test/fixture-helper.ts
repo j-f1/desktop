@@ -3,7 +3,7 @@
 import * as Path from 'path'
 import * as FSE from 'fs-extra'
 
-const klawSync = require('klaw-sync')
+import klawSync = require('klaw-sync')
 
 const temp = require('temp').track()
 

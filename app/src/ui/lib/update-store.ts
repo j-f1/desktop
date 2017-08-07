@@ -1,14 +1,14 @@
 import { remote } from 'electron'
 
-// Given that `autoUpdater` is entirely async anyways, I *think* it's safe to
-// use with `remote`.
-const autoUpdater = remote.autoUpdater
-const lastSuccessfulCheckKey = 'last-successful-update-check'
-
 import { Emitter, Disposable } from 'event-kit'
 
 import { sendWillQuitSync } from '../main-process-proxy'
 import { ErrorWithMetadata } from '../../lib/error-with-metadata'
+
+// Given that `autoUpdater` is entirely async anyways, I *think* it's safe to
+// use with `remote`.
+const autoUpdater = remote.autoUpdater
+const lastSuccessfulCheckKey = 'last-successful-update-check'
 
 /** The states the auto updater can be in. */
 export enum UpdateStatus {

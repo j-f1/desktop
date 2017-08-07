@@ -2,8 +2,15 @@ parser: typescript-eslint-parser
 plugins:
   - typescript
   - babel
+
   - react
+
+  - import
 extends:
+  - plugin:import/errors
+  - plugin:import/warnings
+  - plugin:import/electron
+
   - prettier
   - prettier/react
 
@@ -43,6 +50,26 @@ rules:
   react/jsx-no-bind: error
   react/no-string-refs: error
 
+  # IMPORT
+  import/first: error
+  import/no-amd: error
+  import/extensions: error
+  import/no-commonjs: error
+  import/no-duplicates: error
+  import/no-absolute-path: error
+  import/newline-after-import: error
+  import/no-webpack-loader-syntax: error
+  import/no-extraneous-dependencies: error
+
+  import/no-dynamic-require: warn
+  import/no-mutable-exports: warn
+
+  ## blocked by https://github.com/eslint/typescript-eslint-parser/issues/345
+  import/named: off
+  import/namespace: off
+  import/export: off
+  ##
+
   ###########
   # BUILTIN #
   ###########
@@ -80,3 +107,18 @@ parserOptions:
   sourceType: module
   ecmaFeatures:
     jsx: true
+
+settings:
+  import/extensions:
+    - .js
+    - .ts
+    - .tsx
+  import/resolver:
+    node:
+      extensions:
+        - .js
+        - .ts
+        - .tsx
+  import/parsers:
+    espree:
+      - .js

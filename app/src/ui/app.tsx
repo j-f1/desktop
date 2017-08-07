@@ -30,6 +30,7 @@ import { OcticonSymbol, iconForRepository } from './octicons'
 import {
   showCertificateTrustDialog,
   registerContextualMenuActionDispatcher,
+  sendReady,
 } from './main-process-proxy'
 import { DiscardChanges } from './discard-changes'
 import { updateStore, UpdateStatus } from './lib/update-store'
@@ -64,7 +65,6 @@ import { UntrustedCertificate } from './untrusted-certificate'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { BlankSlateView } from './blank-slate'
 import { ConfirmRemoveRepository } from '../ui/remove-repository/confirm-remove-repository'
-import { sendReady } from './main-process-proxy'
 import { TermsAndConditions } from './terms-and-conditions'
 import { ZoomInfo } from './window/zoom-info'
 import { FullScreenInfo } from './window/full-screen-info'

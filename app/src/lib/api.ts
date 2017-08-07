@@ -13,6 +13,7 @@ import {
 import { AuthenticationMode } from './2fa'
 import { uuid } from './uuid'
 
+// eslint-disable-next-line import/no-commonjs
 const username: () => Promise<string> = require('username')
 
 const ClientID = process.env.TEST_ENV ? '' : __OAUTH_CLIENT_ID__
