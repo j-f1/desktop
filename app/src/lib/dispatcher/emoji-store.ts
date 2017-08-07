@@ -71,7 +71,7 @@ export class EmojiStore {
       // make the character before me all fancy pants. I don't know why
       // but gemoji explicitly excludes this from its naming scheme so
       // we'll do the same.
-      if (combiningCodePoint && combiningCodePoint !== 0xfe0f) {
+      if (combiningCodePoint && combiningCodePoint !== 0xFE0F) {
         filename = `${filename}-${this.getHexCodePoint(combiningCodePoint)}`
       }
     }

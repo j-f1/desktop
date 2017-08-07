@@ -46,6 +46,7 @@ export class APIError extends Error {
     super(message)
 
     this.apiError = apiError
+    this.name = 'APIError'
   }
 }
 

@@ -62,6 +62,7 @@ describe('git/diff', () => {
       const current = await getWorkingDirectoryImage(repository!, file)
 
       expect(current.mediaType).to.equal('image/png')
+      // eslint-disable-next-line unicorn/prefer-starts-ends-with
       expect(current.contents).to.match(/A2HkbLsBYSgAAAABJRU5ErkJggg==$/)
     })
 
@@ -110,6 +111,7 @@ describe('git/diff', () => {
       const previous = await getBlobImage(repository!, file.path, 'HEAD')
 
       expect(previous.mediaType).to.equal('image/gif')
+      // eslint-disable-next-line unicorn/prefer-starts-ends-with
       expect(previous.contents).to.match(
         /pSQ0J85QG55rqWbgLdEmOWQJ1MjFS3WWA2slfZxeEAtp3AykkAAA7$/
       )

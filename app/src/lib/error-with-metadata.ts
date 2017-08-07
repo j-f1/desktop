@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/custom-error-definition */
 import { Repository } from '../models/repository'
 import { RetryAction } from './retry-actions'
 import { CloningRepository } from './dispatcher/cloning-repositories-store'

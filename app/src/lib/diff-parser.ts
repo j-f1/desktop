@@ -206,7 +206,7 @@ export class DiffParser {
     const num = parseInt(str, 10)
 
     if (isNaN(num)) {
-      throw new Error(
+      throw new TypeError(
         `Could not parse capture group ${group} into number: ${str}`
       )
     }

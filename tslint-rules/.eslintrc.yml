@@ -1,2 +1,6 @@
 rules:
   import/no-commonjs: off
+
+  unicorn/filename-case:
+    - error
+    - case: camelCase
