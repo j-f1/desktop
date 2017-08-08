@@ -1,0 +1,4 @@
+rules:
+  typescript/interface-name-prefix:
+    - error
+    - never

@@ -10,10 +10,6 @@ const temp = require('temp').track()
 import { Repository } from '../src/models/repository'
 import { GitProcess } from 'dugite'
 
-type KlawEntry = {
-  path: string
-}
-
 /**
  * Set up the named fixture repository to be used in a test.
  *
@@ -29,13 +25,11 @@ export function setupFixtureRepository(repositoryName: string): string {
     Path.join(testRepoPath, '.git')
   )
 
-  const ignoreHiddenFiles = function(item: KlawEntry) {
+  const entries = klawSync(testRepoPath)
+  const visiblePaths = entries.filter(item => {
     const basename = Path.basename(item.path)
     return basename === '.' || basename[0] !== '.'
-  }
-
-  const entries: ReadonlyArray<KlawEntry> = klawSync(testRepoPath)
-  const visiblePaths = entries.filter(ignoreHiddenFiles)
+  })
   const submodules = visiblePaths.filter(
     entry => Path.basename(entry.path) === '_git'
   )
