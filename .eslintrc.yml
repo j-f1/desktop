@@ -41,10 +41,10 @@ rules:
   # typescript/member-ordering: error
   ##
 
-  # BABEL
+  # Babel
   babel/no-invalid-this: error
 
-  # REACT
+  # React
   react/jsx-boolean-value:
     - error
     - always
@@ -52,12 +52,12 @@ rules:
   react/jsx-no-bind: error
   react/no-string-refs: error
 
-  # UNICORN
+  # unicorn
   unicorn/number-literal-case: off
   unicorn/explicit-length-check: off
   unicorn/catch-error-name: off
 
-  # IMPORT
+  # import
   import/first: error
   import/no-amd: error
   import/extensions: error
