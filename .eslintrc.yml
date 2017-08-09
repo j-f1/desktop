@@ -7,6 +7,9 @@ plugins:
   - mocha
   - react
 
+  - react-perf
+  - optimize-regex
+
   - unicorn
   - import
 extends:
@@ -97,6 +100,13 @@ rules:
   node/process-exit-as-throw: 1
   node/shebang: error
   node/no-deprecated-api: error
+
+  # perf
+  optimize-regex/optimize-regex: error
+  react-perf/jsx-no-new-object-as-prop: error
+  react-perf/jsx-no-new-array-as-prop: error
+  react-perf/jsx-no-new-function-as-prop: error
+  react-perf/jsx-no-jsx-as-prop: error
 
   ###########
   # BUILTIN #

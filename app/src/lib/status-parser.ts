@@ -75,7 +75,7 @@ export function parsePorcelainStatus(
 }
 
 // 1 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <path>
-const changedEntryRe = /^1 ([MADRCU?!.]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) ([a-f0-9]+) ([a-f0-9]+) (.*?)$/
+const changedEntryRe = /^1 ([MADRCU?!.]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) ([a-f\d]+) ([a-f\d]+) (.*?)$/
 
 function parseChangedEntry(field: string): IStatusEntry {
   const match = changedEntryRe.exec(field)
@@ -92,7 +92,7 @@ function parseChangedEntry(field: string): IStatusEntry {
 }
 
 // 2 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <X><score> <path><sep><origPath>
-const renamedOrCopiedEntryRe = /^2 ([MADRCU?!.]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) ([a-f0-9]+) ([a-f0-9]+) ([RC]\d+) (.*?)$/
+const renamedOrCopiedEntryRe = /^2 ([MADRCU?!.]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) ([a-f\d]+) ([a-f\d]+) ([RC]\d+) (.*?)$/
 
 function parsedRenamedOrCopiedEntry(
   field: string,
@@ -121,7 +121,7 @@ function parsedRenamedOrCopiedEntry(
 }
 
 // u <xy> <sub> <m1> <m2> <m3> <mW> <h1> <h2> <h3> <path>
-const unmergedEntryRe = /^u ([DAU]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) (\d+) ([a-f0-9]+) ([a-f0-9]+) ([a-f0-9]+) (.*?)$/
+const unmergedEntryRe = /^u ([DAU]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) (\d+) ([a-f\d]+) ([a-f\d]+) ([a-f\d]+) (.*?)$/
 
 function parseUnmergedEntry(field: string): IStatusEntry {
   const match = unmergedEntryRe.exec(field)

@@ -162,7 +162,7 @@ export class Tokenizer {
 
     const nextIndex = this.scanForEndOfWord(text, index)
     const maybeMention = text.slice(index, nextIndex)
-    if (!/^@[a-zA-Z0-9\-]+$/.test(maybeMention)) {
+    if (!/^@[a-zA-Z\d-]+$/.test(maybeMention)) {
       return null
     }
 

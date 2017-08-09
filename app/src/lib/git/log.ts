@@ -28,12 +28,12 @@ function mapStatus(rawStatus: string): AppFileStatus {
   } // copied
 
   // git log -M --name-status will return a RXXX - where XXX is a percentage
-  if (status.match(/R[0-9]+/)) {
+  if (status.match(/R\d+/)) {
     return AppFileStatus.Renamed
   }
 
   // git log -C --name-status will return a CXXX - where XXX is a percentage
-  if (status.match(/C[0-9]+/)) {
+  if (status.match(/C\d+/)) {
     return AppFileStatus.Copied
   }
 

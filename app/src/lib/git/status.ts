@@ -115,7 +115,7 @@ export async function getStatus(
       const value = entry.value
 
       // This intentionally does not match branch.oid initial
-      if ((m = value.match(/^branch\.oid ([a-f0-9]+)$/))) {
+      if ((m = value.match(/^branch\.oid ([a-f\d]+)$/))) {
         currentTip = m[1]
       } else if ((m = value.match(/^branch.head (.*)/))) {
         if (m[1] !== '(detached)') {

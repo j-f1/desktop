@@ -9,7 +9,7 @@ function sanitizeId(id: string): string {
   // character since we have the poolPrefix which will
   // guarantee that.
   // See http://stackoverflow.com/a/79022/2114
-  return id.replace(/[^a-z0-9\-_:.]+/gi, '_')
+  return id.replace(/[^a-z\d-_:.]+/gi, '_')
 }
 
 /**
@@ -17,13 +17,13 @@ function sanitizeId(id: string): string {
  * maintains a list of used ids and if an id with a duplicate
  * prefix is already in use a counter value will be appended
  * to the generated id to maintain uniqueness.
- * 
+ *
  * This method should be called from a component's
  * componentWillMount method and then released using the
  * releaseUniqueId method from the component's componentWillUnmount
  * method. The component should store the generated id in its
  * state for the lifetime of the component.
- * 
+ *
  * @param prefix - A prefix used to distinguish components
  *                 or instances of components from each other.
  *                 At minimum a component should pass its own
