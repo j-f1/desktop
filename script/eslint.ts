@@ -10,6 +10,7 @@ const ESLINT_ARGS = [
   './eslint-rules',
   './tslint-rules/*.ts',
   './app/{src,typings,test}',
+  ...process.argv.slice(2),
 ]
 const opts = {
   stdio: 'inherit',
@@ -18,5 +19,6 @@ const opts = {
 if (process.env.CI) {
   ChildProcess.spawn('eslint', ESLINT_ARGS, opts)
 } else {
-  ChildProcess.spawn('eslint_d', ESLINT_ARGS, opts)
+  console.log('> Spinning up eslint_d\n')
+  require('eslint_d/lib/client').lint(ESLINT_ARGS)
 }
