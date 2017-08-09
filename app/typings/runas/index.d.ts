@@ -15,8 +15,16 @@ declare module 'runas' {
     stderr?: string
   }
 
-  function runas(command: string, args?: ReadonlyArray<string>, options?: Options): number
-  function runas(command: string, args: ReadonlyArray<string>, options: CatchOutputOptions): CommandOutput
+  function runas(
+    command: string,
+    args?: ReadonlyArray<string>,
+    options?: Options
+  ): number
+  function runas(
+    command: string,
+    args: ReadonlyArray<string>,
+    options: CatchOutputOptions
+  ): CommandOutput
 
   export = runas
 }

@@ -10,38 +10,40 @@ declare module 'source-map-support' {
    * Output of retrieveSourceMap().
    */
   export interface UrlAndMap {
-      url: string;
-      map: string | Buffer;
+    url: string
+    map: string | Buffer
   }
 
   /**
    * Options to install().
    */
   export interface Options {
-      handleUncaughtExceptions?: boolean;
-      hookRequire?: boolean;
-      emptyCacheBetweenOperations?: boolean;
-      environment?: 'auto' | 'browser' | 'node';
-      overrideRetrieveFile?: boolean;
-      overrideRetrieveSourceMap?: boolean;
-      retrieveFile?(path: string): string;
-      retrieveSourceMap?(source: string): UrlAndMap | undefined | null;
+    handleUncaughtExceptions?: boolean
+    hookRequire?: boolean
+    emptyCacheBetweenOperations?: boolean
+    environment?: 'auto' | 'browser' | 'node'
+    overrideRetrieveFile?: boolean
+    overrideRetrieveSourceMap?: boolean
+    retrieveFile?(path: string): string
+    retrieveSourceMap?(source: string): UrlAndMap | undefined | null
   }
 
   export interface Position {
-      source: string;
-      line: number;
-      column: number;
+    source: string
+    line: number
+    column: number
   }
 
-  export function wrapCallSite(frame: any /* StackFrame */): any /* StackFrame */;
-  export function getErrorSource(error: Error): string | null;
-  export function mapSourcePosition(position: Position): Position;
-  export function retrieveSourceMap(source: string): UrlAndMap | null;
+  export function wrapCallSite(
+    frame: any /* StackFrame */
+  ): any /* StackFrame */
+  export function getErrorSource(error: Error): string | null
+  export function mapSourcePosition(position: Position): Position
+  export function retrieveSourceMap(source: string): UrlAndMap | null
 
   /**
    * Install SourceMap support.
    * @param options Can be used to e.g. disable uncaughtException handler.
    */
-  export function install(options?: Options): void;
+  export function install(options?: Options): void
 }

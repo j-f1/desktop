@@ -6,7 +6,7 @@
 /// <reference types="node" />
 
 declare module 'klaw-sync' {
-  import * as fs from "fs"
+  import * as fs from 'fs'
 
   interface Item {
     path: string
