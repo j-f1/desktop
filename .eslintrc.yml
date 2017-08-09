@@ -2,6 +2,7 @@ parser: typescript-eslint-parser
 plugins:
   - typescript
   - babel
+  - node
 
   - mocha
   - react
@@ -91,6 +92,11 @@ rules:
   mocha/no-top-level-hooks: warn
   mocha/no-pending-tests: warn
   mocha/no-skipped-tests: warn
+
+  # Node
+  node/process-exit-as-throw: 1
+  node/shebang: error
+  node/no-deprecated-api: error
 
   ###########
   # BUILTIN #
