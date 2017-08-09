@@ -100,7 +100,6 @@ rules:
 
   # Node
   node/process-exit-as-throw: 1
-  node/shebang: error
   node/no-deprecated-api: error
 
   # perf
