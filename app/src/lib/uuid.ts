@@ -37,5 +37,5 @@ function getRandomBytes(count: number): Buffer {
  * Node.JS.
  */
 export function uuid() {
-  return guid({ random: getRandomBytes(16) })
+  return guid({ random: Array.from(getRandomBytes(16)) })
 }
