@@ -3,6 +3,7 @@ plugins:
   - typescript
   - babel
 
+  - mocha
   - react
 
   - unicorn
@@ -76,6 +77,20 @@ rules:
   import/namespace: off
   import/export: off
   ##
+
+  # Mocha
+  mocha/handle-done-callback: error
+  mocha/no-identical-title: error
+  mocha/no-exclusive-tests: error
+  mocha/no-return-and-callback: error
+  mocha/no-sibling-hooks: error
+  mocha/no-global-tests: error
+  mocha/no-nested-tests: error
+
+  mocha/max-top-level-suites: warn
+  mocha/no-top-level-hooks: warn
+  mocha/no-pending-tests: warn
+  mocha/no-skipped-tests: warn
 
   ###########
   # BUILTIN #
