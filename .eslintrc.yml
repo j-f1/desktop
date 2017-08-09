@@ -122,6 +122,7 @@ rules:
     - error
     - smart
   no-extra-boolean-cast: error
+  no-unreachable: error
 
   ###########
   # SPECIAL #
