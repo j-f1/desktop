@@ -122,6 +122,9 @@ rules:
     - error
     - smart
   no-extra-boolean-cast: error
+  ## blocked by https://github.com/eslint/eslint/issues/9095
+  # no-fallthrough: error
+  ##
   no-unreachable: error
 
   ###########
