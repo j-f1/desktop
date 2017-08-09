@@ -16,6 +16,8 @@ describe('App', function(this: any) {
   let app: any
 
   beforeEach(function() {
+    chaiAsPromised.transferPromiseness = app.transferPromiseness
+
     let appPath = path.join(
       __dirname,
       '..',
@@ -33,10 +35,6 @@ describe('App', function(this: any) {
       args: [path.join(__dirname, '..', '..', '..', 'out')],
     })
     return app.start()
-  })
-
-  beforeEach(function() {
-    chaiAsPromised.transferPromiseness = app.transferPromiseness
   })
 
   afterEach(function() {
