@@ -171,7 +171,6 @@ class UpdateStore {
   public quitAndInstallUpdate() {
     // This is synchronous so that we can ensure the app will let itself be quit
     // before we call the function to quit.
-    // eslint-disable-next-line no-sync
     sendWillQuitSync()
     autoUpdater.quitAndInstall()
   }

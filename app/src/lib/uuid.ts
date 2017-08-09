@@ -7,7 +7,6 @@ import { randomBytes as nodeCryptoGetRandomBytes } from 'crypto'
 //
 // See
 //  https://github.com/kelektiv/node-uuid/issues/189
-// eslint-disable-next-line import/no-commonjs
 import guid = require('uuid/v4')
 
 /**

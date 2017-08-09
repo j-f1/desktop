@@ -10,6 +10,7 @@ plugins:
   - react-perf
   - optimize-regex
 
+  - eslint-comments
   - unicorn
   - import
 extends:
@@ -106,6 +107,12 @@ rules:
   react-perf/jsx-no-new-array-as-prop: error
   react-perf/jsx-no-new-function-as-prop: error
   react-perf/jsx-no-jsx-as-prop: error
+
+  # ESLint comments
+  eslint-comments/no-duplicate-disable: error
+  eslint-comments/no-unlimited-disable: error
+  eslint-comments/no-unused-disable: error
+  eslint-comments/no-unused-enable: error
 
   ###########
   # BUILTIN #
