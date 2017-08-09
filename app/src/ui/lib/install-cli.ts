@@ -1,11 +1,7 @@
 import * as Fs from 'fs'
 import * as Path from 'path'
 
-const runas: (
-  command: string,
-  args: ReadonlyArray<string>,
-  options?: { admin: boolean }
-) => number = require('runas') // eslint-disable-line import/no-commonjs
+import runas = require('runas')
 
 /** The path for the installed command line tool. */
 export const InstalledCLIPath = '/usr/local/bin/github'

@@ -1,14 +1,7 @@
 import * as Path from 'path'
 import * as Fs from 'fs'
 
-interface IFrontMatterResult<T> {
-  readonly attributes: T
-  readonly body: string
-}
-
-const frontMatter: <T>(
-  path: string
-) => IFrontMatterResult<T> = require('front-matter') // eslint-disable-line import/no-commonjs
+import frontMatter = require('front-matter')
 
 interface IChooseALicense {
   readonly title: string

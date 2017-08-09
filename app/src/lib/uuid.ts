@@ -8,7 +8,7 @@ import { randomBytes as nodeCryptoGetRandomBytes } from 'crypto'
 // See
 //  https://github.com/kelektiv/node-uuid/issues/189
 // eslint-disable-next-line import/no-commonjs
-const guid = require('uuid/v4') as (options?: { random?: Buffer }) => string
+import guid = require('uuid/v4')
 
 /**
  * Fills a buffer with the required number of random bytes.

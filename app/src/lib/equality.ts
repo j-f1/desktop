@@ -1,8 +1,4 @@
-const deepEquals: (
-  actual: object,
-  expected: object,
-  opts?: { strict: boolean }
-) => boolean = require('deep-equal') // eslint-disable-line import/no-commonjs
+import deepEquals = require('deep-equal')
 
 export function structuralEquals<T extends object>(
   actual: T,
