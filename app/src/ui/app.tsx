@@ -68,7 +68,7 @@ import { ConfirmRemoveRepository } from '../ui/remove-repository/confirm-remove-
 import { TermsAndConditions } from './terms-and-conditions'
 import { ZoomInfo } from './window/zoom-info'
 import { FullScreenInfo } from './window/full-screen-info'
-import { PushBranchCommits } from './branches/PushBranchCommits'
+import { PushBranchCommits } from './branches/push-branch-commits'
 import { Branch } from '../models/branch'
 import { CLIInstalled } from './cli-installed'
 import { GenericGitAuthentication } from './generic-git-auth'

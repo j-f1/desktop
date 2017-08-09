@@ -5,10 +5,9 @@ import { FileList } from './file-list'
 import { Repository } from '../../models/repository'
 import { FileChange } from '../../models/status'
 import { Commit } from '../../models/commit'
-import { Dispatcher } from '../../lib/dispatcher'
+import { Dispatcher, IGitHubUser } from '../../lib/dispatcher'
 import { IHistoryState as IAppHistoryState } from '../../lib/app-state'
 import { ThrottledScheduler } from '../lib/throttled-scheduler'
-import { IGitHubUser } from '../../lib/dispatcher'
 import { Resizable } from '../resizable'
 
 // At some point we'll make index.tsx only be exports

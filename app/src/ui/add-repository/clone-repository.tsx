@@ -166,7 +166,8 @@ export class CloneRepository extends React.Component<
   }
 
   private checkPathValid(newPath: string) {
-    FS.exists(newPath, exists => {
+    // FIXME!!!
+    FS.exists(newPath, exists => { // eslint-disable-line node/no-deprecated-api
       // If the path changed while we were checking, we don't care anymore.
       if (this.state.path !== newPath) {
         return
