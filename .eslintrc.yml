@@ -28,11 +28,6 @@ rules:
   # CUSTOM #
   ##########
   insecure-random: error
-  ts-no-use-before-define:
-    - error
-    - functions: false
-      variables: false
-      typedefs: false
 
   ###########
   # PLUGINS #
@@ -44,6 +39,11 @@ rules:
   typescript/no-angle-bracket-type-assertion: error
   typescript/explicit-member-accessibility: error
   typescript/no-unused-vars: error
+  typescript/no-use-before-define:
+    - error
+    - functions: false
+      variables: false
+      typedefs: false
   ## blocked by https://github.com/nzakas/eslint-plugin-typescript/pull/23
   # typescript/member-ordering: error
   ##
