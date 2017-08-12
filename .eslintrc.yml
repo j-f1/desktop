@@ -48,6 +48,9 @@ rules:
   # typescript/member-ordering: error
   ##
   typescript/prefer-namespace-keyword: error
+  ## blocked by https://github.com/nzakas/eslint-plugin-typescript/issues/41
+  # typescript/type-annotation-spacing: error
+  ##
 
   # Babel
   babel/no-invalid-this: error
