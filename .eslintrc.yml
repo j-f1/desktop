@@ -118,13 +118,6 @@ rules:
   # BUILTIN #
   ###########
   curly: error
-  ## blocked by https://github.com/eslint/typescript-eslint-parser/issues/344
-  # indent:
-  #   - error
-  #   - 2
-  #   - SwitchCase: 1
-  ##
-
   no-new-wrappers: error
   no-redeclare:
     - error
