@@ -118,6 +118,9 @@ rules:
   # BUILTIN #
   ###########
   curly: error
+  valid-jsdoc:
+    - error
+    - requireReturn: false
   no-new-wrappers: error
   no-redeclare:
     - error

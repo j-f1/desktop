@@ -29,6 +29,7 @@ import * as Lint from 'tslint'
 class ButtonGroupOrderWalker extends Lint.RuleWalker {
   /**
    * Visit the node and ensure any button children are in the correct order.
+   * @param {ts.JsxElement} node The JSX element to visit
    */
   protected visitJsxElement(node: ts.JsxElement): void {
     super.visitJsxElement(node)

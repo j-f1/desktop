@@ -38,6 +38,7 @@ class ReactNoUnboundDispatcherPropsWalker extends Lint.RuleWalker {
    * Visit the node and apply the rule about ensuring the dispatcher is bound.
    *
    *  JsxOpeningLikeElement encompasses both self-closing and regular elements
+   * @param {ts.JsxOpeningLikeElement} node The element to visit
    */
   private visitJsxOpeningLikeElement(node: ts.JsxOpeningLikeElement): void {
     // create violations if the listener is a reference to a class method that was not bound to 'this' in the constructor
