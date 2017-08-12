@@ -28,6 +28,7 @@ rules:
   ##########
   # CUSTOM #
   ##########
+  button-group-order: error
   insecure-random: error
   ban-keywords: error
 
