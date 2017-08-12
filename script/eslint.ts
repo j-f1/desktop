@@ -1,6 +1,7 @@
 #!/usr/bin/env ts-node
 
 import ChildProcess = require('child_process')
+import Path = require('path')
 
 const ESLINT_ARGS = [
   '--cache',
@@ -17,7 +18,11 @@ const opts = {
 }
 
 if (process.env.CI) {
-  ChildProcess.spawn('../node_modules/.bin/eslint', ESLINT_ARGS, opts)
+  ChildProcess.spawn(
+    Path.resolve(__dirname, '..', 'node_modules', '.bin', 'eslint'),
+    ESLINT_ARGS,
+    opts
+  )
 } else {
   console.log('> Spinning up eslint_d\n')
   require('eslint_d/lib/client').lint(ESLINT_ARGS)
