@@ -37,10 +37,6 @@
         "property-declaration": "nospace",
         "variable-declaration": "nospace"
       }
-    ],
-    "whitespace": [
-      true,
-      "check-type"
     ]
   }
 }
