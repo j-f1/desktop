@@ -47,6 +47,7 @@ rules:
   ## blocked by https://github.com/nzakas/eslint-plugin-typescript/pull/23
   # typescript/member-ordering: error
   ##
+  typescript/prefer-namespace-keyword: error
 
   # Babel
   babel/no-invalid-this: error
