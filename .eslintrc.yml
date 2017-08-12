@@ -139,6 +139,9 @@ rules:
   # no-fallthrough: error
   ##
   no-unreachable: error
+  no-shadow:
+    - error
+    - builtinGlobals: true
 
   ###########
   # SPECIAL #
