@@ -38,10 +38,6 @@
         "variable-declaration": "nospace"
       }
     ],
-    "variable-name": [
-      true,
-      "ban-keywords"
-    ],
     "whitespace": [
       true,
       "check-type"

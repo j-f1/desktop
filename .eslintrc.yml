@@ -28,6 +28,7 @@ rules:
   # CUSTOM #
   ##########
   insecure-random: error
+  ban-keywords: error
 
   ###########
   # PLUGINS #
