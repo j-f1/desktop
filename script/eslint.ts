@@ -6,11 +6,9 @@ import Path = require('path')
 const ESLINT_ARGS = [
   '--cache',
   '--rulesdir=./eslint-rules',
-  '--ext=.js,.ts,.jsx,.tsx',
-  './script',
-  './eslint-rules',
-  './tslint-rules/*.ts',
-  './app/{src,typings,test}',
+  './{script,eslint-rules}/**/*.{j,t}s?(x)',
+  './tslint-rules/**/*.ts',
+  './app/{src,typings,test}/**/*.{j,t}s?(x)',
   ...process.argv.slice(2),
 ]
 const opts = {
