@@ -16,7 +16,6 @@
       "static-before-instance",
       "variables-before-functions"
     ],
-    "no-invalid-this": true,
     "no-stateless-class": true,
     "promise-must-complete": true,
     "react-no-unbound-dispatcher-props": true,
