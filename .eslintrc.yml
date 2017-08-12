@@ -125,9 +125,6 @@ rules:
   # BUILTIN #
   ###########
   curly: error
-  valid-jsdoc:
-    - error
-    - requireReturn: false
   no-new-wrappers: error
   no-redeclare:
     - error
@@ -145,9 +142,6 @@ rules:
   # no-fallthrough: error
   ##
   no-unreachable: error
-  no-shadow:
-    - error
-    - builtinGlobals: true
 
   ###########
   # SPECIAL #
