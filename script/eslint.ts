@@ -17,7 +17,7 @@ const opts = {
 }
 
 if (process.env.CI) {
-  ChildProcess.spawn('eslint', ESLINT_ARGS, opts)
+  ChildProcess.spawn('../node_modules/.bin/eslint', ESLINT_ARGS, opts)
 } else {
   console.log('> Spinning up eslint_d\n')
   require('eslint_d/lib/client').lint(ESLINT_ARGS)
