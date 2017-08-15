@@ -1,2 +1,14 @@
+plugins:
+  - eslint-plugin
+
+extends:
+  - plugin:eslint-plugin/rules-recommended
+
 rules:
   import/no-commonjs: off
+
+  eslint-plugin/consistent-output: error
+  eslint-plugin/prefer-placeholders: error
+  eslint-plugin/report-message-format:
+    - error
+    - ^[A-Z].*\.$

@@ -42,11 +42,10 @@ module.exports = {
               }
             }
 
-            context.report(
-              child,
-              'Forbidden child content, expected <Button>.' +
-                ' ButtonGroups should only contain <Button> elements.'
-            )
+            context.report({
+              node: child,
+              message: 'ButtonGroups should only contain <Button> elements.',
+            })
           })
           .filter(x => x)
 
@@ -75,11 +74,11 @@ module.exports = {
           )
 
           if (primaryButtonIdx > 0) {
-            context.report(
-              buttons[primaryButtonIdx],
-              'Wrong button order in ButtonGroup.' +
-                ' ButtonGroups should have the primary button as its first child'
-            )
+            context.report({
+              node: buttons[primaryButtonIdx],
+              message:
+                'ButtonGroups should have the primary button as its first child.',
+            })
           }
         }
       },

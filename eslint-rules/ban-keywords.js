@@ -18,7 +18,13 @@ module.exports = {
             node.parent.computed ||
             node.parent.object === node)
         ) {
-          context.report(node, `Do not use the variable name '${node.name}'`)
+          context.report({
+            node: node,
+            message: 'Do not use the variable name `{{ name }}`.',
+            data: {
+              name: node.name,
+            },
+          })
         }
       },
     }
