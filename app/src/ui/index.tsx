@@ -20,11 +20,13 @@ import {
   defaultErrorHandler,
   missingRepositoryHandler,
   backgroundTaskHandler,
+  pushNeedsPullHandler,
   AccountsStore,
   RepositoriesDatabase,
   RepositoriesStore,
   TokenStore,
   gitAuthenticationErrorHandler,
+  externalEditorErrorHandler,
 } from '../lib/dispatcher'
 import { URLActionType } from '../lib/parse-app-url'
 import { SelectionType } from '../lib/app-state'
@@ -117,7 +119,9 @@ const appStore = new AppStore(
 const dispatcher = new Dispatcher(appStore)
 
 dispatcher.registerErrorHandler(defaultErrorHandler)
+dispatcher.registerErrorHandler(externalEditorErrorHandler)
 dispatcher.registerErrorHandler(gitAuthenticationErrorHandler)
+dispatcher.registerErrorHandler(pushNeedsPullHandler)
 dispatcher.registerErrorHandler(backgroundTaskHandler)
 dispatcher.registerErrorHandler(missingRepositoryHandler)
 
