@@ -1,0 +1,14 @@
+pick 37e45c42d eslint-plugin-import
+pick 8e00931f9 eslint-plugin-unicorn
+pick 6ad0f7a53 Error when using `!!` in `if` statements
+pick 110e0d25d eslint-plugin-mocha
+pick 8360e60db eslint-plugin-node
+f 6030c0493 🔥 node/shebang
+pick 8e6a73515 Merge progress/git-test.ts `describe`s
+pick 6b9956449 List blocked no-fallthrough rule
+pick 0c46c4a79 Perf plugins 🐎
+pick 5a7703365 eslint-plugin-eslint-comments
+pick fac5f49b1 Replace TSLint’s `jsdoc-format` with ESLint’s `valid-jsdoc`
+pick 16e7ed7e6 no-shadow
+pick 02122cac8 eslint-plugin-eslint-plugin
+pick d0ef32e01 Those broke.
