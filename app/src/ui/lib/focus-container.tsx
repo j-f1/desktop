@@ -1,12 +1,16 @@
 import * as React from 'react'
+
 import * as classNames from 'classnames'
 
 interface IFocusContainerProps {
   readonly className?: string
+
   readonly onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
+
   readonly onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 
   /** Callback used when focus is within container */
+
   readonly onFocusWithinChanged?: (focusWithin: boolean) => void
 }
 
@@ -25,16 +29,21 @@ interface IFocusContainerState {
  * even though it's not supported in our current version
  * of chromium (it'll be in 60 or 61 depending on who you trust)
  */
+
 export class FocusContainer extends React.Component<
   IFocusContainerProps,
   IFocusContainerState
 > {
   private wrapperRef: HTMLDivElement | null = null
+
   private focusWithinChangedTimeoutId: number | null = null
 
   public constructor(props: IFocusContainerProps) {
     super(props)
-    this.state = { focusWithin: false }
+
+    this.state = {
+      focusWithin: false,
+    }
   }
 
   /**
@@ -42,11 +51,13 @@ export class FocusContainer extends React.Component<
    *
    * @param focusWithin the new focus state of the control
    */
+
   private onFocusWithinChanged(focusWithin: boolean) {
     this.setState({ focusWithin })
 
     if (this.focusWithinChangedTimeoutId !== null) {
       cancelAnimationFrame(this.focusWithinChangedTimeoutId)
+
       this.focusWithinChangedTimeoutId = null
     }
 
@@ -87,8 +98,11 @@ export class FocusContainer extends React.Component<
 
   private onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     // If someone is clicking on the focuscontainer itself we'll
+
     // cancel it, that saves us from having a focusout/in cycle
+
     // and a janky focus ring toggle.
+
     if (e.target === this.wrapperRef) {
       e.preventDefault()
     }

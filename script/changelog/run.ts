@@ -1,6 +1,9 @@
 import { spawn } from './spawn'
+
 import { getLogLines } from './git'
+
 import { convertToChangelogFormat } from './parser'
+
 import { sort as semverSort } from 'semver'
 
 const jsonStringify: (obj: any) => string = require('json-pretty')
@@ -22,15 +25,23 @@ export async function run(args: ReadonlyArray<string>): Promise<void> {
 
   if (args.length === 0) {
     // work out the latest tag created in the repository
+
     const allTags = await spawn('git', ['tag'])
+
     const releaseTags = allTags
+
       .split('\n')
+
       .filter(tag => tag.startsWith('release-'))
+
       .filter(tag => tag.indexOf('-linux') === -1)
+
       .filter(tag => tag.indexOf('-test') === -1)
+
       .map(tag => tag.substr(8))
 
     const sortedTags = semverSort(releaseTags)
+
     const latestTag = sortedTags[sortedTags.length - 1]
 
     throw new Error(
@@ -39,6 +50,7 @@ export async function run(args: ReadonlyArray<string>): Promise<void> {
   }
 
   const previousVersion = args[0]
+
   try {
     await spawn('git', ['rev-parse', previousVersion])
   } catch {
@@ -48,6 +60,8 @@ export async function run(args: ReadonlyArray<string>): Promise<void> {
   }
 
   const lines = await getLogLines(previousVersion)
+
   const changelogEntries = await convertToChangelogFormat(lines)
+
   console.log(jsonStringify(changelogEntries))
 }

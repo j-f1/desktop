@@ -1,6 +1,7 @@
 import { ChildProcess } from 'child_process'
 
 import { git } from './core'
+
 import { spawnAndComplete } from './spawn'
 
 import { Repository } from '../../models/repository'
@@ -21,16 +22,19 @@ import { Repository } from '../../models/repository'
  * @param path       - The file path, relative to the repository
  *                     root from where to read the blob contents
  */
+
 export async function getBlobContents(
   repository: Repository,
   commitish: string,
   path: string
 ): Promise<Buffer> {
   const successExitCodes = new Set([0, 1])
+
   const setBinaryEncoding: (process: ChildProcess) => void = cb =>
     cb.stdout.setEncoding('binary')
 
   const args = ['show', `${commitish}:${path}`]
+
   const opts = {
     successExitCodes,
     processCallback: setBinaryEncoding,
@@ -63,6 +67,7 @@ export async function getBlobContents(
  *                     the blob. Note that the number of bytes
  *                     returned may always be less than this number.
  */
+
 export async function getPartialBlobContents(
   repository: Repository,
   commitish: string,

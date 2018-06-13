@@ -1,17 +1,22 @@
 import * as React from 'react'
+
 import { createUniqueId, releaseUniqueId } from './id-pool'
 
 interface ISelectProps {
   /** The label for the select control. */
+
   readonly label?: string
 
   /** The value of the select control. */
+
   readonly value?: string
 
   /** The default value of the select control. */
+
   readonly defaultValue?: string
 
   /** Called when the user changes the selected valued. */
+
   readonly onChange?: (event: React.FormEvent<HTMLSelectElement>) => void
 }
 
@@ -21,6 +26,7 @@ interface ISelectState {
    * it from the label element. This is generated once via the id pool when the
    * component is mounted and then released once the component unmounts.
    */
+
   readonly inputId?: string
 }
 
@@ -29,9 +35,11 @@ interface ISelectState {
  *
  * Provide `children` elements for the contents of the `select` element.
  */
+
 export class Select extends React.Component<ISelectProps, ISelectState> {
   public componentWillMount() {
     const friendlyName = this.props.label || 'unknown'
+
     const inputId = createUniqueId(`Select_${friendlyName}`)
 
     this.setState({ inputId })
@@ -45,6 +53,7 @@ export class Select extends React.Component<ISelectProps, ISelectState> {
 
   private renderLabel() {
     const label = this.props.label
+
     const inputId = this.state.inputId
 
     return label ? <label htmlFor={inputId}>{label}</label> : null

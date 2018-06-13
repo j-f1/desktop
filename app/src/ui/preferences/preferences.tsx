@@ -1,56 +1,94 @@
 import * as React from 'react'
+
 import { Account } from '../../models/account'
+
 import { PreferencesTab } from '../../models/preferences'
+
 import { ExternalEditor } from '../../lib/editors'
+
 import { Dispatcher } from '../../lib/dispatcher'
+
 import { TabBar } from '../tab-bar'
+
 import { Accounts } from './accounts'
+
 import { Advanced } from './advanced'
+
 import { Git } from './git'
+
 import { assertNever } from '../../lib/fatal-error'
+
 import { Button } from '../lib/button'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Dialog, DialogFooter, DialogError } from '../dialog'
+
 import {
   getGlobalConfigValue,
   setGlobalConfigValue,
   getMergeTool,
   IMergeTool,
 } from '../../lib/git/config'
+
 import { lookupPreferredEmail } from '../../lib/email'
+
 import { Shell, getAvailableShells } from '../../lib/shells'
+
 import { getAvailableEditors } from '../../lib/editors/lookup'
+
 import { disallowedCharacters } from './identifier-rules'
 
 interface IPreferencesProps {
   readonly dispatcher: Dispatcher
+
   readonly dotComAccount: Account | null
+
   readonly enterpriseAccount: Account | null
+
   readonly onDismissed: () => void
+
   readonly optOutOfUsageTracking: boolean
+
   readonly initialSelectedTab?: PreferencesTab
+
   readonly confirmRepositoryRemoval: boolean
+
   readonly confirmDiscardChanges: boolean
+
   readonly selectedExternalEditor?: ExternalEditor
+
   readonly selectedShell: Shell
 }
 
 interface IPreferencesState {
   readonly selectedIndex: PreferencesTab
+
   readonly committerName: string
+
   readonly committerEmail: string
+
   readonly disallowedCharactersMessage: string | null
+
   readonly optOutOfUsageTracking: boolean
+
   readonly confirmRepositoryRemoval: boolean
+
   readonly confirmDiscardChanges: boolean
+
   readonly availableEditors: ReadonlyArray<ExternalEditor>
+
   readonly selectedExternalEditor?: ExternalEditor
+
   readonly availableShells: ReadonlyArray<Shell>
+
   readonly selectedShell: Shell
+
   readonly mergeTool: IMergeTool | null
 }
 
 /** The app-level preferences component. */
+
 export class Preferences extends React.Component<
   IPreferencesProps,
   IPreferencesState
@@ -60,22 +98,34 @@ export class Preferences extends React.Component<
 
     this.state = {
       selectedIndex: this.props.initialSelectedTab || PreferencesTab.Accounts,
+
       committerName: '',
+
       committerEmail: '',
+
       disallowedCharactersMessage: null,
+
       availableEditors: [],
+
       optOutOfUsageTracking: false,
+
       confirmRepositoryRemoval: false,
+
       confirmDiscardChanges: false,
+
       selectedExternalEditor: this.props.selectedExternalEditor,
+
       availableShells: [],
+
       selectedShell: this.props.selectedShell,
+
       mergeTool: null,
     }
   }
 
   public async componentWillMount() {
     let committerName = await getGlobalConfigValue('user.name')
+
     let committerEmail = await getGlobalConfigValue('user.email')
 
     if (!committerName || !committerEmail) {
@@ -88,6 +138,7 @@ export class Preferences extends React.Component<
 
         if (!committerEmail) {
           const found = lookupPreferredEmail(account.emails)
+
           if (found) {
             committerEmail = found.email
           }
@@ -96,23 +147,30 @@ export class Preferences extends React.Component<
     }
 
     committerName = committerName || ''
+
     committerEmail = committerEmail || ''
 
     const [editors, shells, mergeTool] = await Promise.all([
       getAvailableEditors(),
+
       getAvailableShells(),
+
       getMergeTool(),
     ])
 
     const availableEditors = editors.map(e => e.editor)
+
     const availableShells = shells.map(e => e.shell)
 
     this.setState({
       committerName,
       committerEmail,
       optOutOfUsageTracking: this.props.optOutOfUsageTracking,
+
       confirmRepositoryRemoval: this.props.confirmRepositoryRemoval,
+
       confirmDiscardChanges: this.props.confirmDiscardChanges,
+
       availableShells,
       availableEditors,
       mergeTool,
@@ -145,11 +203,13 @@ export class Preferences extends React.Component<
 
   private onDotComSignIn = () => {
     this.props.onDismissed()
+
     this.props.dispatcher.showDotComSignInDialog()
   }
 
   private onEnterpriseSignIn = () => {
     this.props.onDismissed()
+
     this.props.dispatcher.showEnterpriseSignInDialog()
   }
 
@@ -159,11 +219,13 @@ export class Preferences extends React.Component<
 
   private disallowedCharacterErrorMessage(name: string, email: string) {
     const disallowedNameCharacters = disallowedCharacters(name)
+
     if (disallowedNameCharacters != null) {
       return `Git name field cannot be a disallowed character "${disallowedNameCharacters}"`
     }
 
     const disallowedEmailCharacters = disallowedCharacters(email)
+
     if (disallowedEmailCharacters != null) {
       return `Git email field cannot be a disallowed character "${disallowedEmailCharacters}"`
     }
@@ -173,6 +235,7 @@ export class Preferences extends React.Component<
 
   private renderDisallowedCharactersError() {
     const message = this.state.disallowedCharactersMessage
+
     if (message != null) {
       return <DialogError>{message}</DialogError>
     } else {
@@ -182,6 +245,7 @@ export class Preferences extends React.Component<
 
   private renderActiveTab() {
     const index = this.state.selectedIndex
+
     switch (index) {
       case PreferencesTab.Accounts:
         return (
@@ -193,6 +257,7 @@ export class Preferences extends React.Component<
             onLogout={this.onLogout}
           />
         )
+
       case PreferencesTab.Git: {
         return (
           <Git
@@ -203,6 +268,7 @@ export class Preferences extends React.Component<
           />
         )
       }
+
       case PreferencesTab.Advanced: {
         return (
           <Advanced
@@ -226,21 +292,28 @@ export class Preferences extends React.Component<
           />
         )
       }
+
       default:
         return assertNever(index, `Unknown tab index: ${index}`)
     }
   }
 
   private onOptOutofReportingChanged = (value: boolean) => {
-    this.setState({ optOutOfUsageTracking: value })
+    this.setState({
+      optOutOfUsageTracking: value,
+    })
   }
 
   private onConfirmRepositoryRemovalChanged = (value: boolean) => {
-    this.setState({ confirmRepositoryRemoval: value })
+    this.setState({
+      confirmRepositoryRemoval: value,
+    })
   }
 
   private onConfirmDiscardChangesChanged = (value: boolean) => {
-    this.setState({ confirmDiscardChanges: value })
+    this.setState({
+      confirmDiscardChanges: value,
+    })
   }
 
   private onCommitterNameChanged = (committerName: string) => {
@@ -262,21 +335,28 @@ export class Preferences extends React.Component<
   }
 
   private onSelectedEditorChanged = (editor: ExternalEditor) => {
-    this.setState({ selectedExternalEditor: editor })
+    this.setState({
+      selectedExternalEditor: editor,
+    })
   }
 
   private onSelectedShellChanged = (shell: Shell) => {
-    this.setState({ selectedShell: shell })
+    this.setState({
+      selectedShell: shell,
+    })
   }
 
   private renderFooter() {
     const hasDisabledError = this.state.disallowedCharactersMessage != null
 
     const index = this.state.selectedIndex
+
     switch (index) {
       case PreferencesTab.Accounts:
         return null
+
       case PreferencesTab.Advanced:
+
       case PreferencesTab.Git: {
         return (
           <DialogFooter>
@@ -289,6 +369,7 @@ export class Preferences extends React.Component<
           </DialogFooter>
         )
       }
+
       default:
         return assertNever(index, `Unknown tab index: ${index}`)
     }
@@ -296,8 +377,11 @@ export class Preferences extends React.Component<
 
   private onSave = async () => {
     await setGlobalConfigValue('user.name', this.state.committerName)
+
     await setGlobalConfigValue('user.email', this.state.committerEmail)
+
     await this.props.dispatcher.setStatsOptOut(this.state.optOutOfUsageTracking)
+
     await this.props.dispatcher.setConfirmRepoRemovalSetting(
       this.state.confirmRepositoryRemoval
     )
@@ -307,12 +391,15 @@ export class Preferences extends React.Component<
         this.state.selectedExternalEditor
       )
     }
+
     await this.props.dispatcher.setShell(this.state.selectedShell)
+
     await this.props.dispatcher.setConfirmDiscardChangesSetting(
       this.state.confirmDiscardChanges
     )
 
     const mergeTool = this.state.mergeTool
+
     if (mergeTool && mergeTool.name) {
       await setGlobalConfigValue('merge.tool', mergeTool.name)
 
@@ -328,7 +415,9 @@ export class Preferences extends React.Component<
   }
 
   private onTabClicked = (index: number) => {
-    this.setState({ selectedIndex: index })
+    this.setState({
+      selectedIndex: index,
+    })
   }
 
   private onMergeToolNameChanged = (name: string) => {
@@ -336,14 +425,17 @@ export class Preferences extends React.Component<
       name,
       command: this.state.mergeTool && this.state.mergeTool.command,
     }
+
     this.setState({ mergeTool })
   }
 
   private onMergeToolCommandChanged = (command: string) => {
     const mergeTool = {
       name: this.state.mergeTool ? this.state.mergeTool.name : '',
+
       command,
     }
+
     this.setState({ mergeTool })
   }
 }

@@ -1,29 +1,39 @@
 import * as React from 'react'
+
 import * as classNames from 'classnames'
+
 import { createUniqueId, releaseUniqueId } from './id-pool'
+
 import { LinkButton } from './link-button'
+
 import { showContextualMenu } from '../main-process-proxy'
 
 export interface ITextBoxProps {
   /** The label for the input field. */
+
   readonly label?: string | JSX.Element
 
   /**
    * An optional className to be applied to the rendered
    * top level element of the component.
    */
+
   readonly className?: string
 
   /** The placeholder for the input field. */
+
   readonly placeholder?: string
 
   /** The current value of the input field. */
+
   readonly value?: string
 
   /** Whether the input field should auto focus when mounted. */
+
   readonly autoFocus?: boolean
 
   /** Whether the input field is disabled. */
+
   readonly disabled?: boolean
 
   /**
@@ -36,12 +46,15 @@ export interface ITextBoxProps {
    * This callback will not be invoked if the callback from onChange calls
    * preventDefault.
    */
+
   readonly onValueChanged?: (value: string) => void
 
   /** Called on key down. */
+
   readonly onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void
 
   /** The type of the input. Defaults to `text`. */
+
   readonly type?: 'text' | 'search' | 'password'
 
   /**
@@ -54,6 +67,7 @@ export interface ITextBoxProps {
    * presenting the user with a contextual link related to a specific text
    * input such as a password recovery link for a password text box.
    */
+
   readonly labelLinkText?: string
 
   /**
@@ -63,6 +77,7 @@ export interface ITextBoxProps {
    *
    * If not specified consumers need to subscribe to the onLabelLinkClick event.
    */
+
   readonly labelLinkUri?: string
 
   /**
@@ -70,24 +85,29 @@ export interface ITextBoxProps {
    * see the labelLinkText prop for more details) is clicked. See the onClick
    * event on the LinkButton component for more details.
    */
+
   readonly onLabelLinkClick?: () => void
 
   /** The tab index of the input element. */
+
   readonly tabIndex?: number
 
   /**
    * Callback used when the component is focused.
    */
+
   readonly onFocus?: () => void
 
   /**
    * Callback used when the component loses focus.
    */
+
   readonly onBlur?: () => void
 
   /**
    * Callback used when the user has cleared the search text.
    */
+
   readonly onSearchCleared?: () => void
 }
 
@@ -97,23 +117,30 @@ interface ITextBoxState {
    * it from the label element. This is generated once via the id pool when the
    * component is mounted and then released once the component unmounts.
    */
+
   readonly inputId?: string
 
   /**
    * Text to display in the underlying input element
    */
+
   readonly value?: string
 }
 
 /** An input element with app-standard styles. */
+
 export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
   private inputElement: HTMLInputElement | null = null
 
   public componentWillMount() {
     const friendlyName = this.props.label || this.props.placeholder
+
     const inputId = createUniqueId(`TextBox_${friendlyName}`)
 
-    this.setState({ inputId, value: this.props.value })
+    this.setState({
+      inputId,
+      value: this.props.value,
+    })
   }
 
   public componentWillUnmount() {
@@ -124,7 +151,9 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
 
   public componentWillReceiveProps(nextProps: ITextBoxProps) {
     if (this.state.value !== nextProps.value) {
-      this.setState({ value: nextProps.value })
+      this.setState({
+        value: nextProps.value,
+      })
     }
   }
 
@@ -132,6 +161,7 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
    * Selects all text (if any) in the inner text input element. Note that this method does not
    * automatically move keyboard focus, see the focus method for that
    */
+
   public selectAll() {
     if (this.inputElement !== null) {
       this.inputElement.select()
@@ -142,6 +172,7 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
    * Programmatically moves keyboard focus to the inner text input element if it can be focused
    * (i.e. if it's not disabled explicitly or implicitly through for example a fieldset).
    */
+
   public focus() {
     if (this.inputElement !== null) {
       this.inputElement.focus()
@@ -151,6 +182,7 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
   /**
    * Programmatically removes keyboard focus from the inner text input element
    */
+
   public blur() {
     if (this.inputElement !== null) {
       this.inputElement.blur()
@@ -184,6 +216,7 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
    * input - because this won't set an event handler.
    *
    */
+
   private onInputRef = (element: HTMLInputElement | null) => {
     if (this.inputElement != null && this.props.type === 'search') {
       this.inputElement.removeEventListener('search', this.onSearchTextCleared)
@@ -227,7 +260,12 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
 
   private onContextMenu = (event: React.MouseEvent<any>) => {
     event.preventDefault()
-    showContextualMenu([{ role: 'editMenu' }])
+
+    showContextualMenu([
+      {
+        role: 'editMenu',
+      },
+    ])
   }
 
   private onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -241,6 +279,7 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
       const value = ''
 
       event.preventDefault()
+
       this.setState({ value })
 
       if (this.props.onValueChanged) {
@@ -253,6 +292,7 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
     ) {
       if (this.props.onBlur) {
         this.props.onBlur()
+
         if (this.inputElement !== null) {
           this.inputElement.blur()
         }
@@ -266,6 +306,7 @@ export class TextBox extends React.Component<ITextBoxProps, ITextBoxState> {
 
   public render() {
     const className = classNames('text-box-component', this.props.className)
+
     const inputId = this.props.label ? this.state.inputId : undefined
 
     return (

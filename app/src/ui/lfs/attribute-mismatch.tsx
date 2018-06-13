@@ -1,16 +1,24 @@
 import * as React from 'react'
+
 import { Button } from '../lib/button'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Dialog, DialogContent, DialogFooter } from '../dialog'
+
 import { LinkButton } from '../lib/link-button'
+
 import { getGlobalConfigPath } from '../../lib/git'
+
 import { shell } from '../../lib/app-shell'
 
 interface IAttributeMismatchProps {
   /** Called when the dialog should be dismissed. */
+
   readonly onDismissed: () => void
 
   /** Called when the user has chosen to replace the update filters. */
+
   readonly onUpdateExistingFilters: () => void
 }
 
@@ -33,7 +41,10 @@ export class AttributeMismatch extends React.Component<
   public async componentDidMount() {
     try {
       const path = await getGlobalConfigPath()
-      this.setState({ globalGitConfigPath: path })
+
+      this.setState({
+        globalGitConfigPath: path,
+      })
     } catch (error) {
       log.warn(`Couldn't get the global git config path`, error)
     }
@@ -41,7 +52,9 @@ export class AttributeMismatch extends React.Component<
 
   private renderGlobalGitConfigLink() {
     const path = this.state.globalGitConfigPath
+
     const msg = 'your global git config'
+
     if (path) {
       return <LinkButton onClick={this.showGlobalGitConfig}>{msg}</LinkButton>
     } else {
@@ -51,6 +64,7 @@ export class AttributeMismatch extends React.Component<
 
   private showGlobalGitConfig = () => {
     const path = this.state.globalGitConfigPath
+
     if (path) {
       shell.openItem(path)
     }

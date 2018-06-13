@@ -1,57 +1,88 @@
 import { BrowserWindow, ipcMain, Menu, app, dialog } from 'electron'
+
 import { Emitter, Disposable } from 'event-kit'
+
 import { encodePathAsUrl } from '../lib/path'
+
 import { registerWindowStateChangedEvents } from '../lib/window-state'
+
 import { MenuEvent } from './menu'
+
 import { URLActionType } from '../lib/parse-app-url'
+
 import { ILaunchStats } from '../lib/stats'
+
 import { menuFromElectronMenu } from '../models/app-menu'
+
 import { now } from './now'
+
 import * as path from 'path'
 
 let windowStateKeeper: any | null = null
 
 export class AppWindow {
   private window: Electron.BrowserWindow
+
   private emitter = new Emitter()
 
   private _loadTime: number | null = null
+
   private _rendererReadyTime: number | null = null
 
   private minWidth = 960
+
   private minHeight = 660
 
   public constructor() {
     if (!windowStateKeeper) {
       // `electron-window-state` requires Electron's `screen` module, which can
+
       // only be required after the app has emitted `ready`. So require it
+
       // lazily.
+
       windowStateKeeper = require('electron-window-state')
     }
 
     const savedWindowState = windowStateKeeper({
       defaultWidth: this.minWidth,
+
       defaultHeight: this.minHeight,
     })
 
     const windowOptions: Electron.BrowserWindowConstructorOptions = {
       x: savedWindowState.x,
+
       y: savedWindowState.y,
+
       width: savedWindowState.width,
+
       height: savedWindowState.height,
+
       minWidth: this.minWidth,
+
       minHeight: this.minHeight,
+
       show: false,
+
       // This fixes subpixel aliasing on Windows
+
       // See https://github.com/atom/atom/commit/683bef5b9d133cb194b476938c77cc07fd05b972
+
       backgroundColor: '#fff',
+
       webPreferences: {
         // Disable auxclick event
+
         // See https://developers.google.com/web/updates/2016/10/auxclick
+
         disableBlinkFeatures: 'Auxclick',
+
         // Enable, among other things, the ResizeObserver
+
         experimentalFeatures: true,
       },
+
       acceptFirstMouse: true,
     }
 
@@ -64,25 +95,32 @@ export class AppWindow {
     }
 
     this.window = new BrowserWindow(windowOptions)
+
     savedWindowState.manage(this.window)
 
     let quitting = false
+
     app.on('before-quit', () => {
       quitting = true
     })
 
     ipcMain.on('will-quit', (event: Electron.IpcMessageEvent) => {
       quitting = true
+
       event.returnValue = true
     })
 
     // on macOS, when the user closes the window we really just hide it. This
+
     // lets us activate quickly and keep all our interesting logic in the
+
     // renderer.
+
     if (__DARWIN__) {
       this.window.on('close', e => {
         if (!quitting) {
           e.preventDefault()
+
           Menu.sendActionToFirstResponder('hide:')
         }
       })
@@ -91,14 +129,22 @@ export class AppWindow {
 
   public load() {
     let startLoad = 0
+
     // We only listen for the first of the loading events to avoid a bug in
+
     // Electron/Chromium where they can sometimes fire more than once. See
+
     // See
+
     // https://github.com/desktop/desktop/pull/513#issuecomment-253028277. This
+
     // shouldn't really matter as in production builds loading _should_ only
+
     // happen once.
+
     this.window.webContents.once('did-start-loading', () => {
       this._rendererReadyTime = null
+
       this._loadTime = null
 
       startLoad = now()
@@ -120,10 +166,12 @@ export class AppWindow {
 
     this.window.webContents.on('did-fail-load', () => {
       this.window.webContents.openDevTools()
+
       this.window.show()
     })
 
     // TODO: This should be scoped by the window.
+
     ipcMain.once(
       'renderer-ready',
       (event: Electron.IpcMessageEvent, readyTime: number) => {
@@ -134,9 +182,11 @@ export class AppWindow {
     )
 
     this.window.on('focus', () => this.window.webContents.send('focus'))
+
     this.window.on('blur', () => this.window.webContents.send('blur'))
 
     registerWindowStateChangedEvents(this.window)
+
     this.window.loadURL(encodePathAsUrl(__dirname, 'index.html'))
   }
 
@@ -144,6 +194,7 @@ export class AppWindow {
    * Emit the `onDidLoad` event if the page has loaded and the renderer has
    * signalled that it's ready.
    */
+
   private maybeEmitDidLoad() {
     if (!this.rendererLoaded) {
       return
@@ -153,6 +204,7 @@ export class AppWindow {
   }
 
   /** Is the page loaded and has the renderer signalled it's ready? */
+
   private get rendererLoaded(): boolean {
     return !!this.loadTime && !!this.rendererReadyTime
   }
@@ -165,6 +217,7 @@ export class AppWindow {
    * Register a function to call when the window is done loading. At that point
    * the page has loaded and the renderer has signalled that it is ready.
    */
+
   public onDidLoad(fn: () => void): Disposable {
     return this.emitter.on('did-load', fn)
   }
@@ -174,6 +227,7 @@ export class AppWindow {
   }
 
   /** Is the window currently visible? */
+
   public isVisible() {
     return this.window.isVisible()
   }
@@ -187,11 +241,13 @@ export class AppWindow {
   }
 
   /** Show the window. */
+
   public show() {
     this.window.show()
   }
 
   /** Send the menu event to the renderer. */
+
   public sendMenuEvent(name: MenuEvent) {
     this.show()
 
@@ -199,6 +255,7 @@ export class AppWindow {
   }
 
   /** Send the URL action to the renderer. */
+
   public sendURLAction(action: URLActionType) {
     this.show()
 
@@ -206,20 +263,25 @@ export class AppWindow {
   }
 
   /** Send the app launch timing stats to the renderer. */
+
   public sendLaunchTimingStats(stats: ILaunchStats) {
     this.window.webContents.send('launch-timing-stats', { stats })
   }
 
   /** Send the app menu to the renderer. */
+
   public sendAppMenu() {
     const appMenu = Menu.getApplicationMenu()
+
     if (appMenu) {
       const menu = menuFromElectronMenu(appMenu)
+
       this.window.webContents.send('app-menu', { menu })
     }
   }
 
   /** Send a certificate error to the renderer. */
+
   public sendCertificateError(
     certificate: Electron.Certificate,
     error: string,
@@ -237,8 +299,11 @@ export class AppWindow {
     message: string
   ) {
     // The Electron type definitions don't include `showCertificateTrustDialog`
+
     // yet.
+
     const d = dialog as any
+
     d.showCertificateTrustDialog(
       this.window,
       { certificate, message },
@@ -247,14 +312,20 @@ export class AppWindow {
   }
 
   /** Report the exception to the renderer. */
+
   public sendException(error: Error) {
     // `Error` can't be JSONified so it doesn't transport nicely over IPC. So
+
     // we'll just manually copy the properties we care about.
+
     const friendlyError = {
       stack: error.stack,
+
       message: error.message,
+
       name: error.name,
     }
+
     this.window.webContents.send('main-process-exception', friendlyError)
   }
 
@@ -263,6 +334,7 @@ export class AppWindow {
    *
    * This will be `null` until `onDidLoad` is called.
    */
+
   public get loadTime(): number | null {
     return this._loadTime
   }
@@ -273,6 +345,7 @@ export class AppWindow {
    *
    * This will be `null` until `onDidLoad` is called.
    */
+
   public get rendererReadyTime(): number | null {
     return this._rendererReadyTime
   }

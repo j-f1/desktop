@@ -1,14 +1,22 @@
 import * as React from 'react'
+
 import { LinkButton } from '../lib/link-button'
+
 import { Octicon, OcticonSymbol } from '../octicons'
+
 import { Loading } from './loading'
+
 import { Form } from './form'
+
 import { Button } from './button'
+
 import { TextBox } from './text-box'
+
 import { Errors } from './errors'
 
 interface IAuthenticationFormProps {
   /** Does the server support basic auth? */
+
   readonly supportsBasicAuth: boolean
 
   /**
@@ -16,15 +24,18 @@ interface IAuthenticationFormProps {
    * and password and submitted those either by clicking on the submit
    * button or by submitting the form through other means (ie hitting Enter).
    */
+
   readonly onSubmit: (username: string, password: string) => void
 
   /**
    * A callback which is invoked if the user requests OAuth sign in using
    * their system configured browser.
    */
+
   readonly onBrowserSignInRequested: () => void
 
   /** An array of additional buttons to render after the "Sign In" button. */
+
   readonly additionalButtons?: ReadonlyArray<JSX.Element>
 
   /**
@@ -32,6 +43,7 @@ interface IAuthenticationFormProps {
    * user in close proximity to the actions or input fields
    * related to the current step.
    */
+
   readonly error: Error | null
 
   /**
@@ -40,6 +52,7 @@ interface IAuthenticationFormProps {
    * form inputs and actions save for a cancel action will
    * be disabled.
    */
+
   readonly loading: boolean
 
   readonly forgotPasswordUrl: string
@@ -47,10 +60,12 @@ interface IAuthenticationFormProps {
 
 interface IAuthenticationFormState {
   readonly username: string
+
   readonly password: string
 }
 
 /** The GitHub authentication component. */
+
 export class AuthenticationForm extends React.Component<
   IAuthenticationFormProps,
   IAuthenticationFormState
@@ -58,7 +73,11 @@ export class AuthenticationForm extends React.Component<
   public constructor(props: IAuthenticationFormProps) {
     super(props)
 
-    this.state = { username: '', password: '' }
+    this.state = {
+      username: '',
+
+      password: '',
+    }
   }
 
   public render() {
@@ -77,6 +96,7 @@ export class AuthenticationForm extends React.Component<
     }
 
     const disabled = this.props.loading
+
     return (
       <div>
         <TextBox
@@ -106,6 +126,7 @@ export class AuthenticationForm extends React.Component<
         !this.state.password.length ||
         this.props.loading
     )
+
     return (
       <div className="actions">
         {this.props.supportsBasicAuth ? (
@@ -130,6 +151,7 @@ export class AuthenticationForm extends React.Component<
 
   private renderSignInWithBrowser() {
     const basicAuth = this.props.supportsBasicAuth
+
     const browserSignInLink = (
       <LinkButton
         className="welcome-link-button link-with-icon"
@@ -166,6 +188,7 @@ export class AuthenticationForm extends React.Component<
 
   private renderError() {
     const error = this.props.error
+
     if (!error) {
       return null
     }
@@ -185,6 +208,7 @@ export class AuthenticationForm extends React.Component<
     if (event) {
       event.preventDefault()
     }
+
     this.props.onBrowserSignInRequested()
   }
 

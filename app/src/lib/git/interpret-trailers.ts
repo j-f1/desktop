@@ -1,5 +1,7 @@
 import { git } from './core'
+
 import { Repository } from '../../models/repository'
+
 import { getConfigValue } from './config'
 
 /**
@@ -7,8 +9,10 @@ import { getConfigValue } from './config'
  *
  * See git-interpret-trailers for more information.
  */
+
 export interface ITrailer {
   readonly token: string
+
   readonly value: string
 }
 
@@ -16,6 +20,7 @@ export interface ITrailer {
  * Gets a value indicating whether the trailer token is
  * Co-Authored-By. Does not validate the token value.
  */
+
 export function isCoAuthoredByTrailer(trailer: ITrailer) {
   return trailer.token.toLowerCase() === 'co-authored-by'
 }
@@ -35,8 +40,10 @@ export function isCoAuthoredByTrailer(trailer: ITrailer) {
  *
  *                   Also see getTrailerSeparatorCharacters.
  */
+
 export function parseRawUnfoldedTrailers(trailers: string, separators: string) {
   const lines = trailers.split('\n')
+
   const parsedTrailers = new Array<ITrailer>()
 
   for (const line of lines) {
@@ -56,10 +63,20 @@ export function parseSingleUnfoldedTrailer(
 ): ITrailer | null {
   for (const separator of separators) {
     const ix = line.indexOf(separator)
+
     if (ix > 0) {
       return {
-        token: line.substring(0, ix).trim(),
-        value: line.substring(ix + 1).trim(),
+        token: line
+
+          .substring(0, ix)
+
+          .trim(),
+
+        value: line
+
+          .substring(ix + 1)
+
+          .trim(),
       }
     }
   }
@@ -72,6 +89,7 @@ export function parseSingleUnfoldedTrailer(
  * separate tokens from values in commit message trailers. If no specific
  * trailer separator is configured the default separator (:) will be returned.
  */
+
 export async function getTrailerSeparatorCharacters(
   repository: Repository
 ): Promise<string> {
@@ -97,6 +115,7 @@ export async function getTrailerSeparatorCharacters(
  *
  * @returns An array of zero or more parsed trailers
  */
+
 export async function parseTrailers(
   repository: Repository,
   commitMessage: string
@@ -117,6 +136,7 @@ export async function parseTrailers(
   }
 
   const separators = await getTrailerSeparatorCharacters(repository)
+
   return parseRawUnfoldedTrailers(result.stdout, separators)
 }
 
@@ -149,6 +169,7 @@ export async function parseTrailers(
  *                      configuration settings for trailers in the provided
  *                      repository.
  */
+
 export async function mergeTrailers(
   repository: Repository,
   commitMessage: string,

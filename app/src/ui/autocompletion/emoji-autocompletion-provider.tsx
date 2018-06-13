@@ -1,19 +1,24 @@
 import * as React from 'react'
+
 import { IAutocompletionProvider } from './index'
+
 import { compare } from '../../lib/compare'
 
 /**
  * Interface describing a autocomplete match for the given search
  * input passed to EmojiAutocompletionProvider#getAutocompletionItems.
  */
+
 export interface IEmojiHit {
   /** A human-readable markdown representation of the emoji, ex :heart: */
+
   readonly emoji: string
 
   /**
    * The offset into the emoji string where the
    * match started, used for highlighting matches.
    */
+
   readonly matchStart: number
 
   /**
@@ -21,10 +26,12 @@ export interface IEmojiHit {
    * string was empty, causing the provider to return
    * all possible matches.
    */
+
   readonly matchLength: number
 }
 
 /** Autocompletion provider for emoji. */
+
 export class EmojiAutocompletionProvider
   implements IAutocompletionProvider<IEmojiHit> {
   public readonly kind = 'emoji'
@@ -43,35 +50,63 @@ export class EmojiAutocompletionProvider
     text: string
   ): Promise<ReadonlyArray<IEmojiHit>> {
     // Empty strings is falsy, this is the happy path to avoid
+
     // sorting and matching when the user types a ':'. We want
+
     // to open the popup with suggestions as fast as possible.
+
     if (!text) {
-      return Array.from(this.emoji.keys()).map<IEmojiHit>(emoji => {
-        return { emoji: emoji, matchStart: 0, matchLength: 0 }
+      return Array.from(this.emoji.keys())
+      .map<IEmojiHit>(emoji => {
+        return {
+          emoji: emoji,
+
+          matchStart: 0,
+
+          matchLength: 0,
+        }
       })
     }
 
     const results = new Array<IEmojiHit>()
+
     const needle = text.toLowerCase()
 
     for (const emoji of this.emoji.keys()) {
       const index = emoji.indexOf(needle)
+
       if (index !== -1) {
-        results.push({ emoji, matchStart: index, matchLength: needle.length })
+        results.push({
+          emoji,
+          matchStart: index,
+
+          matchLength: needle.length,
+        })
       }
     }
 
     // Naive emoji result sorting
+
     //
+
     // Matches closer to the start of the string are sorted
+
     // before matches further into the string
+
     //
+
     // Longer matches relative to the emoji length is sorted
+
     // before the same match in a longer emoji
+
     // (:heart over :heart_eyes)
+
     //
+
     // If both those start and length are equal we sort
+
     // alphabetically
+
     return results.sort(
       (x, y) =>
         compare(x.matchStart, y.matchStart) ||

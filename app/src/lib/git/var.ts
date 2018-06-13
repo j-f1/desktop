@@ -1,5 +1,7 @@
 import { git } from './core'
+
 import { Repository } from '../../models/repository'
+
 import { CommitIdentity } from '../../models/commit-identity'
 
 /**
@@ -17,6 +19,7 @@ import { CommitIdentity } from '../../models/commit-identity'
  * up a user ident string. If this returns null any subsequent
  * commits can be expected to fail as well.
  */
+
 export async function getAuthorIdentity(
   repository: Repository
 ): Promise<CommitIdentity | null> {
@@ -30,6 +33,7 @@ export async function getAuthorIdentity(
   )
 
   // If user.user.useconfigonly is set and no user.name or user.email
+
   if (result.exitCode === 128) {
     return null
   }

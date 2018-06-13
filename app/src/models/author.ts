@@ -11,11 +11,14 @@
  * Additionally it includes an optional username which is
  * solely for presentation purposes inside AuthorInput
  */
+
 export interface IAuthor {
   /** The real name of the author */
+
   readonly name: string
 
   /** The email address of the author */
+
   readonly email: string
 
   /**
@@ -23,5 +26,6 @@ export interface IAuthor {
    * this author or null if that information is not
    * available.
    */
+
   readonly username: string | null
 }

@@ -1,6 +1,9 @@
 import * as React from 'react'
+
 import * as classNames from 'classnames'
+
 import { DialogHeader } from './header'
+
 import { createUniqueId, releaseUniqueId } from '../lib/id-pool'
 
 /**
@@ -8,17 +11,20 @@ import { createUniqueId, releaseUniqueId } from '../lib/id-pool'
  * until it can be dismissed. See the isAppearing property in
  * IDialogState for more information.
  */
+
 const dismissGracePeriodMs = 250
 
 /**
  * The time (in milliseconds) that we should wait after focusing before we
  * re-enable click dismissal. Note that this is only used on Windows.
  */
+
 const DisableClickDismissalDelay = 500
 
 /**
  * Title bar height in pixels. Values taken from 'app/styles/_variables.scss'.
  */
+
 const titleBarHeight = __DARWIN__ ? 22 : 28
 
 interface IDialogProps {
@@ -31,6 +37,7 @@ interface IDialogProps {
    * By omitting this consumers may use their own custom DialogHeader
    * for when the default component doesn't cut it.
    */
+
   readonly title?: string
 
   /**
@@ -46,17 +53,20 @@ interface IDialogProps {
    *
    * Defaults to true if omitted.
    */
+
   readonly dismissable?: boolean
 
   /**
    * Event triggered when the dialog is dismissed by the user in the
    * ways described in the dismissable prop.
    */
+
   readonly onDismissed: () => void
 
   /**
    * An optional id for the rendered dialog element.
    */
+
   readonly id?: string
 
   /**
@@ -65,6 +75,7 @@ interface IDialogProps {
    *
    * Defaults to 'normal' if omitted
    */
+
   readonly type?: 'normal' | 'warning' | 'error'
 
   /**
@@ -75,11 +86,13 @@ interface IDialogProps {
    * on the button itself since there may be other ways of submitting a specific
    * form (such as Ctrl+Enter).
    */
+
   readonly onSubmit?: () => void
 
   /**
    * An optional className to be applied to the rendered dialog element.
    */
+
   readonly className?: string
 
   /**
@@ -92,6 +105,7 @@ interface IDialogProps {
    * save/submit action is in progress. Note that this does not prevent the
    * dialog from being dismissed.
    */
+
   readonly disabled?: boolean
 
   /**
@@ -102,6 +116,7 @@ interface IDialogProps {
    * will temporarily replace the dialog icon (if present) for the duration
    * of the loading operation.
    */
+
   readonly loading?: boolean
 }
 
@@ -117,6 +132,7 @@ interface IDialogState {
    * This state boolean is used to keep track of whether we're still in that
    * grace period or not.
    */
+
   readonly isAppearing: boolean
 
   /**
@@ -125,6 +141,7 @@ interface IDialogState {
    * in an aria-labeledby/aria-describedby attributed. Undefined if the dialog
    * does not have a title or the component has not yet been mounted.
    */
+
   readonly titleId?: string
 }
 
@@ -136,21 +153,28 @@ interface IDialogState {
  * underlying elements. It's not possible to use the tab key to move focus
  * out of the dialog without first dismissing it.
  */
+
 export class Dialog extends React.Component<IDialogProps, IDialogState> {
   private dialogElement: HTMLElement | null = null
+
   private dismissGraceTimeoutId?: number
 
   private disableClickDismissalTimeoutId: number | null = null
+
   private disableClickDismissal = false
 
   public constructor(props: IDialogProps) {
     super(props)
-    this.state = { isAppearing: true }
+
+    this.state = {
+      isAppearing: true,
+    }
   }
 
   private clearDismissGraceTimeout() {
     if (this.dismissGraceTimeoutId !== undefined) {
       window.clearTimeout(this.dismissGraceTimeoutId)
+
       this.dismissGraceTimeoutId = undefined
     }
   }
@@ -165,7 +189,9 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
   }
 
   private onDismissGraceTimer = () => {
-    this.setState({ isAppearing: false })
+    this.setState({
+      isAppearing: false,
+    })
   }
 
   private isDismissable() {
@@ -175,7 +201,10 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
   private updateTitleId() {
     if (this.state.titleId) {
       releaseUniqueId(this.state.titleId)
-      this.setState({ titleId: undefined })
+
+      this.setState({
+        titleId: undefined,
+      })
     }
 
     if (this.props.title) {
@@ -191,10 +220,15 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
 
   public componentDidMount() {
     // This cast to any is necessary since React doesn't know about the
+
     // dialog element yet.
+
     ;(this.dialogElement as any).showModal()
 
-    this.setState({ isAppearing: true })
+    this.setState({
+      isAppearing: true,
+    })
+
     this.scheduleDismissGraceTimeout()
 
     window.addEventListener('focus', this.onWindowFocus)
@@ -202,8 +236,11 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
 
   private onWindowFocus = () => {
     // On Windows and Linux, a click which focuses the window will also get
+
     // passed down into the DOM. But we don't want to dismiss the dialog based
+
     // on that click. See https://github.com/desktop/desktop/issues/2486.
+
     if (__WIN32__ || __LINUX__) {
       this.clearClickDismissalTimer()
 
@@ -211,6 +248,7 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
 
       this.disableClickDismissalTimeoutId = window.setTimeout(() => {
         this.disableClickDismissal = false
+
         this.disableClickDismissalTimeoutId = null
       }, DisableClickDismissalDelay)
     }
@@ -219,6 +257,7 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
   private clearClickDismissalTimer() {
     if (this.disableClickDismissalTimeoutId) {
       window.clearTimeout(this.disableClickDismissalTimeoutId)
+
       this.disableClickDismissalTimeoutId = null
     }
   }
@@ -241,6 +280,7 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
 
   private onDialogCancel = (e: Event) => {
     e.preventDefault()
+
     this.onDismiss()
   }
 
@@ -250,10 +290,15 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
     }
 
     // This event handler catches the onClick event of buttons in the
+
     // dialog. Ie, if someone hits enter inside the dialog form an onClick
+
     // event will be raised on the the submit button which isn't what we
+
     // want so we'll make sure that the original target for the event is
+
     // our own dialog element.
+
     if (e.target !== this.dialogElement) {
       return
     }
@@ -265,18 +310,25 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
     }
 
     // Ignore the first click right after the window's been focused. It could
+
     // be the click that focused the window, in which case we don't wanna
+
     // dismiss the dialog.
+
     if (this.disableClickDismissal) {
       this.disableClickDismissal = false
+
       this.clearClickDismissalTimer()
+
       return
     }
 
     // Figure out if the user clicked on the backdrop or in the dialog itself.
+
     const rect = e.currentTarget.getBoundingClientRect()
 
     // http://stackoverflow.com/a/26984690/2114
+
     const isInDialog =
       rect.top <= e.clientY &&
       e.clientY <= rect.top + rect.height &&
@@ -285,21 +337,27 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
 
     if (!isInDialog) {
       e.preventDefault()
+
       this.onDismiss()
     }
   }
 
   private onDialogRef = (e: HTMLElement | null) => {
     // We need to explicitly subscribe to and unsubscribe from the dialog
+
     // element as react doesn't yet understand the element and which events
+
     // it has.
+
     if (!e) {
       if (this.dialogElement) {
         this.dialogElement.removeEventListener('cancel', this.onDialogCancel)
+
         this.dialogElement.removeEventListener('keydown', this.onKeyDown)
       }
     } else {
       e.addEventListener('cancel', this.onDialogCancel)
+
       e.addEventListener('keydown', this.onKeyDown)
     }
 
@@ -308,6 +366,7 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
 
   private onKeyDown = (event: KeyboardEvent) => {
     const shortcutKey = __DARWIN__ ? event.metaKey : event.ctrlKey
+
     if (shortcutKey && event.key === 'w') {
       this.onDialogCancel(event)
     }
@@ -351,6 +410,7 @@ export class Dialog extends React.Component<IDialogProps, IDialogState> {
     const className = classNames(
       {
         error: this.props.type === 'error',
+
         warning: this.props.type === 'warning',
       },
       this.props.className

@@ -1,13 +1,18 @@
 import * as React from 'react'
+
 import { Octicon, OcticonSymbol } from '../octicons'
+
 import { TextBox, ITextBoxProps } from './text-box'
+
 import * as classNames from 'classnames'
 
 interface IFancyTextBoxProps extends ITextBoxProps {
   /** Icon to render */
+
   readonly symbol: OcticonSymbol
 
   /** Callback used to get a reference to internal TextBox */
+
   readonly onRef: (textbox: TextBox) => void
 }
 
@@ -22,16 +27,23 @@ export class FancyTextBox extends React.Component<
   public constructor(props: IFancyTextBoxProps) {
     super(props)
 
-    this.state = { isFocused: false }
+    this.state = {
+      isFocused: false,
+    }
   }
 
   public render() {
     const componentCSS = classNames(
       'fancy-text-box-component',
       this.props.className,
-      { disabled: this.props.disabled },
-      { focused: this.state.isFocused }
+      {
+        disabled: this.props.disabled,
+      },
+      {
+        focused: this.state.isFocused,
+      }
     )
+
     const octiconCSS = classNames('fancy-octicon')
 
     return (
@@ -60,7 +72,9 @@ export class FancyTextBox extends React.Component<
       this.props.onFocus()
     }
 
-    this.setState({ isFocused: true })
+    this.setState({
+      isFocused: true,
+    })
   }
 
   private onBlur = () => {
@@ -68,6 +82,8 @@ export class FancyTextBox extends React.Component<
       this.props.onBlur()
     }
 
-    this.setState({ isFocused: false })
+    this.setState({
+      isFocused: false,
+    })
   }
 }

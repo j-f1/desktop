@@ -12,6 +12,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sollicitudin tu
 tempor euismod fermentum. Nullam hendrerit neque eget risus faucibus volutpat. Donec
 ultrices, orci quis auctor ultrices, nulla lacus gravida lectus, non rutrum dolor
 quam vel augue.`
+
       expect(findIssueRef(body)).to.equal(' #2314')
     })
 
@@ -24,6 +25,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sollicitudin tu
 tempor euismod fermentum. Nullam hendrerit neque eget risus faucibus volutpat. Donec
 ultrices, orci quis auctor ultrices, nulla lacus gravida lectus, non rutrum dolor
 quam vel augue.`
+
       expect(findIssueRef(body)).to.equal(' #2314 #1234')
     })
 
@@ -37,6 +39,7 @@ Nam malesuada augue vel velit vehicula suscipit. Nunc posuere, velit at sodales
 malesuada, quam tellus rutrum orci, et tincidunt sem nunc non velit. Cras
 placerat, massa vel tristique iaculis, urna nisl tristique nibh, eget luctus
 nisl quam in metus.`
+
       expect(findIssueRef(body)).to.equal(' #2314')
     })
 
@@ -48,11 +51,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sollicitudin tu
 tempor euismod fermentum. Nullam hendrerit neque eget risus faucibus volutpat. Donec
 ultrices, orci quis auctor ultrices, nulla lacus gravida lectus, non rutrum dolor
 quam vel augue.`
+
       expect(findIssueRef(body)).to.equal(' #2314')
     })
 
     it('handles resolves syntax', () => {
       const body = `This resolves #2314 and is totally wild`
+
       expect(findIssueRef(body)).to.equal(' #2314')
     })
   })

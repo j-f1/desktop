@@ -1,15 +1,21 @@
 import * as Path from 'path'
+
 import * as Os from 'os'
 
 import { pathExists, ensureDir, writeFile } from 'fs-extra'
+
 import { spawn, getPathSegments, setPathSegments } from '../lib/process/win32'
 
 const appFolder = Path.resolve(process.execPath, '..')
+
 const rootAppDir = Path.resolve(appFolder, '..')
+
 const updateDotExe = Path.resolve(Path.join(rootAppDir, 'Update.exe'))
+
 const exeName = Path.basename(process.execPath)
 
 // A lot of this code was cargo-culted from our Atom comrades:
+
 // https://github.com/atom/atom/blob/7c9f39e3f1d05ee423e0093e6b83f042ce11c90a/src/main-process/squirrel-update.coffee.
 
 /**
@@ -17,6 +23,7 @@ const exeName = Path.basename(process.execPath)
  *
  * Returns a promise which will resolve when the work is done.
  */
+
 export function handleSquirrelEvent(eventName: string): Promise<void> | null {
   switch (eventName) {
     case '--squirrel-install':
@@ -37,20 +44,27 @@ export function handleSquirrelEvent(eventName: string): Promise<void> | null {
 
 async function handleInstalled(): Promise<void> {
   await createShortcut(['StartMenu', 'Desktop'])
+
   await installCLI()
 }
 
 async function handleUpdated(): Promise<void> {
   await updateShortcut()
+
   await installCLI()
 }
 
 async function installCLI(): Promise<void> {
   const binPath = getBinPath()
+
   await ensureDir(binPath)
+
   await writeBatchScriptCLITrampoline(binPath)
+
   await writeShellScriptCLITrampoline(binPath)
+
   const paths = await getPathSegments()
+
   if (paths.indexOf(binPath) < 0) {
     await setPathSegments([...paths, binPath])
   }
@@ -60,12 +74,14 @@ async function installCLI(): Promise<void> {
  * Get the path for the `bin` directory which exists in our `AppData` but
  * outside path which includes the installed app version.
  */
+
 function getBinPath(): string {
   return Path.resolve(process.execPath, '../../bin')
 }
 
 function resolveVersionedPath(binPath: string, relativePath: string): string {
   const appFolder = Path.resolve(process.execPath, '..')
+
   return Path.relative(binPath, Path.join(appFolder, relativePath))
 }
 
@@ -80,6 +96,7 @@ function resolveVersionedPath(binPath: string, relativePath: string): string {
  * rewrite the trampoline to point to the new, version-specific path. Bingo
  * bango Bob's your uncle.
  */
+
 function writeBatchScriptCLITrampoline(binPath: string): Promise<void> {
   const versionedPath = resolveVersionedPath(
     binPath,
@@ -87,6 +104,7 @@ function writeBatchScriptCLITrampoline(binPath: string): Promise<void> {
   )
 
   const trampoline = `@echo off\n"%~dp0\\${versionedPath}" %*`
+
   const trampolinePath = Path.join(binPath, 'github.bat')
 
   return writeFile(trampolinePath, trampoline)
@@ -101,12 +119,18 @@ function writeShellScriptCLITrampoline(binPath: string): Promise<void> {
   const trampoline = `#!/usr/bin/env bash
   DIR="$( cd "$( dirname "\$\{BASH_SOURCE[0]\}" )" && pwd )"
   sh "$DIR/${versionedPath}" "$@"`
+
   const trampolinePath = Path.join(binPath, 'github')
 
-  return writeFile(trampolinePath, trampoline, { encoding: 'utf8', mode: 755 })
+  return writeFile(trampolinePath, trampoline, {
+    encoding: 'utf8',
+
+    mode: 755,
+  })
 }
 
 /** Spawn the Squirrel.Windows `Update.exe` with a command. */
+
 async function spawnSquirrelUpdate(
   commands: ReadonlyArray<string>
 ): Promise<void> {
@@ -118,8 +142,11 @@ type ShortcutLocations = ReadonlyArray<'StartMenu' | 'Desktop'>
 function createShortcut(locations: ShortcutLocations): Promise<void> {
   return spawnSquirrelUpdate([
     '--createShortcut',
+
     exeName,
+
     '-l',
+
     locations.join(','),
   ])
 }
@@ -128,8 +155,11 @@ async function handleUninstall(): Promise<void> {
   await removeShortcut()
 
   const paths = await getPathSegments()
+
   const binPath = getBinPath()
+
   const pathsWithoutBinPath = paths.filter(p => p !== binPath)
+
   return setPathSegments(pathsWithoutBinPath)
 }
 
@@ -139,16 +169,20 @@ function removeShortcut(): Promise<void> {
 
 async function updateShortcut(): Promise<void> {
   const homeDirectory = Os.homedir()
+
   if (homeDirectory) {
     const desktopShortcutPath = Path.join(
       homeDirectory,
       'Desktop',
       'GitHub Desktop.lnk'
     )
+
     const exists = await pathExists(desktopShortcutPath)
+
     const locations: ShortcutLocations = exists
       ? ['StartMenu', 'Desktop']
       : ['StartMenu']
+
     return createShortcut(locations)
   } else {
     return createShortcut(['StartMenu', 'Desktop'])

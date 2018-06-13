@@ -1,4 +1,5 @@
 import { git } from './core'
+
 import { Repository } from '../../models/repository'
 
 /**
@@ -18,6 +19,7 @@ import { Repository } from '../../models/repository'
  * @param paths      The relative paths in the working directory to update
  *                   with information from the index.
  */
+
 export async function checkoutIndex(
   repository: Repository,
   paths: ReadonlyArray<string>

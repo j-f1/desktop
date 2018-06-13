@@ -1,10 +1,15 @@
 import { ChildProcess } from 'child_process'
+
 import { pathExists } from 'fs-extra'
 
 import * as Darwin from './darwin'
+
 import * as Win32 from './win32'
+
 import * as Linux from './linux'
+
 import { IFoundShell } from './found-shell'
+
 import { ShellError } from './error'
 
 export type Shell = Darwin.Shell | Win32.Shell | Linux.Shell
@@ -12,6 +17,7 @@ export type Shell = Darwin.Shell | Win32.Shell | Linux.Shell
 export type FoundShell = IFoundShell<Shell>
 
 /** The default shell. */
+
 export const Default = (function() {
   if (__DARWIN__) {
     return Darwin.Default
@@ -25,6 +31,7 @@ export const Default = (function() {
 let shellCache: ReadonlyArray<FoundShell> | null = null
 
 /** Parse the label into the specified shell type. */
+
 export function parse(label: string): Shell {
   if (__DARWIN__) {
     return Darwin.parse(label)
@@ -40,6 +47,7 @@ export function parse(label: string): Shell {
 }
 
 /** Get the shells available for the user. */
+
 export async function getAvailableShells(): Promise<ReadonlyArray<FoundShell>> {
   if (shellCache) {
     return shellCache
@@ -47,12 +55,15 @@ export async function getAvailableShells(): Promise<ReadonlyArray<FoundShell>> {
 
   if (__DARWIN__) {
     shellCache = await Darwin.getAvailableShells()
+
     return shellCache
   } else if (__WIN32__) {
     shellCache = await Win32.getAvailableShells()
+
     return shellCache
   } else if (__LINUX__) {
     shellCache = await Linux.getAvailableShells()
+
     return shellCache
   }
 
@@ -62,9 +73,12 @@ export async function getAvailableShells(): Promise<ReadonlyArray<FoundShell>> {
 }
 
 /** Find the given shell or the default if the given shell can't be found. */
+
 export async function findShellOrDefault(shell: Shell): Promise<FoundShell> {
   const available = await getAvailableShells()
+
   const found = available.find(s => s.shell === shell)
+
   if (found) {
     return found
   } else {
@@ -73,17 +87,23 @@ export async function findShellOrDefault(shell: Shell): Promise<FoundShell> {
 }
 
 /** Launch the given shell at the path. */
+
 export async function launchShell(
   shell: FoundShell,
   path: string,
   onError: (error: Error) => void
 ): Promise<void> {
   // We have to manually cast the wider `Shell` type into the platform-specific
+
   // type. This is less than ideal, but maybe the best we can do without
+
   // platform-specific build targets.
+
   const exists = await pathExists(shell.path)
+
   if (!exists) {
     const label = __DARWIN__ ? 'Preferences' : 'Options'
+
     throw new ShellError(
       `Could not find executable for '${shell.shell}' at path '${
         shell.path
@@ -103,6 +123,7 @@ export async function launchShell(
 
   if (cp != null) {
     addErrorTracing(shell.shell, cp, onError)
+
     return Promise.resolve()
   } else {
     return Promise.reject(
@@ -120,11 +141,13 @@ function addErrorTracing(
 ) {
   cp.stderr.on('data', chunk => {
     const text = chunk instanceof Buffer ? chunk.toString() : chunk
+
     log.debug(`[${shell}] stderr: '${text}'`)
   })
 
   cp.on('error', err => {
     log.debug(`[${shell}] an error was encountered`, err)
+
     onError(err)
   })
 

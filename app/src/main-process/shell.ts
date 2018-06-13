@@ -1,4 +1,5 @@
 import * as Url from 'url'
+
 import { shell } from 'electron'
 
 /**
@@ -10,11 +11,14 @@ import { shell } from 'electron'
  *
  * @param path directory to open
  */
+
 export function openDirectorySafe(path: string) {
   if (__DARWIN__) {
     const directoryURL = Url.format({
       pathname: path,
+
       protocol: 'file:',
+
       slashes: true,
     })
 

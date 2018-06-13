@@ -1,12 +1,16 @@
 import * as React from 'react'
+
 import { ThrottledScheduler } from '../lib/throttled-scheduler'
+
 import { Resizable } from '../resizable'
 
 interface IPersistingResizableProps {
   /** String key used when persisting the panel width to localStorage */
+
   readonly configKey: string
 
   /** The optional ID for the root element. */
+
   readonly id?: string
 
   /**
@@ -18,12 +22,14 @@ interface IPersistingResizableProps {
    *
    * @default 250
    */
+
   readonly defaultWidth?: number
 
   /** The maximum width the panel can be resized to.
    *
    * @default 350
    */
+
   readonly maximumWidth?: number
 
   /**
@@ -31,6 +37,7 @@ interface IPersistingResizableProps {
    *
    * @default 150
    */
+
   readonly minimumWidth?: number
 }
 
@@ -39,6 +46,7 @@ interface IPersistingResizableState {
    * The width of the panel in pixels.
    * Optional
    */
+
   readonly width?: number
 }
 
@@ -50,12 +58,14 @@ interface IPersistingResizableState {
  * Soft deprecated, new consumers should opt for the pure
  * Resizable component and manage persistence themselves.
  */
+
 export class PersistingResizable extends React.Component<
   IPersistingResizableProps,
   IPersistingResizableState
 > {
   public static defaultProps: IPersistingResizableProps = {
     configKey: 'resizable-width',
+
     defaultWidth: 250,
   }
 
@@ -63,7 +73,10 @@ export class PersistingResizable extends React.Component<
 
   public constructor(props: IPersistingResizableProps) {
     super(props)
-    this.state = { width: this.getPersistedWidth() }
+
+    this.state = {
+      width: this.getPersistedWidth(),
+    }
   }
 
   private getPersistedWidth(): number | undefined {
@@ -71,6 +84,7 @@ export class PersistingResizable extends React.Component<
       localStorage.getItem(this.props.configKey) || '',
       10
     )
+
     if (!storedWidth || isNaN(storedWidth)) {
       return this.props.defaultWidth
     }
@@ -99,12 +113,18 @@ export class PersistingResizable extends React.Component<
 
   private handleResize = (newWidth: number) => {
     this.setPersistedWidth(newWidth)
-    this.setState({ width: newWidth })
+
+    this.setState({
+      width: newWidth,
+    })
   }
 
   private handleReset = () => {
     this.clearPersistedWidth()
-    this.setState({ width: undefined })
+
+    this.setState({
+      width: undefined,
+    })
   }
 
   public render() {

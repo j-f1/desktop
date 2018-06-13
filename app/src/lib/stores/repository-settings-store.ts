@@ -1,8 +1,11 @@
 import * as Path from 'path'
+
 import * as FS from 'fs'
 
 import { BaseStore } from './base-store'
+
 import { Repository } from '../../models/repository'
+
 import { getConfigValue } from '../git'
 
 export class RepositorySettingsStore extends BaseStore {
@@ -21,8 +24,10 @@ export class RepositorySettingsStore extends BaseStore {
    * with the contents of the file. If there's no .gitignore file
    * in the repository root the promise will resolve with null.
    */
+
   public async readGitIgnore(): Promise<string | null> {
     const repository = this._repository
+
     const ignorePath = Path.join(repository.path, '.gitignore')
 
     return new Promise<string | null>((resolve, reject) => {
@@ -46,8 +51,10 @@ export class RepositorySettingsStore extends BaseStore {
    * If the repository root doesn't contain a .gitignore file one
    * will be created, otherwise the current file will be overwritten.
    */
+
   public async saveGitIgnore(text: string): Promise<void> {
     const repository = this._repository
+
     const ignorePath = Path.join(repository.path, '.gitignore')
 
     if (text === '') {
@@ -63,6 +70,7 @@ export class RepositorySettingsStore extends BaseStore {
     }
 
     const fileContents = await formatGitIgnoreContents(text, repository)
+
     return new Promise<void>((resolve, reject) => {
       FS.writeFile(ignorePath, fileContents, err => {
         if (err) {
@@ -75,13 +83,17 @@ export class RepositorySettingsStore extends BaseStore {
   }
 
   /** Ignore the given path or pattern. */
+
   public async ignore(patterns: string | string[]): Promise<void> {
     const text = (await this.readGitIgnore()) || ''
+
     const repository = this._repository
+
     const currentContents = await formatGitIgnoreContents(text, repository)
 
     const newPatternText =
       patterns instanceof Array ? patterns.join('\n') : patterns
+
     const newText = await formatGitIgnoreContents(
       `${currentContents}${newPatternText}`,
       repository
@@ -105,31 +117,39 @@ export class RepositorySettingsStore extends BaseStore {
  * @param text The text to format.
  * @param repository The repository associated with the gitignore file.
  */
+
 async function formatGitIgnoreContents(
   text: string,
   repository: Repository
 ): Promise<string> {
   const autocrlf = await getConfigValue(repository, 'core.autocrlf')
+
   const safecrlf = await getConfigValue(repository, 'core.safecrlf')
 
   return new Promise<string>((resolve, reject) => {
     if (autocrlf === 'true' && safecrlf === 'true') {
       // based off https://stackoverflow.com/a/141069/1363815
+
       const normalizedText = text.replace(/\r\n|\n\r|\n|\r/g, '\r\n')
+
       resolve(normalizedText)
+
       return
     }
 
     if (text.endsWith('\n')) {
       resolve(text)
+
       return
     }
 
     if (autocrlf == null) {
       // fallback to Git default behaviour
+
       resolve(`${text}\n`)
     } else {
       const linesEndInCRLF = autocrlf === 'true'
+
       if (linesEndInCRLF) {
         resolve(`${text}\n`)
       } else {

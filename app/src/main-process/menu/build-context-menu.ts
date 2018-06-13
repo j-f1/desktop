@@ -1,10 +1,12 @@
 import { IMenuItem } from '../../lib/menu-item'
+
 import { Menu, MenuItem } from 'electron'
 
 /**
  * Gets a value indicating whether or not two roles are considered
  * equal using a case-insensitive comparison.
  */
+
 function roleEquals(x: string | undefined, y: string | undefined) {
   return (x ? x.toLowerCase() : x) === (y ? y.toLowerCase() : y)
 }
@@ -13,17 +15,28 @@ function roleEquals(x: string | undefined, y: string | undefined) {
  * Get platform-specific edit menu items by leveraging Electron's
  * built-in editMenu role.
  */
+
 function getEditMenuItems(): ReadonlyArray<MenuItem> {
-  const menu = Menu.buildFromTemplate([{ role: 'editMenu' }]).items[0]
+  const menu = Menu.buildFromTemplate([
+    {
+      role: 'editMenu',
+    },
+  ]).items[0]
 
   // Electron is violating its contract if there's no subMenu but
+
   // we'd rather just ignore it than crash. It's not the end of
+
   // the world if we don't have edit menu items.
+
   const items = menu && menu.submenu ? menu.submenu.items : []
 
   // We don't use styled inputs anywhere at the moment
+
   // so let's skip this for now and when/if we do we
+
   // can make it configurable from the callee
+
   return items.filter(x => !roleEquals(x.role, 'pasteandmatchstyle'))
 }
 
@@ -45,6 +58,7 @@ function getEditMenuItems(): ReadonlyArray<MenuItem> {
  *                 not be called when expanded/automatically created
  *                 edit menu items are clicked.
  */
+
 export function buildContextMenu(
   template: ReadonlyArray<IMenuItem>,
   onClick: (ix: number, item: IMenuItem) => void
@@ -53,22 +67,34 @@ export function buildContextMenu(
 
   for (const [ix, item] of template.entries()) {
     // Special case editMenu in context menus. What we
+
     // mean by this is that we want to insert all edit
+
     // related menu items into the menu at this spot, we
+
     // don't want a sub menu
+
     if (roleEquals(item.role, 'editmenu')) {
       menuItems.push(...getEditMenuItems())
     } else {
       // TODO: We're always overriding the click function here.
+
       // It's possible that we might want to add a role-based
+
       // menu item without a custom click function at some point
+
       // in the future.
+
       menuItems.push(
         new MenuItem({
           label: item.label,
+
           type: item.type,
+
           enabled: item.enabled,
+
           role: item.role,
+
           click: () => onClick(ix, item),
         })
       )
@@ -76,6 +102,7 @@ export function buildContextMenu(
   }
 
   const menu = new Menu()
+
   menuItems.forEach(x => menu.append(x))
 
   return menu

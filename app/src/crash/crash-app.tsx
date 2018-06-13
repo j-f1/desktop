@@ -1,17 +1,27 @@
 import * as React from 'react'
+
 import { ipcRenderer, remote } from 'electron'
+
 import { ICrashDetails, ErrorType } from './shared'
+
 import { TitleBar } from '../ui/window/title-bar'
+
 import { encodePathAsUrl } from '../lib/path'
+
 import {
   WindowState,
   getWindowState,
   windowStateChannelName,
 } from '../lib/window-state'
+
 import { Octicon, OcticonSymbol } from '../ui/octicons'
+
 import { Button } from '../ui/lib/button'
+
 import { LinkButton } from '../ui/lib/link-button'
+
 import { getVersion } from '../ui/lib/app-proxy'
+
 import { getOS } from '../lib/get-os'
 
 interface ICrashAppProps {}
@@ -22,21 +32,26 @@ interface ICrashAppState {
    * the main renderer process or not. See the documentation for
    * the ErrorType type for more details.
    */
+
   readonly type?: ErrorType
 
   /**
    * The error that caused us to spawn the crash process.
    */
+
   readonly error?: Error
 
   /**
    * The current state of the Window, ie maximized, minimized full-screen etc.
    */
+
   readonly windowState: WindowState
 }
 
 // Note that we're reusing the welcome illustration here, any changes to it
+
 // will have to be reflected in the welcome flow as well.
+
 const BottomImageUri = encodePathAsUrl(
   __dirname,
   'static/welcome-illustration-left-bottom.svg'
@@ -49,25 +64,35 @@ const issuesUri = 'https://github.com/desktop/desktop/issues'
  * from paths and appends system metadata such and the running version and
  * current operating system.
  */
+
 function prepareErrorMessage(error: Error) {
   let message
 
   if (error.stack) {
     message = error.stack
+
       .split('\n')
+
       .map(line => {
         // The stack trace lines come in two forms:
+
         //
+
         // `at Function.module.exports.Emitter.simpleDispatch (SOME_USER_SPECIFIC_PATH/app/node_modules/event-kit/lib/emitter.js:25:14)`
+
         // `at file:///SOME_USER_SPECIFIC_PATH/app/renderer.js:6:4250`
+
         //
+
         // We want to try to strip the user-specific path part out.
+
         const match = line.match(/(\s*)(.*)(\(|file:\/\/\/).*(app.*)/)
 
         return !match || match.length < 5
           ? line
           : match[1] + match[2] + match[3] + match[4]
       })
+
       .join('\n')
   } else {
     message = `${error.name}: ${error.message}`
@@ -86,6 +111,7 @@ function prepareErrorMessage(error: Error) {
  * Exercise caution when working with the crash process. If the crash
  * process itself crashes we've failed.
  */
+
 export class CrashApp extends React.Component<ICrashAppProps, ICrashAppState> {
   public constructor(props: ICrashAppProps) {
     super(props)
@@ -99,7 +125,9 @@ export class CrashApp extends React.Component<ICrashAppProps, ICrashAppState> {
     const window = remote.getCurrentWindow()
 
     ipcRenderer.on(windowStateChannelName, () => {
-      this.setState({ windowState: getWindowState(window) })
+      this.setState({
+        windowState: getWindowState(window),
+      })
     })
 
     ipcRenderer.on(
@@ -114,6 +142,7 @@ export class CrashApp extends React.Component<ICrashAppProps, ICrashAppState> {
 
   private onQuitButtonClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+
     ipcRenderer.send('crash-quit')
   }
 
@@ -169,8 +198,11 @@ export class CrashApp extends React.Component<ICrashAppProps, ICrashAppState> {
 
   private renderQuitButton() {
     let quitText
+
     // We don't support restarting in dev mode since we can't
+
     // control the life time of the dev server.
+
     if (__DEV__) {
       quitText = __DARWIN__ ? 'Quit' : 'Exit'
     } else {

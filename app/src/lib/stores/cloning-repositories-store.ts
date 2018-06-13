@@ -1,13 +1,20 @@
 import { CloningRepository } from '../../models/cloning-repository'
+
 import { clone as cloneRepo, CloneOptions } from '../git'
+
 import { ICloneProgress } from '../app-state'
+
 import { RetryAction, RetryActionType } from '../retry-actions'
+
 import { ErrorWithMetadata } from '../error-with-metadata'
+
 import { BaseStore } from './base-store'
 
 /** The store in charge of repository currently being cloned. */
+
 export class CloningRepositoriesStore extends BaseStore {
   private readonly _repositories = new Array<CloningRepository>()
+
   private readonly stateByID = new Map<number, ICloneProgress>()
 
   /**
@@ -15,23 +22,33 @@ export class CloningRepositoriesStore extends BaseStore {
    *
    * Returns a {Promise} which resolves to whether the clone was successful.
    */
+
   public async clone(
     url: string,
     path: string,
     options: CloneOptions
   ): Promise<boolean> {
     const repository = new CloningRepository(path, url)
+
     this._repositories.push(repository)
 
     const title = `Cloning into ${path}`
 
-    this.stateByID.set(repository.id, { kind: 'clone', title, value: 0 })
+    this.stateByID.set(repository.id, {
+      kind: 'clone',
+
+      title,
+      value: 0,
+    })
+
     this.emitUpdate()
 
     let success = true
+
     try {
       await cloneRepo(url, path, options, progress => {
         this.stateByID.set(repository.id, progress)
+
         this.emitUpdate()
       })
     } catch (e) {
@@ -39,10 +56,12 @@ export class CloningRepositoriesStore extends BaseStore {
 
       const retryAction: RetryAction = {
         type: RetryActionType.Clone,
+
         url,
         path,
         options,
       }
+
       e = new ErrorWithMetadata(e, { retryAction, repository })
 
       this.emitError(e)
@@ -54,11 +73,13 @@ export class CloningRepositoriesStore extends BaseStore {
   }
 
   /** Get the repositories currently being cloned. */
+
   public get repositories(): ReadonlyArray<CloningRepository> {
     return Array.from(this._repositories)
   }
 
   /** Get the state of the repository. */
+
   public getRepositoryState(
     repository: CloningRepository
   ): ICloneProgress | null {
@@ -66,10 +87,12 @@ export class CloningRepositoriesStore extends BaseStore {
   }
 
   /** Remove the repository. */
+
   public remove(repository: CloningRepository) {
     this.stateByID.delete(repository.id)
 
     const repoIndex = this._repositories.findIndex(r => r.id === repository.id)
+
     if (repoIndex > -1) {
       this._repositories.splice(repoIndex, 1)
     }

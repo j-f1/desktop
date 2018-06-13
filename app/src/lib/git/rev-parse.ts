@@ -1,6 +1,7 @@
 import * as Path from 'path'
 
 import { git } from './core'
+
 import { RepositoryDoesNotExistErrorCode } from 'dugite'
 
 /**
@@ -11,6 +12,7 @@ import { RepositoryDoesNotExistErrorCode } from 'dugite'
  *
  * @returns null if the path provided doesn't reside within a Git repository.
  */
+
 export async function getTopLevelWorkingDirectory(
   path: string
 ): Promise<string | null> {
@@ -18,8 +20,11 @@ export async function getTopLevelWorkingDirectory(
 
   try {
     // Note, we use --show-cdup here instead of --show-toplevel because show-toplevel
+
     // dereferences symlinks and we want to resolve a path as closely as possible to
+
     // what the user gave us.
+
     result = await git(
       ['rev-parse', '--show-cdup'],
       path,
@@ -37,7 +42,9 @@ export async function getTopLevelWorkingDirectory(
   }
 
   // Exit code 128 means it was run in a directory that's not a git
+
   // repository.
+
   if (result.exitCode === 128) {
     return null
   }
@@ -45,6 +52,7 @@ export async function getTopLevelWorkingDirectory(
   const relativePath = result.stdout.trim()
 
   // No output means we're already at the root
+
   if (!relativePath) {
     return path
   }
@@ -53,6 +61,7 @@ export async function getTopLevelWorkingDirectory(
 }
 
 /** Is the path a git repository? */
+
 export async function isGitRepository(path: string): Promise<boolean> {
   return (await getTopLevelWorkingDirectory(path)) !== null
 }

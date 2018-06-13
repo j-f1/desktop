@@ -4,55 +4,83 @@ type StatusItem = IStatusHeader | IStatusEntry
 
 export interface IStatusHeader {
   readonly kind: 'header'
+
   readonly value: string
 }
 
 /** A representation of a parsed status entry from git status */
+
 export interface IStatusEntry {
   readonly kind: 'entry'
 
   /** The path to the file relative to the repository root */
+
   readonly path: string
 
   /** The two character long status code */
+
   readonly statusCode: string
 
   /** The original path in the case of a renamed file */
+
   readonly oldPath?: string
 }
 
 const ChangedEntryType = '1'
+
 const RenamedOrCopiedEntryType = '2'
+
 const UnmergedEntryType = 'u'
+
 const UntrackedEntryType = '?'
+
 const IgnoredEntryType = '!'
 
 /** Parses output from git status --porcelain -z into file status entries */
+
 export function parsePorcelainStatus(
   output: string
 ): ReadonlyArray<StatusItem> {
   const entries = new Array<StatusItem>()
 
   // See https://git-scm.com/docs/git-status
+
   //
+
   // In the short-format, the status of each path is shown as
+
   // XY PATH1 -> PATH2
+
   //
+
   // There is also an alternate -z format recommended for machine parsing. In that
+
   // format, the status field is the same, but some other things change. First,
+
   // the -> is omitted from rename entries and the field order is reversed (e.g
+
   // from -> to becomes to from). Second, a NUL (ASCII 0) follows each filename,
+
   // replacing space as a field separator and the terminating newline (but a space
+
   // still separates the status field from the first filename). Third, filenames
+
   // containing special characters are not specially formatted; no quoting or
+
   // backslash-escaping is performed.
 
   const fields = output.split('\0')
+
   let field: string | undefined
 
   while ((field = fields.shift())) {
     if (field.startsWith('# ') && field.length > 2) {
-      entries.push({ kind: 'header', value: field.substr(2) })
+      entries.push({
+        kind: 'header',
+
+        value: field.substr(2),
+      })
+
       continue
     }
 
@@ -75,6 +103,7 @@ export function parsePorcelainStatus(
 }
 
 // 1 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <path>
+
 const changedEntryRe = /^1 ([MADRCUTX?!.]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) ([a-f0-9]+) ([a-f0-9]+) ([\s\S]*?)$/
 
 function parseChangedEntry(field: string): IStatusEntry {
@@ -86,12 +115,15 @@ function parseChangedEntry(field: string): IStatusEntry {
 
   return {
     kind: 'entry',
+
     statusCode: match[1],
+
     path: match[8],
   }
 }
 
 // 2 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <X><score> <path><sep><origPath>
+
 const renamedOrCopiedEntryRe = /^2 ([MADRCUTX?!.]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) ([a-f0-9]+) ([a-f0-9]+) ([RC]\d+) ([\s\S]*?)$/
 
 function parsedRenamedOrCopiedEntry(
@@ -114,13 +146,16 @@ function parsedRenamedOrCopiedEntry(
 
   return {
     kind: 'entry',
+
     statusCode: match[1],
+
     oldPath,
     path: match[9],
   }
 }
 
 // u <xy> <sub> <m1> <m2> <m3> <mW> <h1> <h2> <h3> <path>
+
 const unmergedEntryRe = /^u ([DAU]{2}) (N\.\.\.|S[C.][M.][U.]) (\d+) (\d+) (\d+) (\d+) ([a-f0-9]+) ([a-f0-9]+) ([a-f0-9]+) ([\s\S]*?)$/
 
 function parseUnmergedEntry(field: string): IStatusEntry {
@@ -132,18 +167,25 @@ function parseUnmergedEntry(field: string): IStatusEntry {
 
   return {
     kind: 'entry',
+
     statusCode: match[1],
+
     path: match[10],
   }
 }
 
 function parseUntrackedEntry(field: string): IStatusEntry {
   const path = field.substr(2)
+
   return {
     kind: 'entry',
+
     // NOTE: We return ?? instead of ? here to play nice with mapStatus,
+
     // might want to consider changing this (and mapStatus) in the future.
+
     statusCode: '??',
+
     path,
   }
 }
@@ -151,6 +193,7 @@ function parseUntrackedEntry(field: string): IStatusEntry {
 /**
  * Map the raw status text from Git to a structure we can work with in the app.
  */
+
 export function mapStatus(status: string): FileEntry {
   if (status === '??') {
     return {
@@ -161,8 +204,11 @@ export function mapStatus(status: string): FileEntry {
   if (status === '.M') {
     return {
       kind: 'ordinary',
+
       type: 'modified',
+
       index: GitStatusEntry.Unchanged,
+
       workingTree: GitStatusEntry.Modified,
     }
   }
@@ -170,8 +216,11 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'M.') {
     return {
       kind: 'ordinary',
+
       type: 'modified',
+
       index: GitStatusEntry.Modified,
+
       workingTree: GitStatusEntry.Unchanged,
     }
   }
@@ -179,8 +228,11 @@ export function mapStatus(status: string): FileEntry {
   if (status === '.A') {
     return {
       kind: 'ordinary',
+
       type: 'added',
+
       index: GitStatusEntry.Unchanged,
+
       workingTree: GitStatusEntry.Added,
     }
   }
@@ -188,8 +240,11 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'A.') {
     return {
       kind: 'ordinary',
+
       type: 'added',
+
       index: GitStatusEntry.Added,
+
       workingTree: GitStatusEntry.Unchanged,
     }
   }
@@ -197,8 +252,11 @@ export function mapStatus(status: string): FileEntry {
   if (status === '.D') {
     return {
       kind: 'ordinary',
+
       type: 'deleted',
+
       index: GitStatusEntry.Unchanged,
+
       workingTree: GitStatusEntry.Deleted,
     }
   }
@@ -206,8 +264,11 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'D.') {
     return {
       kind: 'ordinary',
+
       type: 'deleted',
+
       index: GitStatusEntry.Deleted,
+
       workingTree: GitStatusEntry.Unchanged,
     }
   }
@@ -215,7 +276,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'R.') {
     return {
       kind: 'renamed',
+
       index: GitStatusEntry.Renamed,
+
       workingTree: GitStatusEntry.Unchanged,
     }
   }
@@ -223,7 +286,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === '.R') {
     return {
       kind: 'renamed',
+
       index: GitStatusEntry.Unchanged,
+
       workingTree: GitStatusEntry.Renamed,
     }
   }
@@ -231,7 +296,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'C.') {
     return {
       kind: 'copied',
+
       index: GitStatusEntry.Copied,
+
       workingTree: GitStatusEntry.Unchanged,
     }
   }
@@ -239,7 +306,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === '.C') {
     return {
       kind: 'copied',
+
       index: GitStatusEntry.Unchanged,
+
       workingTree: GitStatusEntry.Copied,
     }
   }
@@ -247,8 +316,11 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'AD') {
     return {
       kind: 'ordinary',
+
       type: 'added',
+
       index: GitStatusEntry.Added,
+
       workingTree: GitStatusEntry.Deleted,
     }
   }
@@ -256,8 +328,11 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'AM') {
     return {
       kind: 'ordinary',
+
       type: 'added',
+
       index: GitStatusEntry.Added,
+
       workingTree: GitStatusEntry.Modified,
     }
   }
@@ -265,7 +340,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'RM') {
     return {
       kind: 'renamed',
+
       index: GitStatusEntry.Renamed,
+
       workingTree: GitStatusEntry.Modified,
     }
   }
@@ -273,7 +350,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'RD') {
     return {
       kind: 'renamed',
+
       index: GitStatusEntry.Renamed,
+
       workingTree: GitStatusEntry.Deleted,
     }
   }
@@ -281,7 +360,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'DD') {
     return {
       kind: 'conflicted',
+
       us: GitStatusEntry.Deleted,
+
       them: GitStatusEntry.Deleted,
     }
   }
@@ -289,7 +370,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'AU') {
     return {
       kind: 'conflicted',
+
       us: GitStatusEntry.Added,
+
       them: GitStatusEntry.Modified,
     }
   }
@@ -297,7 +380,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'UD') {
     return {
       kind: 'conflicted',
+
       us: GitStatusEntry.Modified,
+
       them: GitStatusEntry.Deleted,
     }
   }
@@ -305,7 +390,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'UA') {
     return {
       kind: 'conflicted',
+
       us: GitStatusEntry.Modified,
+
       them: GitStatusEntry.Added,
     }
   }
@@ -313,7 +400,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'DU') {
     return {
       kind: 'conflicted',
+
       us: GitStatusEntry.Deleted,
+
       them: GitStatusEntry.Modified,
     }
   }
@@ -321,7 +410,9 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'AA') {
     return {
       kind: 'conflicted',
+
       us: GitStatusEntry.Added,
+
       them: GitStatusEntry.Added,
     }
   }
@@ -329,14 +420,18 @@ export function mapStatus(status: string): FileEntry {
   if (status === 'UU') {
     return {
       kind: 'conflicted',
+
       us: GitStatusEntry.Modified,
+
       them: GitStatusEntry.Modified,
     }
   }
 
   // as a fallback, we assume the file is modified in some way
+
   return {
     kind: 'ordinary',
+
     type: 'modified',
   }
 }

@@ -1,13 +1,20 @@
 import { DiffSelection } from '../../../models/diff'
+
 import { ISelectionStrategy } from './selection-strategy'
+
 import { DiffLineGutter } from '../diff-line-gutter'
+
 import { range } from '../../../lib/range'
 
 /** apply hunk selection to the current diff */
+
 export class RangeSelection implements ISelectionStrategy {
   private readonly _start: number
+
   private readonly _end: number
+
   private readonly _desiredSelection: boolean
+
   private readonly _snapshot: DiffSelection
 
   public constructor(
@@ -17,8 +24,11 @@ export class RangeSelection implements ISelectionStrategy {
     snapshot: DiffSelection
   ) {
     this._start = start
+
     this._end = end
+
     this._desiredSelection = desiredSelection
+
     this._snapshot = snapshot
   }
 
@@ -32,6 +42,7 @@ export class RangeSelection implements ISelectionStrategy {
 
       if (!element) {
         // if the element has not been rendered, it's not visible to the user
+
         return
       }
 

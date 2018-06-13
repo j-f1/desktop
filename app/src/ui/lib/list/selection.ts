@@ -6,11 +6,13 @@ interface ISelectRowAction {
   /**
    * The vertical direction use when searching for a selectable row.
    */
+
   readonly direction: SelectionDirection
 
   /**
    * The starting row index to search from.
    */
+
   readonly row: number
 
   /**
@@ -22,6 +24,7 @@ interface ISelectRowAction {
    *
    * Defaults to true if not set.
    */
+
   readonly wrap?: boolean
 }
 
@@ -29,8 +32,10 @@ interface ISelectRowAction {
  * Interface describing a user initiated selection change event
  * originating from a pointer device clicking or pressing on an item.
  */
+
 export interface IMouseClickSource {
   readonly kind: 'mouseclick'
+
   readonly event: React.MouseEvent<any>
 }
 
@@ -39,8 +44,10 @@ export interface IMouseClickSource {
  * originating from a pointer device hovering over an item.
  * Only applicable when selectedOnHover is set.
  */
+
 export interface IHoverSource {
   readonly kind: 'hover'
+
   readonly event: React.MouseEvent<any>
 }
 
@@ -48,8 +55,10 @@ export interface IHoverSource {
  * Interface describing a user initiated selection change event
  * originating from a keyboard
  */
+
 export interface IKeyboardSource {
   readonly kind: 'keyboard'
+
   readonly event: React.KeyboardEvent<any>
 }
 
@@ -58,11 +67,13 @@ export interface IKeyboardSource {
  * items (usually by clicking the Edit > Select all menu item in
  * the application window). This is highly specific to GitHub Desktop
  */
+
 export interface ISelectAllSource {
   readonly kind: 'select-all'
 }
 
 /** A type union of possible sources of a selection changed event */
+
 export type SelectionSource =
   | IMouseClickSource
   | IHoverSource
@@ -77,6 +88,7 @@ export type SelectionSource =
  * Returns null if no row can be selected or if the only selectable row is
  * identical to the given row parameter.
  */
+
 export function findNextSelectableRow(
   rowCount: number,
   action: ISelectRowAction,
@@ -87,23 +99,36 @@ export function findNextSelectableRow(
   }
 
   const { direction, row } = action
+
   const wrap = action.wrap === undefined ? true : action.wrap
 
   // Ensure the row value is in the range between 0 and rowCount - 1
+
   //
+
   // If the row falls outside this range, use the direction
+
   // given to choose a suitable value:
+
   //
+
   //  - move in an upward direction -> select last row
+
   //  - move in a downward direction -> select first row
+
   //
+
   let currentRow =
     row < 0 || row >= rowCount ? (direction === 'up' ? rowCount - 1 : 0) : row
 
   // handle specific case from switching from filter text to list
+
   //
+
   // locking currentRow to [0,rowCount) above means that the below loops
+
   // will skip over the first entry
+
   if (direction === 'down' && row === -1) {
     currentRow = -1
   }
@@ -111,13 +136,17 @@ export function findNextSelectableRow(
   const delta = direction === 'up' ? -1 : 1
 
   // Iterate through all rows (starting offset from the
+
   // given row and ending on and including the given row)
+
   for (let i = 0; i < rowCount; i++) {
     currentRow += delta
 
     if (currentRow >= rowCount) {
       // We've hit rock bottom, wrap around to the top
+
       // if we're allowed to or give up.
+
       if (wrap) {
         currentRow = 0
       } else {
@@ -125,7 +154,9 @@ export function findNextSelectableRow(
       }
     } else if (currentRow < 0) {
       // We've reached the top, wrap around to the bottom
+
       // if we're allowed to or give up
+
       if (wrap) {
         currentRow = rowCount - 1
       } else {

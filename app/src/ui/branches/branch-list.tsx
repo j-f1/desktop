@@ -9,8 +9,11 @@ import {
   IFilterListGroup,
   SelectionSource,
 } from '../lib/filter-list'
+
 import { IMatches } from '../../lib/fuzzy-find'
+
 import { Button } from '../lib/button'
+
 import { TextBox } from '../lib/text-box'
 
 import {
@@ -18,6 +21,7 @@ import {
   IBranchListItem,
   BranchGroupIdentifier,
 } from './group-branches'
+
 import { NoBranches } from './no-branches'
 
 const RowHeight = 30
@@ -26,37 +30,44 @@ interface IBranchListProps {
   /**
    * See IBranchesState.defaultBranch
    */
+
   readonly defaultBranch: Branch | null
 
   /**
    * The currently checked out branch or null if HEAD is detached
    */
+
   readonly currentBranch: Branch | null
 
   /**
    * See IBranchesState.allBranches
    */
+
   readonly allBranches: ReadonlyArray<Branch>
 
   /**
    * See IBranchesState.recentBranches
    */
+
   readonly recentBranches: ReadonlyArray<Branch>
 
   /**
    * The currently selected branch in the list, see the onSelectionChanged prop.
    */
+
   readonly selectedBranch: Branch | null
 
   /**
    * Called when a key down happens in the filter field. Users have a chance to
    * respond or cancel the default behavior by calling `preventDefault`.
    */
+
   readonly onFilterKeyDown?: (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => void
 
   /** Called when an item is clicked. */
+
   readonly onItemClick?: (item: Branch) => void
 
   /**
@@ -69,24 +80,29 @@ interface IBranchListProps {
    *                       either a pointer device press, or a keyboard event
    *                       (arrow up/down)
    */
+
   readonly onSelectionChanged?: (
     selectedItem: Branch | null,
     source: SelectionSource
   ) => void
 
   /** The current filter text to render */
+
   readonly filterText: string
 
   /** Callback to fire when the filter text is changed */
+
   readonly onFilterTextChanged: (filterText: string) => void
 
   /** Can users create a new branch? */
+
   readonly canCreateNewBranch: boolean
 
   /**
    * Called when the user wants to create a new branch. It will be given a name
    * to prepopulate the new branch name field.
    */
+
   readonly onCreateNewBranch?: (name: string) => void
 
   readonly textbox?: TextBox
@@ -94,6 +110,7 @@ interface IBranchListProps {
   /**
    * Render function to apply to each branch in the list
    */
+
   readonly renderBranch: (
     item: IBranchListItem,
     matches: IMatches
@@ -107,9 +124,11 @@ interface IBranchListState {
    * Groups are currently defined as 'default branch', 'current branch',
    * 'recent branches' and all branches.
    */
+
   readonly groups: ReadonlyArray<IFilterListGroup<IBranchListItem>>
 
   /** The selected item in the filtered list */
+
   readonly selectedItem: IBranchListItem | null
 }
 
@@ -122,12 +141,15 @@ function createState(props: IBranchListProps): IBranchListState {
   )
 
   let selectedItem: IBranchListItem | null = null
+
   const selectedBranch = props.selectedBranch
+
   if (selectedBranch) {
     for (const group of groups) {
       selectedItem =
         group.items.find(i => {
           const branch = i.branch
+
           return branch.name === selectedBranch.name
         }) || null
 
@@ -141,6 +163,7 @@ function createState(props: IBranchListProps): IBranchListState {
 }
 
 /** The Branches list component. */
+
 export class BranchList extends React.Component<
   IBranchListProps,
   IBranchListState
@@ -149,6 +172,7 @@ export class BranchList extends React.Component<
 
   public constructor(props: IBranchListProps) {
     super(props)
+
     this.state = createState(props)
   }
 
@@ -198,9 +222,12 @@ export class BranchList extends React.Component<
   private parseHeader(label: string): BranchGroupIdentifier | null {
     switch (label) {
       case 'default':
+
       case 'recent':
+
       case 'other':
         return label
+
       default:
         return null
     }

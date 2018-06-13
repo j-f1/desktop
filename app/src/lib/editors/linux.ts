@@ -1,12 +1,16 @@
 import { pathExists } from 'fs-extra'
 
 import { IFoundEditor } from './found-editor'
+
 import { assertNever } from '../fatal-error'
 
 export enum ExternalEditor {
   Atom = 'Atom',
+
   VisualStudioCode = 'Visual Studio Code',
+
   VisualStudioCodeInsiders = 'Visual Studio Code (Insiders)',
+
   SublimeText = 'Sublime Text',
 }
 
@@ -38,12 +42,16 @@ function getEditorPath(editor: ExternalEditor): Promise<string | null> {
   switch (editor) {
     case ExternalEditor.Atom:
       return getPathIfAvailable('/usr/bin/atom')
+
     case ExternalEditor.VisualStudioCode:
       return getPathIfAvailable('/usr/bin/code')
+
     case ExternalEditor.VisualStudioCodeInsiders:
       return getPathIfAvailable('/usr/bin/code-insiders')
+
     case ExternalEditor.SublimeText:
       return getPathIfAvailable('/usr/bin/subl')
+
     default:
       return assertNever(editor, `Unknown editor: ${editor}`)
   }
@@ -57,29 +65,45 @@ export async function getAvailableEditors(): Promise<
   const [atomPath, codePath, codeInsidersPath, sublimePath] = await Promise.all(
     [
       getEditorPath(ExternalEditor.Atom),
+
       getEditorPath(ExternalEditor.VisualStudioCode),
+
       getEditorPath(ExternalEditor.VisualStudioCodeInsiders),
+
       getEditorPath(ExternalEditor.SublimeText),
     ]
   )
 
   if (atomPath) {
-    results.push({ editor: ExternalEditor.Atom, path: atomPath })
+    results.push({
+      editor: ExternalEditor.Atom,
+
+      path: atomPath,
+    })
   }
 
   if (codePath) {
-    results.push({ editor: ExternalEditor.VisualStudioCode, path: codePath })
+    results.push({
+      editor: ExternalEditor.VisualStudioCode,
+
+      path: codePath,
+    })
   }
 
   if (codeInsidersPath) {
     results.push({
       editor: ExternalEditor.VisualStudioCode,
+
       path: codeInsidersPath,
     })
   }
 
   if (sublimePath) {
-    results.push({ editor: ExternalEditor.SublimeText, path: sublimePath })
+    results.push({
+      editor: ExternalEditor.SublimeText,
+
+      path: sublimePath,
+    })
   }
 
   return results

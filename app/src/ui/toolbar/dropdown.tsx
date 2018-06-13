@@ -1,28 +1,38 @@
 import * as React from 'react'
+
 import { Octicon, OcticonSymbol } from '../octicons'
+
 import { assertNever } from '../../lib/fatal-error'
+
 import { ToolbarButton, ToolbarButtonStyle } from './button'
+
 import { rectEquals } from '../lib/rect'
+
 import * as classNames from 'classnames'
 
 export type DropdownState = 'open' | 'closed'
 
 export interface IToolbarDropdownProps {
   /** The primary button text, describing its function */
+
   readonly title?: string
 
   /** An optional description of the function of the button */
+
   readonly description?: string | JSX.Element
 
   /** The tooltip for the button. */
+
   readonly tooltip?: string
 
   /** An optional symbol to be displayed next to the button text */
+
   readonly icon?: OcticonSymbol
 
   /**
    * The state for of the drop down button.
    */
+
   readonly dropdownState: DropdownState
 
   /**
@@ -33,6 +43,7 @@ export interface IToolbarDropdownProps {
    * @param source   - Whether the state change was caused by a keyboard or
    *                   pointer interaction.
    */
+
   readonly onDropdownStateChanged: (
     state: DropdownState,
     source: 'keyboard' | 'pointer'
@@ -43,6 +54,7 @@ export interface IToolbarDropdownProps {
    * a pointer device. Note that this only fires for mouse events inside
    * the button and not when hovering content inside the foldout.
    */
+
   readonly onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void
 
   /**
@@ -53,38 +65,46 @@ export interface IToolbarDropdownProps {
    * had its default action prevented by an earlier consumer that's called
    * the preventDefault method on the event instance.
    */
+
   readonly onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 
   /**
    * An render callback for when the dropdown is open.
    * Use this to render the contents of the fold out.
    */
+
   readonly dropdownContentRenderer: () => JSX.Element | null
 
   /**
    * An optional classname that will be appended to the default
    * class name 'toolbar-button dropdown open|closed'
    */
+
   readonly className?: string
 
   /** The class name for the icon element. */
+
   readonly iconClassName?: string
 
   /** The button's style. Defaults to `ToolbarButtonStyle.Standard`. */
+
   readonly style?: ToolbarButtonStyle
 
   /**
    * Sets the styles for the dropdown's foldout. Useful for custom positioning
    * and sizes.
    */
+
   readonly foldoutStyle?: React.CSSProperties
 
   /**
    * Whether the button should displays its disclosure arrow. Defaults to true.
    */
+
   readonly showDisclosureArrow?: boolean
 
   /** Whether the button is disabled. Defaults to false. */
+
   readonly disabled?: boolean
 
   /**
@@ -109,6 +129,7 @@ export interface IToolbarDropdownProps {
    * Note: A positive value should be avoided if at all possible as it's
    * detrimental to accessibility in most scenarios.
    */
+
   readonly tabIndex?: number
 
   /**
@@ -121,9 +142,11 @@ export interface IToolbarDropdownProps {
    * text in the description or title along with information about what
    * operation is currently in flight.
    */
+
   readonly progressValue?: number
 
   readonly role?: string
+
   readonly buttonRole?: string
 }
 
@@ -134,6 +157,7 @@ interface IToolbarDropdownState {
 /**
  * A toolbar dropdown button
  */
+
 export class ToolbarDropdown extends React.Component<
   IToolbarDropdownProps,
   IToolbarDropdownState
@@ -142,7 +166,10 @@ export class ToolbarDropdown extends React.Component<
 
   public constructor(props: IToolbarDropdownProps) {
     super(props)
-    this.state = { clientRect: null }
+
+    this.state = {
+      clientRect: null,
+    }
   }
 
   private get isOpen() {
@@ -151,7 +178,9 @@ export class ToolbarDropdown extends React.Component<
 
   private dropdownIcon(state: DropdownState): OcticonSymbol {
     // @TODO: Remake triangle octicon in a 12px version,
+
     // right now it's scaled badly on normal dpi monitors.
+
     if (state === 'open') {
       return OcticonSymbol.triangleUp
     } else if (state === 'closed') {
@@ -178,13 +207,21 @@ export class ToolbarDropdown extends React.Component<
       this.props.dropdownState === 'open' ? 'closed' : 'open'
 
     // This is probably one of the hackiest things I've ever done.
+
     // We need to be able to determine whether the button was clicked
+
     // using a pointer device or activated by pressing Enter or Space.
+
     // The problem is that button onClick events fire with a mouse event
+
     // regardless of whether they were activated with a key press or a
+
     // pointer device. So far, the only way I've been able to tell the
+
     // two apart is that keyboard derived clicks don't have a pointer
+
     // position.
+
     const source = !event.clientX && !event.clientY ? 'keyboard' : 'pointer'
 
     this.props.onDropdownStateChanged(newState, source)
@@ -193,11 +230,14 @@ export class ToolbarDropdown extends React.Component<
   private updateClientRectIfNecessary() {
     if (this.props.dropdownState === 'open' && this.innerButton) {
       const newRect = this.innerButton.getButtonBoundingClientRect()
+
       if (newRect) {
         const currentRect = this.state.clientRect
 
         if (!currentRect || !rectEquals(currentRect, newRect)) {
-          this.setState({ clientRect: newRect })
+          this.setState({
+            clientRect: newRect,
+          })
         }
       }
     }
@@ -221,15 +261,20 @@ export class ToolbarDropdown extends React.Component<
 
   private getFoldoutContainerStyle(): React.CSSProperties | undefined {
     const rect = this.state.clientRect
+
     if (!rect) {
       return undefined
     }
 
     return {
       position: 'absolute',
+
       top: rect.bottom,
+
       left: 0,
+
       width: '100%',
+
       height: `calc(100% - ${rect.bottom}px)`,
     }
   }
@@ -240,15 +285,20 @@ export class ToolbarDropdown extends React.Component<
     }
 
     const rect = this.state.clientRect
+
     if (!rect) {
       return undefined
     }
 
     return {
       position: 'absolute',
+
       marginLeft: rect.left,
+
       minWidth: rect.width,
+
       height: '100%',
+
       top: 0,
     }
   }
@@ -256,6 +306,7 @@ export class ToolbarDropdown extends React.Component<
   private onFoldoutKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (!event.defaultPrevented && this.isOpen && event.key === 'Escape') {
       event.preventDefault()
+
       this.props.onDropdownStateChanged('closed', 'keyboard')
     }
   }
@@ -266,9 +317,13 @@ export class ToolbarDropdown extends React.Component<
     }
 
     // The overlay has a -1 tab index because if it doesn't then focus will be put
+
     // on the body element when someone clicks on it and that causes the app menu
+
     // bar to instantly close before even receiving the onDropdownStateChanged
+
     // event from us.
+
     return (
       <div id="foldout-container" style={this.getFoldoutContainerStyle()}>
         <div
@@ -294,6 +349,7 @@ export class ToolbarDropdown extends React.Component<
   /**
    * Programmatically move keyboard focus to the button element.
    */
+
   public focusButton = () => {
     if (this.innerButton) {
       this.innerButton.focusButton()

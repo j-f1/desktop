@@ -1,10 +1,14 @@
 import { git, IGitExecutionOptions, gitNetworkArguments } from './core'
+
 import { Repository } from '../../models/repository'
+
 import { Branch, BranchType } from '../../models/branch'
+
 import {
   CheckoutProgressParser,
   executionOptionsWithProgress,
 } from '../progress'
+
 import { ICheckoutProgress } from '../app-state'
 
 import {
@@ -29,6 +33,7 @@ export type ProgressCallback = (progress: ICheckoutProgress) => void
  *                           enables the '--progress' command line flag for
  *                           'git checkout'.
  */
+
 export async function checkoutBranch(
   repository: Repository,
   account: IGitAccount | null,
@@ -37,20 +42,28 @@ export async function checkoutBranch(
 ): Promise<void> {
   let opts: IGitExecutionOptions = {
     env: envForAuthentication(account),
+
     expectedErrors: AuthenticationErrors,
   }
 
   if (progressCallback) {
     const title = `Checking out branch ${branch.name}`
+
     const kind = 'checkout'
+
     const targetBranch = branch.name
 
     opts = await executionOptionsWithProgress(
-      { ...opts, trackLFSProgress: true },
+      {
+        ...opts,
+
+        trackLFSProgress: true,
+      },
       new CheckoutProgressParser(),
       progress => {
         if (progress.kind === 'progress') {
           const description = progress.details.text
+
           const value = progress.percent
 
           progressCallback({ kind, title, description, value, targetBranch })
@@ -59,7 +72,14 @@ export async function checkoutBranch(
     )
 
     // Initial progress
-    progressCallback({ kind, title, value: 0, targetBranch })
+
+    progressCallback({
+      kind,
+      title,
+      value: 0,
+
+      targetBranch,
+    })
   }
 
   const baseArgs =
@@ -76,6 +96,7 @@ export async function checkoutBranch(
 }
 
 /** Check out the paths at HEAD. */
+
 export async function checkoutPaths(
   repository: Repository,
   paths: ReadonlyArray<string>

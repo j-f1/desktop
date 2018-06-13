@@ -1,8 +1,13 @@
 import * as React from 'react'
+
 import { Loading } from './loading'
+
 import { Form } from './form'
+
 import { TextBox } from './text-box'
+
 import { Button } from './button'
+
 import { Errors } from './errors'
 
 interface IEnterpriseServerEntryProps {
@@ -11,6 +16,7 @@ interface IEnterpriseServerEntryProps {
    * user in close proximity to the actions or input fields
    * related to the current step.
    */
+
   readonly error: Error | null
 
   /**
@@ -19,6 +25,7 @@ interface IEnterpriseServerEntryProps {
    * form inputs and actions save for a cancel action will
    * be disabled.
    */
+
   readonly loading: boolean
 
   /**
@@ -26,9 +33,11 @@ interface IEnterpriseServerEntryProps {
    * endpoint url and submitted it either by clicking on the submit
    * button or by submitting the form through other means (ie hitting Enter).
    */
+
   readonly onSubmit: (url: string) => void
 
   /** An array of additional buttons to render after the "Continue" button. */
+
   readonly additionalButtons?: ReadonlyArray<JSX.Element>
 }
 
@@ -37,17 +46,22 @@ interface IEnterpriseServerEntryState {
 }
 
 /** An entry form for an Enterprise server address. */
+
 export class EnterpriseServerEntry extends React.Component<
   IEnterpriseServerEntryProps,
   IEnterpriseServerEntryState
 > {
   public constructor(props: IEnterpriseServerEntryProps) {
     super(props)
-    this.state = { serverAddress: '' }
+
+    this.state = {
+      serverAddress: '',
+    }
   }
 
   public render() {
     const disableEntry = this.props.loading
+
     const disableSubmission =
       this.state.serverAddress.length === 0 || this.props.loading
 

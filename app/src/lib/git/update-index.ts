@@ -1,7 +1,11 @@
 import { git } from './core'
+
 import { Repository } from '../../models/repository'
+
 import { DiffSelectionType } from '../../models/diff'
+
 import { applyPatchToIndex } from './apply'
+
 import { AppFileStatus, WorkingDirectoryFileChange } from '../../models/status'
 
 interface IUpdateIndexOptions {
@@ -12,6 +16,7 @@ interface IUpdateIndexOptions {
    *
    * @default true
    */
+
   add?: boolean
 
   /**
@@ -21,6 +26,7 @@ interface IUpdateIndexOptions {
    *
    * @default true
    */
+
   remove?: boolean
 
   /**
@@ -29,6 +35,7 @@ interface IUpdateIndexOptions {
    *
    * @default false
    */
+
   forceRemove?: boolean
 
   /**
@@ -49,6 +56,7 @@ interface IUpdateIndexOptions {
    *
    * @default true
    */
+
   replace?: boolean
 }
 
@@ -60,6 +68,7 @@ interface IUpdateIndexOptions {
  *
  * @param options See the IUpdateIndexOptions interface for more details.
  */
+
 async function updateIndex(
   repository: Repository,
   paths: ReadonlyArray<string>,
@@ -102,17 +111,21 @@ async function updateIndex(
  * the job of this function is to set up the index in such a way that it
  * reflects what the user has selected in the app.
  */
+
 export async function stageFiles(
   repository: Repository,
   files: ReadonlyArray<WorkingDirectoryFileChange>
 ): Promise<void> {
   const normal = []
+
   const oldRenamed = []
+
   const partial = []
 
   for (const file of files) {
     if (file.selection.getSelectionType() === DiffSelectionType.All) {
       normal.push(file.path)
+
       if (file.status === AppFileStatus.Renamed && file.oldPath) {
         oldRenamed.push(file.oldPath)
       }
@@ -122,35 +135,63 @@ export async function stageFiles(
   }
 
   // Staging files happens in three steps.
+
   //
+
   // In the first step we run through all of the renamed files, or
+
   // more specifically the source files (old) that were renamed and
+
   // forcefully remove them from the index. We do this in order to handle
+
   // the scenario where a file has been renamed and a new file has been
+
   // created in its original position. Think of it like this
+
   //
+
   // $ touch foo && git add foo && git commit -m 'foo'
+
   // $ git mv foo bar
+
   // $ echo "I'm a new foo" > foo
+
   //
+
   // Now we have a file which is of type Renamed that has its path set
+
   // to 'bar' and its oldPath set to 'foo'. But there's a new file called
+
   // foo in the repository. So if the user selects the 'foo -> bar' change
+
   // but not the new 'foo' file for inclusion in this commit we don't
+
   // want to add the new 'foo', we just want to recreate the move in the
+
   // index. We do this by forcefully removing the old path from the index
+
   // and then later (in step 2) stage the new file.
-  await updateIndex(repository, oldRenamed, { forceRemove: true })
+
+  await updateIndex(repository, oldRenamed, {
+    forceRemove: true,
+  })
 
   // In the second step we update the index to match
+
   // the working directory in the case of new, modified, deleted,
+
   // and copied files as well as the destination paths for renamed
+
   // paths.
+
   await updateIndex(repository, normal)
 
   // Finally we run through all files that have partial selections.
+
   // We don't care about renamed or not here since applyPatchToIndex
+
   // has logic to support that scenario.
+
   if (partial.length) {
     for (const file of partial) {
       await applyPatchToIndex(repository, file)

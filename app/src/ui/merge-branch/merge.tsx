@@ -1,52 +1,65 @@
 import * as React from 'react'
 
 import { getAheadBehind } from '../../lib/git'
+
 import { Dispatcher } from '../../lib/dispatcher'
 
 import { Branch } from '../../models/branch'
+
 import { Repository } from '../../models/repository'
 
 import { Button } from '../lib/button'
+
 import { ButtonGroup } from '../lib/button-group'
 
 import { Dialog, DialogContent, DialogFooter } from '../dialog'
+
 import { BranchList, IBranchListItem, renderDefaultBranch } from '../branches'
+
 import { revSymmetricDifference } from '../../lib/git'
+
 import { IMatches } from '../../lib/fuzzy-find'
 
 interface IMergeProps {
   readonly dispatcher: Dispatcher
+
   readonly repository: Repository
 
   /**
    * See IBranchesState.defaultBranch
    */
+
   readonly defaultBranch: Branch | null
 
   /**
    * The currently checked out branch or null if HEAD is detached
    */
+
   readonly currentBranch: Branch | null
 
   /**
    * See IBranchesState.allBranches
    */
+
   readonly allBranches: ReadonlyArray<Branch>
 
   /**
    * See IBranchesState.recentBranches
    */
+
   readonly recentBranches: ReadonlyArray<Branch>
 
   /**
    * A function that's called when the dialog is dismissed by the user in the
    * ways described in the Dialog component's dismissable prop.
    */
+
   readonly onDismissed: () => void
 }
 
 interface IMergeState {
   /** The currently selected branch. */
+
   readonly selectedBranch: Branch | null
 
   /**
@@ -54,30 +67,38 @@ interface IMergeState {
    * undefined if no branch is selected or still calculating the
    * number of commits.
    */
+
   readonly commitCount?: number
 
   /** The filter text to use in the branch selector */
+
   readonly filterText: string
 }
 
 /** A component for merging a branch into the current branch. */
+
 export class Merge extends React.Component<IMergeProps, IMergeState> {
   public constructor(props: IMergeProps) {
     super(props)
 
     const currentBranch = props.currentBranch
+
     const defaultBranch = props.defaultBranch
 
     this.state = {
       // Select the default branch unless that's currently checked out
+
       selectedBranch: currentBranch === defaultBranch ? null : defaultBranch,
+
       commitCount: undefined,
+
       filterText: '',
     }
   }
 
   public componentDidMount() {
     const branch = this.state.selectedBranch
+
     if (!branch) {
       return
     }
@@ -92,15 +113,21 @@ export class Merge extends React.Component<IMergeProps, IMergeState> {
   private onSelectionChanged = async (selectedBranch: Branch | null) => {
     if (selectedBranch) {
       this.setState({ selectedBranch })
+
       await this.updateCommitCount(selectedBranch)
     } else {
-      this.setState({ selectedBranch, commitCount: 0 })
+      this.setState({
+        selectedBranch,
+        commitCount: 0,
+      })
     }
   }
 
   private renderMergeInfo() {
     const commitCount = this.state.commitCount
+
     const selectedBranch = this.state.selectedBranch
+
     const currentBranch = this.props.currentBranch
 
     if (
@@ -116,6 +143,7 @@ export class Merge extends React.Component<IMergeProps, IMergeState> {
     }
 
     const countPlural = commitCount === 1 ? 'commit' : 'commits'
+
     const countText =
       commitCount === undefined ? (
         'commits'
@@ -140,6 +168,7 @@ export class Merge extends React.Component<IMergeProps, IMergeState> {
 
   public render() {
     const selectedBranch = this.state.selectedBranch
+
     const currentBranch = this.props.currentBranch
 
     const disabled =
@@ -184,12 +213,17 @@ export class Merge extends React.Component<IMergeProps, IMergeState> {
 
   private async updateCommitCount(branch: Branch) {
     const range = revSymmetricDifference('', branch.name)
+
     const aheadBehind = await getAheadBehind(this.props.repository, range)
+
     const commitCount = aheadBehind ? aheadBehind.behind : 0
 
     if (this.state.selectedBranch !== branch) {
       // The branch changed while we were waiting on the result of `getAheadBehind`.
-      this.setState({ commitCount: undefined })
+
+      this.setState({
+        commitCount: undefined,
+      })
     } else {
       this.setState({ commitCount })
     }
@@ -197,11 +231,13 @@ export class Merge extends React.Component<IMergeProps, IMergeState> {
 
   private merge = () => {
     const branch = this.state.selectedBranch
+
     if (!branch) {
       return
     }
 
     this.props.dispatcher.mergeBranch(this.props.repository, branch.name)
+
     this.props.dispatcher.closePopup()
   }
 }

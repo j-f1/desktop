@@ -1,35 +1,56 @@
 import * as React from 'react'
+
 import { TabBar } from '../tab-bar'
+
 import { Remote } from './remote'
+
 import { GitIgnore } from './git-ignore'
+
 import { assertNever } from '../../lib/fatal-error'
+
 import { IRemote } from '../../models/remote'
+
 import { Dispatcher } from '../../lib/dispatcher'
+
 import { PopupType } from '../../lib/app-state'
+
 import { Repository } from '../../models/repository'
+
 import { Button } from '../lib/button'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Dialog, DialogError, DialogFooter } from '../dialog'
+
 import { NoRemote } from './no-remote'
 
 interface IRepositorySettingsProps {
   readonly dispatcher: Dispatcher
+
   readonly remote: IRemote | null
+
   readonly repository: Repository
+
   readonly onDismissed: () => void
 }
 
 enum RepositorySettingsTab {
   Remote = 0,
+
   IgnoredFiles,
 }
 
 interface IRepositorySettingsState {
   readonly selectedTab: RepositorySettingsTab
+
   readonly remote: IRemote | null
+
   readonly ignoreText: string | null
+
   readonly ignoreTextHasChanged: boolean
+
   readonly disabled: boolean
+
   readonly errors?: ReadonlyArray<JSX.Element | string>
 }
 
@@ -42,9 +63,13 @@ export class RepositorySettings extends React.Component<
 
     this.state = {
       selectedTab: RepositorySettingsTab.Remote,
+
       remote: props.remote,
+
       ignoreText: null,
+
       ignoreTextHasChanged: false,
+
       disabled: false,
     }
   }
@@ -54,6 +79,7 @@ export class RepositorySettings extends React.Component<
       const ignoreText = await this.props.dispatcher.readGitIgnore(
         this.props.repository
       )
+
       this.setState({ ignoreText })
     } catch (e) {
       log.error(
@@ -62,7 +88,10 @@ export class RepositorySettings extends React.Component<
         }`,
         e
       )
-      this.setState({ errors: [`Could not read .gitignore: ${e}`] })
+
+      this.setState({
+        errors: [`Could not read .gitignore: ${e}`],
+      })
     }
   }
 
@@ -75,6 +104,7 @@ export class RepositorySettings extends React.Component<
 
     return errors.map((err, ix) => {
       const key = `err-${ix}`
+
       return <DialogError key={key}>{err}</DialogError>
     })
   }
@@ -106,7 +136,9 @@ export class RepositorySettings extends React.Component<
 
   private renderFooter() {
     const tab = this.state.selectedTab
+
     const remote = this.state.remote
+
     if (tab === RepositorySettingsTab.Remote && !remote) {
       return null
     }
@@ -123,9 +155,11 @@ export class RepositorySettings extends React.Component<
 
   private renderActiveTab() {
     const tab = this.state.selectedTab
+
     switch (tab) {
       case RepositorySettingsTab.Remote: {
         const remote = this.state.remote
+
         if (remote) {
           return (
             <Remote
@@ -137,6 +171,7 @@ export class RepositorySettings extends React.Component<
           return <NoRemote onPublish={this.onPublish} />
         }
       }
+
       case RepositorySettingsTab.IgnoredFiles: {
         return (
           <GitIgnore
@@ -154,6 +189,7 @@ export class RepositorySettings extends React.Component<
   private onPublish = () => {
     this.props.dispatcher.showPopup({
       type: PopupType.PublishRepository,
+
       repository: this.props.repository,
     })
   }
@@ -163,7 +199,12 @@ export class RepositorySettings extends React.Component<
   }
 
   private onSubmit = async () => {
-    this.setState({ disabled: true, errors: undefined })
+    this.setState({
+      disabled: true,
+
+      errors: undefined,
+    })
+
     const errors = new Array<JSX.Element | string>()
 
     if (this.state.remote && this.props.remote) {
@@ -181,6 +222,7 @@ export class RepositorySettings extends React.Component<
             }`,
             e
           )
+
           errors.push(`Failed setting the remote URL: ${e}`)
         }
       }
@@ -199,6 +241,7 @@ export class RepositorySettings extends React.Component<
           }`,
           e
         )
+
         errors.push(`Failed saving the .gitignore file: ${e}`)
       }
     }
@@ -206,7 +249,11 @@ export class RepositorySettings extends React.Component<
     if (!errors.length) {
       this.props.onDismissed()
     } else {
-      this.setState({ disabled: false, errors })
+      this.setState({
+        disabled: false,
+
+        errors,
+      })
     }
   }
 
@@ -217,15 +264,28 @@ export class RepositorySettings extends React.Component<
       return
     }
 
-    const newRemote = { ...remote, url }
-    this.setState({ remote: newRemote })
+    const newRemote = {
+      ...remote,
+
+      url,
+    }
+
+    this.setState({
+      remote: newRemote,
+    })
   }
 
   private onIgnoreTextChanged = (text: string) => {
-    this.setState({ ignoreText: text, ignoreTextHasChanged: true })
+    this.setState({
+      ignoreText: text,
+
+      ignoreTextHasChanged: true,
+    })
   }
 
   private onTabClicked = (index: number) => {
-    this.setState({ selectedTab: index })
+    this.setState({
+      selectedTab: index,
+    })
   }
 }

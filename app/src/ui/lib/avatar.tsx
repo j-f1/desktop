@@ -1,12 +1,16 @@
 import * as React from 'react'
+
 import { encodePathAsUrl } from '../../lib/path'
+
 import { IAvatarUser } from '../../models/avatar'
+
 import { fetchAvatarUrl } from './avatar-in-memory-cache'
 
 const DefaultAvatarURL = encodePathAsUrl(__dirname, 'static/default-avatar.png')
 
 interface IAvatarProps {
   /** The user whose avatar should be displayed. */
+
   readonly user?: IAvatarUser
 
   /**
@@ -14,6 +18,7 @@ interface IAvatarProps {
    * Defaults to the name and email if undefined and is
    * skipped completely if title is null
    */
+
   readonly title?: string | null
 }
 
@@ -22,13 +27,16 @@ interface IAvatarState {
 }
 
 /** A component for displaying a user avatar. */
+
 export class Avatar extends React.Component<IAvatarProps, IAvatarState> {
   private cancelFetchingAvatar = false
 
   public constructor(props: IAvatarProps) {
     super(props)
 
-    this.state = { dataUrl: DefaultAvatarURL }
+    this.state = {
+      dataUrl: DefaultAvatarURL,
+    }
   }
 
   public shouldComponentUpdate(
@@ -61,8 +69,11 @@ export class Avatar extends React.Component<IAvatarProps, IAvatarState> {
     const dataUrl = await fetchAvatarUrl(DefaultAvatarURL, this.props.user)
 
     // https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
+
     // We're basically doing isMounted here. Let's look at better ways
+
     // in the future
+
     if (!this.cancelFetchingAvatar) {
       this.setState({ dataUrl })
     }
@@ -72,8 +83,11 @@ export class Avatar extends React.Component<IAvatarProps, IAvatarState> {
     const dataUrl = await fetchAvatarUrl(DefaultAvatarURL, nextProps.user)
 
     // https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
+
     // We're basically doing isMounted here. Let's look at better ways
+
     // in the future
+
     if (!this.cancelFetchingAvatar) {
       this.setState({ dataUrl })
     }
@@ -93,8 +107,10 @@ export class Avatar extends React.Component<IAvatarProps, IAvatarState> {
     }
 
     const user = this.props.user
+
     if (user) {
       const name = user.name
+
       if (name) {
         return `${name} <${user.email}>`
       } else {
@@ -107,6 +123,7 @@ export class Avatar extends React.Component<IAvatarProps, IAvatarState> {
 
   public render() {
     const title = this.getTitle()
+
     const ariaLabel = this.props.user
       ? `Avatar for ${this.props.user.name || this.props.user.email}`
       : `Avatar for unknown user`

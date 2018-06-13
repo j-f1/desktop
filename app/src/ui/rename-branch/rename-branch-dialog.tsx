@@ -1,14 +1,23 @@
 import * as React from 'react'
 
 import { Dispatcher } from '../../lib/dispatcher'
+
 import { Repository } from '../../models/repository'
+
 import { Branch } from '../../models/branch'
+
 import { sanitizedBranchName } from '../../lib/sanitize-branch'
+
 import { TextBox } from '../lib/text-box'
+
 import { Row } from '../lib/row'
+
 import { Button } from '../lib/button'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Dialog, DialogContent, DialogFooter } from '../dialog'
+
 import {
   renderBranchNameWarning,
   renderBranchHasRemoteWarning,
@@ -16,7 +25,9 @@ import {
 
 interface IRenameBranchProps {
   readonly dispatcher: Dispatcher
+
   readonly repository: Repository
+
   readonly branch: Branch
 }
 
@@ -31,12 +42,15 @@ export class RenameBranch extends React.Component<
   public constructor(props: IRenameBranchProps) {
     super(props)
 
-    this.state = { newName: props.branch.name }
+    this.state = {
+      newName: props.branch.name,
+    }
   }
 
   public render() {
     const disabled =
       !this.state.newName.length || /^\s*$/.test(this.state.newName)
+
     return (
       <Dialog
         id="rename-branch"
@@ -73,7 +87,9 @@ export class RenameBranch extends React.Component<
   }
 
   private onNameChange = (name: string) => {
-    this.setState({ newName: name })
+    this.setState({
+      newName: name,
+    })
   }
 
   private cancel = () => {
@@ -82,11 +98,13 @@ export class RenameBranch extends React.Component<
 
   private renameBranch = () => {
     const name = sanitizedBranchName(this.state.newName)
+
     this.props.dispatcher.renameBranch(
       this.props.repository,
       this.props.branch,
       name
     )
+
     this.props.dispatcher.closePopup()
   }
 }

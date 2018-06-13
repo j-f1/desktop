@@ -1,16 +1,27 @@
 import * as React from 'react'
+
 import { clipboard } from 'electron'
 
 import { Row } from '../lib/row'
+
 import { Button } from '../lib/button'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Dialog, DialogError, DialogContent, DialogFooter } from '../dialog'
+
 import { Octicon, OcticonSymbol } from '../octicons'
+
 import { LinkButton } from '../lib/link-button'
+
 import { updateStore, IUpdateState, UpdateStatus } from '../lib/update-store'
+
 import { Disposable } from 'event-kit'
+
 import { Loading } from '../lib/loading'
+
 import { RelativeTime } from '../relative-time'
+
 import { assertNever } from '../../lib/fatal-error'
 
 interface IAboutProps {
@@ -18,24 +29,29 @@ interface IAboutProps {
    * Event triggered when the dialog is dismissed by the user in the
    * ways described in the Dialog component's dismissable prop.
    */
+
   readonly onDismissed: () => void
 
   /**
    * The name of the currently installed (and running) application
    */
+
   readonly applicationName: string
 
   /**
    * The currently installed (and running) version of the app.
    */
+
   readonly applicationVersion: string
 
   /** A function to call to kick off an update check. */
+
   readonly onCheckForUpdates: () => void
 
   readonly onShowAcknowledgements: () => void
 
   /** A function to call when the user wants to see Terms and Conditions. */
+
   readonly onShowTermsAndConditions: () => void
 }
 
@@ -49,8 +65,10 @@ const releaseNotesUri = 'https://desktop.github.com/release-notes/'
  * A dialog that presents information about the
  * running application such as name and version.
  */
+
 export class About extends React.Component<IAboutProps, IAboutState> {
   private closeButton: Button | null = null
+
   private updateStoreEventHandle: Disposable | null = null
 
   public constructor(props: IAboutProps) {
@@ -77,13 +95,21 @@ export class About extends React.Component<IAboutProps, IAboutState> {
     this.updateStoreEventHandle = updateStore.onDidChange(
       this.onUpdateStateChanged
     )
-    this.setState({ updateState: updateStore.state })
+
+    this.setState({
+      updateState: updateStore.state,
+    })
 
     // A modal dialog autofocuses the first element that can receive
+
     // focus (and our dialog even uses the autofocus attribute on its
+
     // fieldset). In our case that's the release notes link button and
+
     // we don't want that to have focus so we'll move it over to the
+
     // close button instead.
+
     if (this.closeButton) {
       this.closeButton.focus()
     }
@@ -92,6 +118,7 @@ export class About extends React.Component<IAboutProps, IAboutState> {
   public componentWillUnmount() {
     if (this.updateStoreEventHandle) {
       this.updateStoreEventHandle.dispose()
+
       this.updateStoreEventHandle = null
     }
   }
@@ -119,8 +146,11 @@ export class About extends React.Component<IAboutProps, IAboutState> {
             </Button>
           </Row>
         )
+
       case UpdateStatus.UpdateNotAvailable:
+
       case UpdateStatus.CheckingForUpdates:
+
       case UpdateStatus.UpdateAvailable:
         const disabled = updateStatus !== UpdateStatus.UpdateNotAvailable
 
@@ -131,6 +161,7 @@ export class About extends React.Component<IAboutProps, IAboutState> {
             </Button>
           </Row>
         )
+
       default:
         return assertNever(
           updateStatus,
@@ -161,6 +192,7 @@ export class About extends React.Component<IAboutProps, IAboutState> {
     const lastCheckedDate = this.state.updateState.lastSuccessfulCheck
 
     // This case is rendered as an error
+
     if (!lastCheckedDate) {
       return null
     }
@@ -203,12 +235,16 @@ export class About extends React.Component<IAboutProps, IAboutState> {
     switch (updateState.status) {
       case UpdateStatus.CheckingForUpdates:
         return this.renderCheckingForUpdate()
+
       case UpdateStatus.UpdateAvailable:
         return this.renderUpdateAvailable()
+
       case UpdateStatus.UpdateNotAvailable:
         return this.renderUpdateNotAvailable()
+
       case UpdateStatus.UpdateReady:
         return this.renderUpdateReady()
+
       default:
         return assertNever(
           updateState.status,
@@ -244,7 +280,9 @@ export class About extends React.Component<IAboutProps, IAboutState> {
 
   public render() {
     const name = this.props.applicationName
+
     const version = this.props.applicationVersion
+
     const releaseNotesLink = (
       <LinkButton uri={releaseNotesUri}>release notes</LinkButton>
     )

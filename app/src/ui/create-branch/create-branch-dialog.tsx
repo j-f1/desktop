@@ -1,46 +1,71 @@
 import * as React from 'react'
 
 import { Repository } from '../../models/repository'
+
 import { Dispatcher } from '../../lib/dispatcher'
+
 import { sanitizedBranchName } from '../../lib/sanitize-branch'
+
 import { Branch } from '../../models/branch'
+
 import { TextBox } from '../lib/text-box'
+
 import { Row } from '../lib/row'
+
 import { Ref } from '../lib/ref'
+
 import { Button } from '../lib/button'
+
 import { LinkButton } from '../lib/link-button'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Dialog, DialogError, DialogContent, DialogFooter } from '../dialog'
+
 import { VerticalSegmentedControl } from '../lib/vertical-segmented-control'
+
 import {
   TipState,
   IUnbornRepository,
   IDetachedHead,
   IValidBranch,
 } from '../../models/tip'
+
 import { assertNever } from '../../lib/fatal-error'
+
 import { renderBranchNameWarning } from '../lib/branch-name-warnings'
 
 interface ICreateBranchProps {
   readonly repository: Repository
+
   readonly dispatcher: Dispatcher
+
   readonly onDismissed: () => void
+
   readonly tip: IUnbornRepository | IDetachedHead | IValidBranch
+
   readonly defaultBranch: Branch | null
+
   readonly allBranches: ReadonlyArray<Branch>
+
   readonly initialName: string
 }
 
 enum StartPoint {
   CurrentBranch,
+
   DefaultBranch,
+
   Head,
 }
 
 interface ICreateBranchState {
   readonly currentError: Error | null
+
   readonly proposedName: string
+
   readonly sanitizedName: string
+
   readonly startPoint: StartPoint
 
   /**
@@ -57,23 +82,27 @@ interface ICreateBranchState {
    * fails this dialog will still be dismissed and an error dialog will be
    * shown in its place.
    */
+
   readonly isCreatingBranch: boolean
 
   /**
    * The tip of the current repository, captured from props at the start
    * of the create branch operation.
    */
+
   readonly tipAtCreateStart: IUnbornRepository | IDetachedHead | IValidBranch
 
   /**
    * The default branch of the current repository, captured from props at the
    * start of the create branch operation.
    */
+
   readonly defaultBranchAtCreateStart: Branch | null
 }
 
 enum SelectedBranch {
   DefaultBranch = 0,
+
   CurrentBranch = 1,
 }
 
@@ -106,6 +135,7 @@ function getStartPoint(
 }
 
 /** The Create Branch component. */
+
 export class CreateBranch extends React.Component<
   ICreateBranchProps,
   ICreateBranchState
@@ -115,11 +145,17 @@ export class CreateBranch extends React.Component<
 
     this.state = {
       currentError: null,
+
       proposedName: props.initialName,
+
       sanitizedName: '',
+
       startPoint: getStartPoint(props, StartPoint.DefaultBranch),
+
       isCreatingBranch: false,
+
       tipAtCreateStart: props.tip,
+
       defaultBranchAtCreateStart: props.defaultBranch,
     }
   }
@@ -138,6 +174,7 @@ export class CreateBranch extends React.Component<
     if (!this.state.isCreatingBranch) {
       this.setState({
         tipAtCreateStart: nextProps.tip,
+
         defaultBranchAtCreateStart: nextProps.defaultBranch,
       })
     }
@@ -167,6 +204,7 @@ export class CreateBranch extends React.Component<
       )
     } else if (tip.kind === TipState.Valid) {
       const currentBranch = tip.branch
+
       const defaultBranch = this.state.isCreatingBranch
         ? this.props.defaultBranch
         : this.state.defaultBranchAtCreateStart
@@ -177,6 +215,7 @@ export class CreateBranch extends React.Component<
             default branch
           </LinkButton>
         )
+
         return (
           <p>
             Your new branch will be based on your currently checked out branch (<Ref
@@ -190,17 +229,21 @@ export class CreateBranch extends React.Component<
         const items = [
           {
             title: defaultBranch.name,
+
             description:
               "The default branch in your repository. Pick this to start on something new that's not dependent on your current branch.",
           },
+
           {
             title: currentBranch.name,
+
             description:
               'The currently checked out branch. Pick this if you need to build on work done in this branch.',
           },
         ]
 
         const startPoint = this.state.startPoint
+
         const selectedIndex = startPoint === StartPoint.DefaultBranch ? 0 : 1
 
         return (
@@ -221,9 +264,13 @@ export class CreateBranch extends React.Component<
 
   private onBaseBranchChanged = (selection: SelectedBranch) => {
     if (selection === SelectedBranch.DefaultBranch) {
-      this.setState({ startPoint: StartPoint.DefaultBranch })
+      this.setState({
+        startPoint: StartPoint.DefaultBranch,
+      })
     } else if (selection === SelectedBranch.CurrentBranch) {
-      this.setState({ startPoint: StartPoint.CurrentBranch })
+      this.setState({
+        startPoint: StartPoint.CurrentBranch,
+      })
     } else {
       throw new Error(`Unknown branch selection: ${selection}`)
     }
@@ -234,6 +281,7 @@ export class CreateBranch extends React.Component<
       this.state.proposedName.length <= 0 ||
       !!this.state.currentError ||
       /^\s*$/.test(this.state.sanitizedName)
+
     const error = this.state.currentError
 
     return (
@@ -283,13 +331,20 @@ export class CreateBranch extends React.Component<
 
   private updateBranchName(name: string) {
     const sanitizedName = sanitizedBranchName(name)
+
     const alreadyExists =
       this.props.allBranches.findIndex(b => b.name === sanitizedName) > -1
+
     const currentError = alreadyExists
       ? new Error(`A branch named ${sanitizedName} already exists`)
       : null
 
-    this.setState({ proposedName: name, sanitizedName, currentError })
+    this.setState({
+      proposedName: name,
+
+      sanitizedName,
+      currentError,
+    })
   }
 
   private createBranch = async () => {
@@ -299,11 +354,14 @@ export class CreateBranch extends React.Component<
 
     if (this.state.startPoint === StartPoint.DefaultBranch) {
       // This really shouldn't happen, we take all kinds of precautions
+
       // to make sure the startPoint state is valid given the current props.
+
       if (!this.props.defaultBranch) {
         this.setState({
           currentError: new Error('Could not determine the default branch'),
         })
+
         return
       }
 
@@ -311,12 +369,16 @@ export class CreateBranch extends React.Component<
     }
 
     if (name.length > 0) {
-      this.setState({ isCreatingBranch: true })
+      this.setState({
+        isCreatingBranch: true,
+      })
+
       await this.props.dispatcher.createBranch(
         this.props.repository,
         name,
         startPoint
       )
+
       this.props.onDismissed()
     }
   }

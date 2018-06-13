@@ -1,8 +1,11 @@
 import * as React from 'react'
+
 import { Branch } from '../../models/branch'
 
 import { Row } from './row'
+
 import { Octicon, OcticonSymbol } from '../octicons'
+
 import { Ref } from './ref'
 
 export function renderBranchNameWarning(
@@ -31,6 +34,7 @@ export function renderBranchNameWarning(
     return null
   }
 }
+
 export function renderBranchHasRemoteWarning(branch: Branch) {
   if (branch.upstream != null) {
     return (

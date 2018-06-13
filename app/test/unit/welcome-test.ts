@@ -19,16 +19,19 @@ describe('Welcome', () => {
 
     it('returns false for some non-numeric value', () => {
       localStorage.setItem(key, 'a')
+
       expect(hasShownWelcomeFlow()).to.be.false
     })
 
     it('returns false when zero found', () => {
       localStorage.setItem(key, '0')
+
       expect(hasShownWelcomeFlow()).to.be.false
     })
 
     it('returns true when one found', () => {
       localStorage.setItem(key, '1')
+
       expect(hasShownWelcomeFlow()).to.be.true
     })
   })
@@ -36,7 +39,9 @@ describe('Welcome', () => {
   describe('markWelcomeFlowComplete', () => {
     it('sets localStorage to 1', () => {
       markWelcomeFlowComplete()
+
       const value = localStorage.getItem(key)
+
       expect(value).to.equal('1')
     })
   })

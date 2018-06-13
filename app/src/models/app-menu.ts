@@ -1,6 +1,7 @@
 import { assertNever } from '../lib/fatal-error'
 
 /** A type union of all possible types of menu items */
+
 export type MenuItem =
   | IMenuItem
   | ISubmenuItem
@@ -9,16 +10,21 @@ export type MenuItem =
   | IRadioMenuItem
 
 /** A type union of all types of menu items which can be executed */
+
 export type ExecutableMenuItem = IMenuItem | ICheckboxMenuItem | IRadioMenuItem
 
 /**
  * Common properties for all item types except separator.
  * Only useful for declaring the types, not for consumption
  */
+
 interface IBaseMenuItem {
   readonly id: string
+
   readonly enabled: boolean
+
   readonly visible: boolean
+
   readonly label: string
 }
 
@@ -27,9 +33,12 @@ interface IBaseMenuItem {
  * menu item, i.e. a clickable item with a label but no
  * other special properties.
  */
+
 export interface IMenuItem extends IBaseMenuItem {
   readonly type: 'menuItem'
+
   readonly accelerator: string | null
+
   readonly accessKey: string | null
 }
 
@@ -39,9 +48,12 @@ export interface IMenuItem extends IBaseMenuItem {
  * submenu which can be expanded to reveal more menu
  * item. Not in itself executable, only a container.
  */
+
 export interface ISubmenuItem extends IBaseMenuItem {
   readonly type: 'submenuItem'
+
   readonly menu: IMenu
+
   readonly accessKey: string | null
 }
 
@@ -50,10 +62,14 @@ export interface ISubmenuItem extends IBaseMenuItem {
  * menu item, i.e. an item which has an associated checked
  * state that can be toggled by executing it.
  */
+
 export interface ICheckboxMenuItem extends IBaseMenuItem {
   readonly type: 'checkbox'
+
   readonly accelerator: string | null
+
   readonly accessKey: string | null
+
   readonly checked: boolean
 }
 
@@ -66,10 +82,14 @@ export interface ICheckboxMenuItem extends IBaseMenuItem {
  * of more radio menu items where the checked item is assigned
  * based on the last executed item in that group.
  */
+
 export interface IRadioMenuItem extends IBaseMenuItem {
   readonly type: 'radio'
+
   readonly accelerator: string | null
+
   readonly accessKey: string | null
+
   readonly checked: boolean
 }
 
@@ -79,9 +99,12 @@ export interface IRadioMenuItem extends IBaseMenuItem {
  * between menu items. It has no other semantics and is purely
  * a visual hint.
  */
+
 export interface ISeparatorMenuItem {
   readonly id: string
+
   readonly type: 'separator'
+
   readonly visible: boolean
 }
 
@@ -91,6 +114,7 @@ export interface ISeparatorMenuItem {
  * Holds collection of menu items and an indication of which item (if any)
  * in the menu is selected.
  */
+
 export interface IMenu {
   /**
    * The id of this menu. For the root menu this will be undefined. For all
@@ -107,15 +131,19 @@ export interface IMenu {
    *                                |  Close (id File.Close)   |
    *                                +--------------------------+
    */
+
   readonly id?: string
 
   /** Type identifier, used for type narrowing */
+
   readonly type: 'menu'
 
   /** A collection of zero or more menu items */
+
   readonly items: ReadonlyArray<MenuItem>
 
   /** The selected item in the menu or undefined if no item is selected */
+
   readonly selectedItem?: MenuItem
 }
 
@@ -125,6 +153,7 @@ export interface IMenu {
  * the default accelerator (if any) for that particular role will be
  * returned.
  */
+
 function getAccelerator(menuItem: Electron.MenuItem): string | null {
   if (menuItem.accelerator) {
     return menuItem.accelerator as string
@@ -132,12 +161,15 @@ function getAccelerator(menuItem: Electron.MenuItem): string | null {
 
   if (menuItem.role) {
     const unsafeItem = menuItem as any
+
     // https://github.com/electron/electron/blob/d4a8a64ba/lib/browser/api/menu-item.js#L62
+
     const getDefaultRoleAccelerator = unsafeItem.getDefaultRoleAccelerator
 
     if (typeof getDefaultRoleAccelerator === 'function') {
       try {
         const defaultRoleAccelerator = getDefaultRoleAccelerator.call(menuItem)
+
         if (typeof defaultRoleAccelerator === 'string') {
           return defaultRoleAccelerator
         }
@@ -157,8 +189,10 @@ function getAccelerator(menuItem: Electron.MenuItem): string | null {
  * the string "Check for &updates" the access key is 'u'. Access keys are
  * case insensitive and are unique per menu.
  */
+
 function getAccessKey(text: string): string | null {
   const m = text.match(/&([^&])/)
+
   return m ? m[1] : null
 }
 
@@ -167,50 +201,74 @@ function getAccessKey(text: string): string | null {
  * on an Electron MenuItem instance. Will recurse through all sub menus and
  * convert each item.
  */
+
 function menuItemFromElectronMenuItem(menuItem: Electron.MenuItem): MenuItem {
   // Our menu items always have ids and Electron.MenuItem takes on whatever
+
   // properties was defined on the MenuItemOptions template used to create it
+
   // but doesn't surface those in the type declaration.
+
   const id: string | undefined = (menuItem as any).id
+
   if (!id) {
     throw new Error(`menuItem must specify id: ${menuItem.label}`)
   }
+
   const enabled = menuItem.enabled
+
   const visible = menuItem.visible
+
   const label = menuItem.label
+
   const checked = menuItem.checked
+
   const accelerator = getAccelerator(menuItem)
+
   const accessKey = getAccessKey(menuItem.label)
 
   // normal, separator, submenu, checkbox or radio.
+
   switch (menuItem.type) {
     case 'normal':
       return {
         id,
         type: 'menuItem',
+
         label,
         enabled,
         visible,
         accelerator,
         accessKey,
       }
+
     case 'separator':
-      return { id, type: 'separator', visible }
+      return {
+        id,
+        type: 'separator',
+
+        visible,
+      }
+
     case 'submenu':
       const menu = menuFromElectronMenu(menuItem.submenu as Electron.Menu, id)
+
       return {
         id,
         type: 'submenuItem',
+
         label,
         enabled,
         visible,
         menu,
         accessKey,
       }
+
     case 'checkbox':
       return {
         id,
         type: 'checkbox',
+
         label,
         enabled,
         visible,
@@ -218,10 +276,12 @@ function menuItemFromElectronMenuItem(menuItem: Electron.MenuItem): MenuItem {
         checked,
         accessKey,
       }
+
     case 'radio':
       return {
         id,
         type: 'radio',
+
         label,
         enabled,
         visible,
@@ -229,6 +289,7 @@ function menuItemFromElectronMenuItem(menuItem: Electron.MenuItem): MenuItem {
         checked,
         accessKey,
       }
+
     default:
       return assertNever(
         menuItem.type,
@@ -236,6 +297,7 @@ function menuItemFromElectronMenuItem(menuItem: Electron.MenuItem): MenuItem {
       )
   }
 }
+
 /**
  * Creates a IMenu instance based on an Electron Menu instance.
  * Will recurse through all sub menus and convert each item using
@@ -247,6 +309,7 @@ function menuItemFromElectronMenuItem(menuItem: Electron.MenuItem): MenuItem {
  * @param id   - The id of the menu. Menus share their id with
  *               their parent item. The root menu id is undefined.
  */
+
 export function menuFromElectronMenu(menu: Electron.Menu, id?: string): IMenu {
   const items = menu.items.map(menuItemFromElectronMenuItem)
 
@@ -268,19 +331,26 @@ export function menuFromElectronMenu(menu: Electron.Menu, id?: string): IMenu {
     }
   }
 
-  return { id, type: 'menu', items }
+  return {
+    id,
+    type: 'menu',
+
+    items,
+  }
 }
 
 /**
  * Creates a map between MenuItem ids and MenuItems by recursing
  * through all items and all submenus.
  */
+
 function buildIdMap(
   menu: IMenu,
   map = new Map<string, MenuItem>()
 ): Map<string, MenuItem> {
   for (const item of menu.items) {
     map.set(item.id, item)
+
     if (item.type === 'submenuItem') {
       buildIdMap(item.menu, map)
     }
@@ -290,6 +360,7 @@ function buildIdMap(
 }
 
 /** Type guard which narrows a MenuItem to one which supports access keys */
+
 export function itemMayHaveAccessKey(
   item: MenuItem
 ): item is IMenuItem | ISubmenuItem | ICheckboxMenuItem | IRadioMenuItem {
@@ -306,6 +377,7 @@ export function itemMayHaveAccessKey(
  * selected. Selectable items are non-separator items which are enabled
  * and visible.
  */
+
 export function itemIsSelectable(item: MenuItem) {
   return item.type !== 'separator' && item.enabled && item.visible
 }
@@ -318,6 +390,7 @@ export function itemIsSelectable(item: MenuItem) {
  * item is selectable, consumers of this function need to perform that
  * check themselves when applicable.
  */
+
 export function findItemByAccessKey(
   accessKey: string,
   items: ReadonlyArray<MenuItem>
@@ -353,6 +426,7 @@ export function findItemByAccessKey(
  * In general, however, this object is not platform specific and much of
  * the interactions are defined by the component using it.
  */
+
 export class AppMenu {
   /**
    * A list of currently open menus with their selected items
@@ -362,6 +436,7 @@ export class AppMenu {
    * selection works is defined within this class class as well as
    * in the individual components transforming that state.
    */
+
   public readonly openMenus: ReadonlyArray<IMenu>
 
   /**
@@ -369,38 +444,46 @@ export class AppMenu {
    * electron Menu instance and converted into an IMenu model
    * by menuFromElectronMenu.
    */
+
   private readonly menu: IMenu
 
   /**
    * A map between menu item ids and their corresponding MenuItem
    */
+
   private readonly menuItemById: Map<string, MenuItem>
 
   /**
    * Static constructor for the initial creation of an AppMenu instance
    * from an IMenu instance.
    */
+
   public static fromMenu(menu: IMenu): AppMenu {
     const map = buildIdMap(menu)
+
     const openMenus = [menu]
 
     return new AppMenu(menu, openMenus, map)
   }
 
   // Used by static constructors and transformers.
+
   private constructor(
     menu: IMenu,
     openMenus: ReadonlyArray<IMenu>,
     menuItemById: Map<string, MenuItem>
   ) {
     this.menu = menu
+
     this.openMenus = openMenus
+
     this.menuItemById = menuItemById
   }
 
   /**
    * Retrieves a menu item by its id.
    */
+
   public getItemById(id: string): MenuItem | undefined {
     return this.menuItemById.get(id)
   }
@@ -409,28 +492,37 @@ export class AppMenu {
    * Merges the current AppMenu state with a new menu while
    * attempting to maintain selection state.
    */
+
   public withMenu(newMenu: IMenu): AppMenu {
     const newMap = buildIdMap(newMenu)
+
     const newOpenMenus = new Array<IMenu>()
 
     // Enumerate all currently open menus and attempt to recreate
+
     // the openMenus array with the new menu instances
+
     for (const openMenu of this.openMenus) {
       let newOpenMenu: IMenu
 
       // No id means it's the root menu, simple enough.
+
       if (!openMenu.id) {
         newOpenMenu = newMenu
       } else {
         // Menus share id with their parent item
+
         const item = newMap.get(openMenu.id)
 
         if (item && item.type === 'submenuItem') {
           newOpenMenu = item.menu
         } else {
           // This particular menu can't be found in the new menu
+
           // structure, we have no choice but to bail here and
+
           // not open this particular menu.
+
           break
         }
       }
@@ -443,8 +535,11 @@ export class AppMenu {
 
       newOpenMenus.push({
         id: newOpenMenu.id,
+
         type: 'menu',
+
         items: newOpenMenu.items,
+
         selectedItem: newSelectedItem,
       })
     }
@@ -465,6 +560,7 @@ export class AppMenu {
    *
    *                          Defaults to false.
    */
+
   public withOpenedMenu(
     submenuItem: ISubmenuItem,
     selectFirstItem = false
@@ -488,7 +584,9 @@ export class AppMenu {
     )
 
     // The parent menu has apparently been closed in between, we could go and
+
     // recreate it but it's probably not worth it.
+
     if (parentMenuIndex === -1) {
       return this
     }
@@ -497,8 +595,14 @@ export class AppMenu {
 
     if (selectFirstItem) {
       // First selectable item.
+
       const selectedItem = ourMenuItem.menu.items.find(itemIsSelectable)
-      newOpenMenus.push({ ...ourMenuItem.menu, selectedItem })
+
+      newOpenMenus.push({
+        ...ourMenuItem.menu,
+
+        selectedItem,
+      })
     } else {
       newOpenMenus.push(ourMenuItem.menu)
     }
@@ -513,8 +617,10 @@ export class AppMenu {
    * @param menu - The menu which is to be closed, i.e. removed from the
    *               list of open menus.
    */
+
   public withClosedMenu(menu: IMenu) {
     // Root menu is always open and can't be closed
+
     if (!menu.id) {
       return this
     }
@@ -538,6 +644,7 @@ export class AppMenu {
    *               menus, all menus below this level will be pruned from
    *               the list of open menus.
    */
+
   public withLastMenu(menu: IMenu) {
     const ourMenuIndex = this.openMenus.findIndex(m => m.id === menu.id)
 
@@ -565,11 +672,14 @@ export class AppMenu {
    *
    * @param menuItem - The menu item which is to be selected.
    */
+
   public withSelectedItem(menuItem: MenuItem) {
     const ourMenuItem = this.menuItemById.get(menuItem.id)
 
     // The item that someone is trying to select no longer
+
     // exists, not much we can do about that.
+
     if (!ourMenuItem) {
       return this
     }
@@ -579,7 +689,9 @@ export class AppMenu {
     )
 
     // The menu which the selected item belongs to is no longer open,
+
     // not much we can do about that.
+
     if (parentMenuIndex === -1) {
       return this
     }
@@ -588,25 +700,42 @@ export class AppMenu {
 
     const parentMenu = newOpenMenus[parentMenuIndex]
 
-    newOpenMenus[parentMenuIndex] = { ...parentMenu, selectedItem: ourMenuItem }
+    newOpenMenus[parentMenuIndex] = {
+      ...parentMenu,
+
+      selectedItem: ourMenuItem,
+    }
 
     // All submenus below the active menu should have their selection cleared
+
     for (let i = parentMenuIndex + 1; i < newOpenMenus.length; i++) {
-      newOpenMenus[i] = { ...newOpenMenus[i], selectedItem: undefined }
+      newOpenMenus[i] = {
+        ...newOpenMenus[i],
+
+        selectedItem: undefined,
+      }
     }
 
     // Ensure that the path that lead us to the currently selected menu is
+
     // selected. i.e. all menus above the currently active menu should have
+
     // their selection reset to point to the currently active menu.
+
     for (let i = parentMenuIndex - 1; i >= 0; i--) {
       const menu = newOpenMenus[i]
+
       const childMenu = newOpenMenus[i + 1]
 
       const selectedItem = menu.items.find(
         item => item.type === 'submenuItem' && item.id === childMenu.id
       )
 
-      newOpenMenus[i] = { ...menu, selectedItem }
+      newOpenMenus[i] = {
+        ...menu,
+
+        selectedItem,
+      }
     }
 
     return new AppMenu(this.menu, newOpenMenus, this.menuItemById)
@@ -625,32 +754,48 @@ export class AppMenu {
    * @param menu - The menu which is to have its selection state
    *               cleared.
    */
+
   public withDeselectedMenu(menu: IMenu) {
     const ourMenuIndex = this.openMenus.findIndex(m => m.id === menu.id)
 
     // The menu that someone is trying to deselect is no longer open
+
     // so no need to worry about selection
+
     if (ourMenuIndex === -1) {
       return this
     }
 
     const ourMenu = this.openMenus[ourMenuIndex]
+
     const newOpenMenus = this.openMenus.slice()
 
-    newOpenMenus[ourMenuIndex] = { ...ourMenu, selectedItem: undefined }
+    newOpenMenus[ourMenuIndex] = {
+      ...ourMenu,
+
+      selectedItem: undefined,
+    }
 
     // Ensure that the path to the menu without an active selection is
+
     // selected. i.e. all menus above should have their selection reset
+
     // to point to the menu which no longer has an active selection.
+
     for (let i = ourMenuIndex - 1; i >= 0; i--) {
       const menu = newOpenMenus[i]
+
       const childMenu = newOpenMenus[i + 1]
 
       const selectedItem = menu.items.find(
         item => item.type === 'submenuItem' && item.id === childMenu.id
       )
 
-      newOpenMenus[i] = { ...menu, selectedItem }
+      newOpenMenus[i] = {
+        ...menu,
+
+        selectedItem,
+      }
     }
 
     return new AppMenu(this.menu, newOpenMenus, this.menuItemById)
@@ -661,6 +806,7 @@ export class AppMenu {
    * is reset. Resetting means that only the root menu is open and
    * all selection state is cleared.
    */
+
   public withReset() {
     return new AppMenu(this.menu, [this.menu], this.menuItemById)
   }

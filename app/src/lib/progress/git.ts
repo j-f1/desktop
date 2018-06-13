@@ -2,6 +2,7 @@
  * Identifies a particular subset of progress events from Git by
  * title.
  */
+
 export interface IProgressStep {
   /**
    * The title of the git progress event. By title we refer to the
@@ -16,6 +17,7 @@ export interface IProgressStep {
    *
    * In this case the title would be 'remote: Compressing objects'.
    */
+
   readonly title: string
 
   /**
@@ -25,18 +27,21 @@ export interface IProgressStep {
    * to a decimal value between 0 and 1 before being used to calculate
    * overall progress.
    */
+
   readonly weight: number
 }
 
 /**
  * The overall progress of one or more steps in a Git operation.
  */
+
 export interface IGitProgress {
   readonly kind: 'progress'
 
   /**
    * The overall percent of the operation
    */
+
   readonly percent: number
 
   /**
@@ -50,18 +55,22 @@ export interface IGitProgress {
    * Second, the percent in this instance is scaled in relation to any
    * other steps included in the progress parser.
    */
+
   readonly details: IGitProgressInfo
 }
 
 export interface IGitOutput {
   readonly kind: 'context'
+
   readonly percent: number
+
   readonly text: string
 }
 
 /**
  * A well-structured representation of a Git progress line.
  */
+
 export interface IGitProgressInfo {
   /**
    * The title of the git progress event. By title we refer to the
@@ -76,6 +85,7 @@ export interface IGitProgressInfo {
    *
    * In this case the title would be 'remote: Compressing objects'.
    */
+
   readonly title: string
 
   /**
@@ -90,6 +100,7 @@ export interface IGitProgressInfo {
    * In the progress line 'remote: Counting objects: 123' the value is 123.
    *
    */
+
   readonly value: number
 
   /**
@@ -104,6 +115,7 @@ export interface IGitProgressInfo {
    * In the progress line 'remote: Counting objects: 123' the total is undefined.
    *
    */
+
   readonly total?: number
 
   /**
@@ -119,6 +131,7 @@ export interface IGitProgressInfo {
    * In the progress line 'remote: Counting objects: 123' the percent is undefined.
    *
    */
+
   readonly percent?: number
 
   /**
@@ -128,12 +141,14 @@ export interface IGitProgressInfo {
    * This is denoted by a trailing ", done" string in the progress line.
    * Example: Checking out files:  100% (728/728), done
    */
+
   readonly done: boolean
 
   /**
    * The untouched raw text line that this instance was parsed from. Useful
    * for presenting the actual output from Git to the user.
    */
+
   readonly text: string
 }
 
@@ -147,6 +162,7 @@ export interface IGitProgressInfo {
  * A parser cannot be reused, it's mean to parse a single stderr stream
  * for Git.
  */
+
 export class GitProgressParser {
   private readonly steps: ReadonlyArray<IProgressStep>
 
@@ -156,6 +172,7 @@ export class GitProgressParser {
    * progress with the assumption that we've already seen the previous
    * steps.
    */
+
   private stepIndex = 0
 
   private lastPercent = 0
@@ -170,17 +187,21 @@ export class GitProgressParser {
    *                are considered completed and overall progress is adjusted
    *                accordingly.
    */
+
   public constructor(steps: ReadonlyArray<IProgressStep>) {
     if (!steps.length) {
       throw new Error('must specify at least one step')
     }
 
     // Scale the step weight so that they're all a percentage
+
     // adjusted to the total weight of all steps.
+
     const totalStepWeight = steps.reduce((sum, step) => sum + step.weight, 0)
 
     this.steps = steps.map(step => ({
       title: step.title,
+
       weight: step.weight / totalStepWeight,
     }))
   }
@@ -192,11 +213,18 @@ export class GitProgressParser {
    * instance if the line couldn't be parsed or if the title wasn't
    * registered with the parser.
    */
+
   public parse(line: string): IGitProgress | IGitOutput {
     const progress = parse(line)
 
     if (!progress) {
-      return { kind: 'context', text: line, percent: this.lastPercent }
+      return {
+        kind: 'context',
+
+        text: line,
+
+        percent: this.lastPercent,
+      }
     }
 
     let percent = 0
@@ -210,19 +238,32 @@ export class GitProgressParser {
         }
 
         this.stepIndex = i
+
         this.lastPercent = percent
 
-        return { kind: 'progress', percent, details: progress }
+        return {
+          kind: 'progress',
+
+          percent,
+          details: progress,
+        }
       } else {
         percent += step.weight
       }
     }
 
-    return { kind: 'context', text: line, percent: this.lastPercent }
+    return {
+      kind: 'context',
+
+      text: line,
+
+      percent: this.lastPercent,
+    }
   }
 }
 
 const percentRe = /^(\d{1,3})% \((\d+)\/(\d+)\)$/
+
 const valueOnlyRe = /^\d+$/
 
 /**
@@ -242,6 +283,7 @@ const valueOnlyRe = /^\d+$/
  * @returns An object containing well-structured information about the progress
  *          or null if the line could not be parsed as a Git progress line.
  */
+
 export function parse(line: string): IGitProgressInfo | null {
   const titleLength = line.lastIndexOf(': ')
 
@@ -254,7 +296,12 @@ export function parse(line: string): IGitProgressInfo | null {
   }
 
   const title = line.substr(0, titleLength)
-  const progressText = line.substr(title.length + 2).trim()
+
+  const progressText = line
+
+    .substr(title.length + 2)
+
+    .trim()
 
   if (!progressText.length) {
     return null
@@ -267,7 +314,9 @@ export function parse(line: string): IGitProgressInfo | null {
   }
 
   let value: number
+
   let total: number | undefined = undefined
+
   let percent: number | undefined = undefined
 
   if (valueOnlyRe.test(progressParts[0])) {
@@ -284,7 +333,9 @@ export function parse(line: string): IGitProgressInfo | null {
     }
 
     percent = parseInt(percentMatch[1], 10)
+
     value = parseInt(percentMatch[2], 10)
+
     total = parseInt(percentMatch[3], 10)
 
     if (isNaN(percent) || isNaN(value) || isNaN(total)) {
@@ -295,13 +346,23 @@ export function parse(line: string): IGitProgressInfo | null {
   let done = false
 
   // We don't parse throughput at the moment so let's just loop
+
   // through the remaining
+
   for (let i = 1; i < progressParts.length; i++) {
     if (progressParts[i] === 'done.') {
       done = true
+
       break
     }
   }
 
-  return { title, value, percent, total, done, text: line }
+  return {
+    title,
+    value,
+    percent,
+    total,
+    done,
+    text: line,
+  }
 }

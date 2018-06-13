@@ -1,7 +1,11 @@
 import { ExternalEditor, ExternalEditorError } from './shared'
+
 import { IFoundEditor } from './found-editor'
+
 import { getAvailableEditors as getAvailableEditorsDarwin } from './darwin'
+
 import { getAvailableEditors as getAvailableEditorsWindows } from './win32'
+
 import { getAvailableEditors as getAvailableEditorsLinux } from './linux'
 
 let editorCache: ReadonlyArray<IFoundEditor<ExternalEditor>> | null = null
@@ -10,6 +14,7 @@ let editorCache: ReadonlyArray<IFoundEditor<ExternalEditor>> | null = null
  * Resolve a list of installed editors on the user's machine, using the known
  * install identifiers that each OS supports.
  */
+
 export async function getAvailableEditors(): Promise<
   ReadonlyArray<IFoundEditor<ExternalEditor>>
 > {
@@ -19,16 +24,19 @@ export async function getAvailableEditors(): Promise<
 
   if (__DARWIN__) {
     editorCache = await getAvailableEditorsDarwin()
+
     return editorCache
   }
 
   if (__WIN32__) {
     editorCache = await getAvailableEditorsWindows()
+
     return editorCache
   }
 
   if (__LINUX__) {
     editorCache = await getAvailableEditorsLinux()
+
     return editorCache
   }
 
@@ -48,24 +56,32 @@ export async function getAvailableEditors(): Promise<
  * Will throw an error if no editors are found, or if the editor name cannot
  * be found (i.e. it has been removed).
  */
+
 export async function findEditorOrDefault(
   name: string | null
 ): Promise<IFoundEditor<ExternalEditor>> {
   const editors = await getAvailableEditors()
+
   if (editors.length === 0) {
     throw new ExternalEditorError(
       'No suitable editors installed for GitHub Desktop to launch. Install Atom for your platform and restart GitHub Desktop to try again.',
-      { suggestAtom: true }
+      {
+        suggestAtom: true,
+      }
     )
   }
 
   if (name) {
     const match = editors.find(p => p.editor === name) || null
+
     if (!match) {
       const menuItemName = __DARWIN__ ? 'Preferences' : 'Options'
+
       const message = `The editor '${name}' could not be found. Please open ${menuItemName} and choose an available editor.`
 
-      throw new ExternalEditorError(message, { openPreferences: true })
+      throw new ExternalEditorError(message, {
+        openPreferences: true,
+      })
     }
 
     return match

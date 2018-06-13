@@ -1,5 +1,7 @@
 import * as React from 'react'
+
 import { CSSTransitionGroup } from 'react-transition-group'
+
 import { WindowState } from '../../lib/window-state'
 
 interface IFullScreenInfoProps {
@@ -8,11 +10,14 @@ interface IFullScreenInfoProps {
 
 interface IFullScreenInfoState {
   readonly renderInfo: boolean
+
   readonly renderTransitionGroup: boolean
 }
 
 const transitionAppearDuration = 100
+
 const transitionLeaveDuration = 250
+
 const holdDuration = 3000
 
 /**
@@ -21,11 +26,13 @@ const holdDuration = 3000
  * other content (except for dialogs, we can't put ourselves on top of dialogs
  * easily at the moment).
  */
+
 export class FullScreenInfo extends React.Component<
   IFullScreenInfoProps,
   IFullScreenInfoState
 > {
   private infoDisappearTimeoutId: number | null = null
+
   private transitionGroupDisappearTimeoutId: number | null = null
 
   public constructor(props: IFullScreenInfoProps) {
@@ -33,17 +40,20 @@ export class FullScreenInfo extends React.Component<
 
     this.state = {
       renderInfo: false,
+
       renderTransitionGroup: false,
     }
   }
 
   public componentWillReceiveProps(nextProps: IFullScreenInfoProps) {
     // If the window state hasn't change we don't have to do anything
+
     if (nextProps.windowState === this.props.windowState) {
       return
     }
 
     // Clean up any stray timeout
+
     if (this.infoDisappearTimeoutId !== null) {
       window.clearTimeout(this.infoDisappearTimeoutId)
     }
@@ -65,24 +75,32 @@ export class FullScreenInfo extends React.Component<
 
       this.setState({
         renderTransitionGroup: true,
+
         renderInfo: true,
       })
     } else if (this.state.renderInfo || this.state.renderTransitionGroup) {
       // We're no longer in full-screen, let's get rid of the notification
+
       // immediately without any transitions.
+
       this.setState({
         renderTransitionGroup: false,
+
         renderInfo: false,
       })
     }
   }
 
   private onInfoDisappearTimeout = () => {
-    this.setState({ renderInfo: false })
+    this.setState({
+      renderInfo: false,
+    })
   }
 
   private onTransitionGroupDisappearTimeout = () => {
-    this.setState({ renderTransitionGroup: false })
+    this.setState({
+      renderTransitionGroup: false,
+    })
   }
 
   private renderFullScreenNotification() {

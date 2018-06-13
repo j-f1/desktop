@@ -24,6 +24,7 @@ function featureFlag(
 
   if (memoize) {
     const value = getter()
+
     return () => value
   } else {
     return getter
@@ -40,6 +41,7 @@ function featureFlag(
  *
  * Default: false on macOS, true on other platforms.
  */
+
 export const shouldRenderApplicationMenu = featureFlag(
   'should-render-application-menu',
   __DARWIN__ ? false : true,

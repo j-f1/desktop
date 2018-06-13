@@ -4,6 +4,7 @@
  * Ensures that the returned value is at least min and at most
  * (inclusive) max.
  */
+
 export function clamp(value: number, min: number, max: number): number {
   if (value < min) {
     return min

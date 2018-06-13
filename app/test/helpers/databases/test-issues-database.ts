@@ -7,6 +7,7 @@ export class TestIssuesDatabase extends IssuesDatabase {
 
   public async reset(): Promise<void> {
     await this.delete()
+
     await this.open()
   }
 }

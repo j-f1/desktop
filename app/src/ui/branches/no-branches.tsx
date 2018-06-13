@@ -1,5 +1,7 @@
 import * as React from 'react'
+
 import { encodePathAsUrl } from '../../lib/path'
+
 import { Button } from '../lib/button'
 
 const BlankSlateImage = encodePathAsUrl(
@@ -9,8 +11,11 @@ const BlankSlateImage = encodePathAsUrl(
 
 interface INoBranchesProps {
   /** The callback to invoke when the user wishes to create a new branch */
+
   readonly onCreateNewBranch: () => void
+
   /** True to display the UI elements for creating a new branch, false to hide them */
+
   readonly canCreateNewBranch: boolean
 }
 

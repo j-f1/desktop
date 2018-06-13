@@ -5,7 +5,10 @@ export function spawn(
   args: ReadonlyArray<string>
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = ChildProcess.spawn(cmd, args as string[], { shell: true })
+    const child = ChildProcess.spawn(cmd, args as string[], {
+      shell: true,
+    })
+
     let receivedData = ''
 
     child.on('error', reject)

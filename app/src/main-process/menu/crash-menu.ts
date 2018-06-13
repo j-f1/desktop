@@ -8,6 +8,7 @@ import { Menu } from 'electron'
  * menu items require the ui process to work we'll have to
  * disable them.
  */
+
 export function setCrashMenu() {
   const menu = Menu.getApplicationMenu()
 
@@ -42,5 +43,6 @@ function disable(item: Electron.MenuItem) {
   }
 
   item.enabled = false
+
   return false
 }

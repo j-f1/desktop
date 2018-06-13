@@ -1,4 +1,5 @@
 import { ITrailer, mergeTrailers } from './git/interpret-trailers'
+
 import { Repository } from '../models/repository'
 
 /**
@@ -14,6 +15,7 @@ import { Repository } from '../models/repository'
  *
  * See https://git-scm.com/docs/git-commit#_discussion
  */
+
 export async function formatCommitMessage(
   repository: Repository,
   summary: string,
@@ -21,12 +23,19 @@ export async function formatCommitMessage(
   trailers?: ReadonlyArray<ITrailer>
 ) {
   // Git always trim whitespace at the end of commit messages
+
   // so we concatenate the summary with the description, ensuring
+
   // that they're separated by two newlines. If we don't have a
+
   // description or if it consists solely of whitespace that'll
+
   // all get trimmed away and replaced with a single newline (since
+
   // all commit messages needs to end with a newline for git
+
   // interpret-trailers to work)
+
   const message = `${summary}\n\n${description || ''}\n`.replace(/\s+$/, '\n')
 
   return trailers !== undefined && trailers.length > 0

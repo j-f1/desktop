@@ -3,6 +3,7 @@
  * rect instances are structurally equal (i.e. all their individual
  * values are equal).
  */
+
 export function rectEquals(x: ClientRect, y: ClientRect) {
   if (x === y) {
     return true

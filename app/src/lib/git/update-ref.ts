@@ -1,4 +1,5 @@
 import { git } from './core'
+
 import { Repository } from '../../models/repository'
 
 /**
@@ -12,6 +13,7 @@ import { Repository } from '../../models/repository'
  * @param newValue   - The new value for the ref.
  * @param reason     - The reflog entry.
  */
+
 export async function updateRef(
   repository: Repository,
   ref: string,
@@ -33,6 +35,7 @@ export async function updateRef(
  * @param ref        - The ref to remove. Should be fully qualified, but may also be 'HEAD'.
  * @param reason     - The reflog entry.
  */
+
 export async function deleteRef(
   repository: Repository,
   ref: string,

@@ -3,8 +3,10 @@
  * This object is useless without the startIndex
  * information contained within the ILineTokens interface.
  */
+
 export interface IToken {
   readonly length: number
+
   readonly token: string
 }
 
@@ -13,6 +15,7 @@ export interface IToken {
  * start of the line) containing the tokens parsed from
  * that line.
  */
+
 export interface ILineTokens {
   [startIndex: number]: IToken
 }
@@ -27,6 +30,7 @@ export interface ILineTokens {
  * highlighting in diffs. See the diff syntax mode for more
  * details on how this object is to be interpreted.
  */
+
 export interface ITokens {
   [line: number]: ILineTokens
 }
@@ -35,23 +39,27 @@ export interface ITokens {
  * Represents a request to detect the language and highlight
  * the contents provided.
  */
+
 export interface IHighlightRequest {
   /**
    * The width of a tab character. Defaults to 4. Used by the
    * stream to count columns. See CodeMirror's StringStream
    * class for more details.
    */
+
   readonly tabSize: number
 
   /**
    * The file extension of the path in question as returned
    * by node's extname() function (i.e. with a leading dot).
    */
+
   readonly extension: string
 
   /**
    * The actual contents which is to be used for highlighting.
    */
+
   readonly contents: string
 
   /**
@@ -63,6 +71,7 @@ export interface IHighlightRequest {
    * to be serialized over the IPC boundary) and, for stateless
    * modes we can significantly speed up the highlight process.
    */
+
   readonly lines?: Array<number>
 
   /**
@@ -71,5 +80,6 @@ export interface IHighlightRequest {
    * produced it, prefixed with "cm-m-". For example, tokens from
    * the XML mode will get the cm-m-xml class.
    */
+
   readonly addModeClass?: boolean
 }

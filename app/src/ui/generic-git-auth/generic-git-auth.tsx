@@ -1,18 +1,26 @@
 import * as React from 'react'
 
 import { TextBox } from '../lib/text-box'
+
 import { Row } from '../lib/row'
+
 import { Button } from '../lib/button'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Dialog, DialogContent, DialogFooter } from '../dialog'
+
 import { Monospaced } from '../lib/monospaced'
+
 import { RetryAction } from '../../lib/retry-actions'
 
 interface IGenericGitAuthenticationProps {
   /** The hostname with which the user tried to authenticate. */
+
   readonly hostname: string
 
   /** The function to call when the user saves their credentials. */
+
   readonly onSave: (
     hostname: string,
     username: string,
@@ -21,18 +29,22 @@ interface IGenericGitAuthenticationProps {
   ) => void
 
   /** The function to call when the user dismisses the dialog. */
+
   readonly onDismiss: () => void
 
   /** The action to retry after getting credentials. */
+
   readonly retryAction: RetryAction
 }
 
 interface IGenericGitAuthenticationState {
   readonly username: string
+
   readonly password: string
 }
 
 /** Shown to enter the credentials to authenticate to a generic git server. */
+
 export class GenericGitAuthentication extends React.Component<
   IGenericGitAuthenticationProps,
   IGenericGitAuthenticationState
@@ -40,11 +52,16 @@ export class GenericGitAuthentication extends React.Component<
   public constructor(props: IGenericGitAuthenticationProps) {
     super(props)
 
-    this.state = { username: '', password: '' }
+    this.state = {
+      username: '',
+
+      password: '',
+    }
   }
 
   public render() {
     const disabled = !this.state.password.length && !this.state.username.length
+
     return (
       <Dialog
         id="generic-git-auth"
@@ -91,11 +108,15 @@ export class GenericGitAuthentication extends React.Component<
   }
 
   private onUsernameChange = (value: string) => {
-    this.setState({ username: value })
+    this.setState({
+      username: value,
+    })
   }
 
   private onPasswordChange = (value: string) => {
-    this.setState({ password: value })
+    this.setState({
+      password: value,
+    })
   }
 
   private save = () => {

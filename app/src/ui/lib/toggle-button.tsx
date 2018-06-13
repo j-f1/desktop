@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import * as classNames from 'classnames'
 
 interface IToggleButtonProps {
@@ -7,18 +8,23 @@ interface IToggleButtonProps {
    *
    * If not specified, button state defaults to false (unchecked).
    */
+
   readonly checked?: boolean
 
   /** A function to call when the checked state of the component changes */
+
   readonly onClick?: (checked: boolean) => void
 
   /** The title of the button. */
+
   readonly children?: string
 
   /** Is the button disabled? */
+
   readonly disabled?: boolean
 
   /** CSS class names */
+
   readonly className?: string
 
   /**
@@ -28,15 +34,18 @@ interface IToggleButtonProps {
    * handling of the `ref` type into some ungodly monstrosity. Hopefully someday
    * this will be unnecessary.
    */
+
   readonly onButtonRef?: (instance: HTMLButtonElement | null) => void
 }
 
 interface IToggleButtonState {
   /** track the internal state of the toggle button */
+
   readonly isChecked: boolean
 }
 
 /** A button component that can be unchecked or checked by the user. */
+
 export class ToggleButton extends React.Component<
   IToggleButtonProps,
   IToggleButtonState
@@ -44,10 +53,13 @@ export class ToggleButton extends React.Component<
   public constructor(props: IToggleButtonProps) {
     super(props)
 
-    this.state = { isChecked: props.checked || false }
+    this.state = {
+      isChecked: props.checked || false,
+    }
   }
 
   /** check the current state of the toggle button */
+
   private isChecked(): boolean {
     return this.props.checked !== undefined
       ? this.props.checked
@@ -56,6 +68,7 @@ export class ToggleButton extends React.Component<
 
   public render() {
     const classNameState = this.isChecked() ? 'checked' : 'unchecked'
+
     const className = classNames(
       'button-component',
       this.props.className,
@@ -79,9 +92,11 @@ export class ToggleButton extends React.Component<
     event.preventDefault()
 
     const isChecked = !this.isChecked()
+
     this.setState({ isChecked })
 
     const onClick = this.props.onClick
+
     if (onClick) {
       onClick(isChecked)
     }

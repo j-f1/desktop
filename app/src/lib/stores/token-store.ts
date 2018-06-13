@@ -12,8 +12,4 @@ function deleteItem(key: string, login: string) {
   return keytar.deletePassword(key, login)
 }
 
-export const TokenStore = {
-  setItem,
-  getItem,
-  deleteItem,
-}
+export const TokenStore = { setItem, getItem, deleteItem }

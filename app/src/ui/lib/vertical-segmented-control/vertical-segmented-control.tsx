@@ -1,20 +1,25 @@
 import * as React from 'react'
+
 import { createUniqueId, releaseUniqueId } from '../id-pool'
+
 import { SegmentedItem } from './segmented-item'
 
 /**
  * An item which is rendered as a choice in the segmented control.
  */
+
 export interface ISegmentedItem {
   /**
    * The title for the segmented item. This should be kept short.
    */
+
   readonly title: string
 
   /**
    * An optional description which explains the consequences of
    * selecting this item.
    */
+
   readonly description?: string
 }
 
@@ -24,6 +29,7 @@ interface IVerticalSegmentedControlProps {
    * as a legend element inside a field group. Consumers are strongly
    * encouraged to use this in order to aid accessibility.
    */
+
   readonly label?: string
 
   /**
@@ -31,12 +37,14 @@ interface IVerticalSegmentedControlProps {
    * An item must have a title and may (encouraged) also have a description
    * which explains what the consequences of selecting the items are.
    */
+
   readonly items: ReadonlyArray<ISegmentedItem>
 
   /**
    * The currently selected item, denoted by its position in the items
    * array.
    */
+
   readonly selectedIndex: number
 
   /**
@@ -44,6 +52,7 @@ interface IVerticalSegmentedControlProps {
    * as a result of a click using a pointer device or as a result of the user
    * hitting an up/down while the component has focus.
    */
+
   readonly onSelectionChanged: (selectedIndex: number) => void
 }
 
@@ -53,6 +62,7 @@ interface IVerticalSegmentedControlState {
    * it from the label element. This is generated once via the id pool when the
    * component is mounted and then released once the component unmounts.
    */
+
   readonly listId?: string
 }
 
@@ -60,22 +70,28 @@ interface IVerticalSegmentedControlState {
  * A component for presenting a small number of choices to the user. Equivalent
  * of a radio button group but styled as a vertically oriented segmented control.
  */
+
 export class VerticalSegmentedControl extends React.Component<
   IVerticalSegmentedControlProps,
   IVerticalSegmentedControlState
 > {
   private listRef: HTMLUListElement | null = null
+
   private formRef: HTMLFormElement | null = null
 
   public constructor(props: IVerticalSegmentedControlProps) {
     super(props)
+
     this.state = {}
   }
 
   private updateListId(label: string | undefined) {
     if (this.state.listId) {
       releaseUniqueId(this.state.listId)
-      this.setState({ listId: undefined })
+
+      this.setState({
+        listId: undefined,
+      })
     }
 
     if (label) {
@@ -130,18 +146,24 @@ export class VerticalSegmentedControl extends React.Component<
       if (this.props.selectedIndex > 0) {
         this.props.onSelectionChanged(this.props.selectedIndex - 1)
       }
+
       event.preventDefault()
     } else if (event.key === 'ArrowDown') {
       if (this.props.selectedIndex < this.props.items.length - 1) {
         this.props.onSelectionChanged(this.props.selectedIndex + 1)
       }
+
       event.preventDefault()
     } else if (event.key === 'Enter') {
       const form = this.formRef
+
       if (form) {
         // NB: In order to play nicely with React's custom event dispatching,
+
         // we dispatch an event instead of calling `submit` directly on the
+
         // form.
+
         form.dispatchEvent(new Event('submit'))
       }
     }
@@ -167,6 +189,7 @@ export class VerticalSegmentedControl extends React.Component<
     }
 
     const selectedIndex = this.props.selectedIndex
+
     const label = this.props.label ? (
       <legend onClick={this.onLegendClick}>{this.props.label}</legend>
     ) : (
@@ -176,8 +199,11 @@ export class VerticalSegmentedControl extends React.Component<
     const activeDescendant = this.getListItemId(selectedIndex)
 
     // Using a fieldset with a legend seems to be the way to go here since
+
     // we can't use a label to point to a list (https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#Form_labelable).
+
     // See http://stackoverflow.com/a/13273907/2114
+
     return (
       <fieldset className="vertical-segmented-control" ref={this.onFieldsetRef}>
         {label}

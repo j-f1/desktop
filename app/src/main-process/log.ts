@@ -1,8 +1,11 @@
 import * as Path from 'path'
+
 import * as winston from 'winston'
 
 import { getLogDirectoryPath } from '../lib/logging/get-log-path'
+
 import { LogLevel } from '../lib/logging/log-level'
+
 import { ensureDir } from 'fs-extra'
 
 require('winston-daily-rotate-file')
@@ -11,12 +14,16 @@ require('winston-daily-rotate-file')
  * The maximum number of log files we should have on disk before pruning old
  * ones.
  */
+
 const MaxLogFiles = 14
 
 /** resolve the log file location based on the current channel */
+
 function getLogFilePath(directory: string): string {
   const channel = __RELEASE_CHANNEL__
+
   const fileName = `desktop.${channel}.log`
+
   return Path.join(directory, fileName)
 }
 
@@ -30,16 +37,25 @@ function getLogFilePath(directory: string): string {
  *             path such that passing a path '/logs/foo' will end up
  *             writing to '/logs/2017-05-17.foo'
  */
+
 function initializeWinston(path: string): winston.LogMethod {
   const fileLogger = new winston.transports.DailyRotateFile({
     filename: path,
+
     // We'll do this ourselves, thank you
+
     handleExceptions: false,
+
     json: false,
+
     datePattern: 'yyyy-MM-dd.',
+
     prepend: true,
+
     // log everything interesting (info and up)
+
     level: 'info',
+
     maxFiles: MaxLogFiles,
   })
 
@@ -65,6 +81,7 @@ let loggerPromise: Promise<winston.LogMethod> | null = null
  *          it accepts a log level, a message and an optional callback
  *          for when the event has been written to all destinations.
  */
+
 function getLogger(): Promise<winston.LogMethod> {
   if (loggerPromise) {
     return loggerPromise
@@ -77,11 +94,13 @@ function getLogger(): Promise<winston.LogMethod> {
       .then(() => {
         try {
           const logger = initializeWinston(getLogFilePath(logDirectory))
+
           resolve(logger)
         } catch (err) {
           reject(err)
         }
       })
+
       .catch(error => {
         reject(error)
       })
@@ -99,9 +118,11 @@ function getLogger(): Promise<winston.LogMethod> {
  * resolves when the log entry has been written to all transports
  * or if the entry could not be written due to an error.
  */
+
 export async function log(level: LogLevel, message: string) {
   try {
     const logger = await getLogger()
+
     await new Promise<void>((resolve, reject) => {
       logger(level, message, error => {
         if (error) {

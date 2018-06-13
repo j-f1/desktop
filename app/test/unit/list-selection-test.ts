@@ -9,8 +9,10 @@ describe('list-selection', () => {
     it('returns first row when selecting down outside list (filter text)', () => {
       const selectedRow = findNextSelectableRow(rowCount, {
         direction: 'down',
+
         row: -1,
       })
+
       expect(selectedRow).to.equal(0)
     })
 
@@ -19,6 +21,7 @@ describe('list-selection', () => {
         rowCount,
         {
           direction: 'down',
+
           row: -1,
         },
         row => {
@@ -29,23 +32,29 @@ describe('list-selection', () => {
           }
         }
       )
+
       expect(selectedRow).to.equal(1)
     })
 
     it('returns first row when selecting down from last row', () => {
       const lastRow = rowCount - 1
+
       const selectedRow = findNextSelectableRow(rowCount, {
         direction: 'down',
+
         row: lastRow,
       })
+
       expect(selectedRow).to.equal(0)
     })
 
     it('returns last row when selecting up from top row', () => {
       const selectedRow = findNextSelectableRow(rowCount, {
         direction: 'up',
+
         row: 0,
       })
+
       expect(selectedRow).to.equal(4)
     })
   })

@@ -5,24 +5,39 @@ import {
   DiffLine,
   DiffLineType,
 } from '../models/diff'
+
 import { assertNever } from '../lib/fatal-error'
 
 // https://en.wikipedia.org/wiki/Diff_utility
+
 //
+
 // @@ -l,s +l,s @@ optional section heading
+
 //
+
 // The hunk range information contains two hunk ranges. The range for the hunk of the original
+
 // file is preceded by a minus symbol, and the range for the new file is preceded by a plus
+
 // symbol. Each hunk range is of the format l,s where l is the starting line number and s is
+
 // the number of lines the change hunk applies to for each respective file.
+
 //
+
 // In many versions of GNU diff, each range can omit the comma and trailing value s,
+
 // in which case s defaults to 1
+
 const diffHeaderRe = /^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/
 
 const DiffPrefixAdd: '+' = '+'
+
 const DiffPrefixDelete: '-' = '-'
+
 const DiffPrefixContext: ' ' = ' '
+
 const DiffPrefixNoNewline: '\\' = '\\'
 
 type DiffLinePrefix =
@@ -30,10 +45,14 @@ type DiffLinePrefix =
   | typeof DiffPrefixDelete
   | typeof DiffPrefixContext
   | typeof DiffPrefixNoNewline
+
 const DiffLinePrefixChars: Set<DiffLinePrefix> = new Set([
   DiffPrefixAdd,
+
   DiffPrefixDelete,
+
   DiffPrefixContext,
+
   DiffPrefixNoNewline,
 ])
 
@@ -43,6 +62,7 @@ interface IDiffHeaderInfo {
    * that a diff couldn't be produced due to the contents of the
    * new and/or old file was binary.
    */
+
   readonly isBinary: boolean
 }
 
@@ -51,6 +71,7 @@ interface IDiffHeaderInfo {
  *
  * See https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html
  */
+
 export class DiffParser {
   /**
    * Line start pointer.
@@ -58,6 +79,7 @@ export class DiffParser {
    * The offset into the text property where the current line starts (ie either zero
    * or one character ahead of the last newline character).
    */
+
   private ls!: number
 
   /**
@@ -66,11 +88,13 @@ export class DiffParser {
    * The offset into the text property where the current line ends (ie it points to
    * the newline character) or -1 if the line boundary hasn't been determined yet
    */
+
   private le!: number
 
   /**
    * The text buffer containing the raw, unified diff output to be parsed
    */
+
   private text!: string
 
   public constructor() {
@@ -82,9 +106,12 @@ export class DiffParser {
    *
    * This is done automatically at the end of each parse run.
    */
+
   private reset() {
     this.ls = 0
+
     this.le = -1
+
     this.text = ''
   }
 
@@ -95,10 +122,12 @@ export class DiffParser {
    * Returns true if successful or false if the end of the diff
    * has been reached.
    */
+
   private nextLine(): boolean {
     this.ls = this.le + 1
 
     // We've reached the end of the diff
+
     if (this.ls >= this.text.length) {
       return false
     }
@@ -106,13 +135,17 @@ export class DiffParser {
     this.le = this.text.indexOf('\n', this.ls)
 
     // If we can't find the next newline character we'll put our
+
     // end pointer at the end of the diff string
+
     if (this.le === -1) {
       this.le = this.text.length
     }
 
     // We've succeeded if there's anything to read in between the
+
     // start and the end
+
     return this.ls !== this.le
   }
 
@@ -121,16 +154,19 @@ export class DiffParser {
    * of the raw diff text. Returns null if end of diff was
    * reached.
    */
+
   private readLine(): string | null {
     return this.nextLine() ? this.text.substring(this.ls, this.le) : null
   }
 
   /** Tests if the current line starts with the given search text */
+
   private lineStartsWith(searchString: string): boolean {
     return this.text.startsWith(searchString, this.ls)
   }
 
   /** Tests if the current line ends with the given search text */
+
   private lineEndsWith(searchString: string): boolean {
     return this.text.endsWith(searchString, this.le)
   }
@@ -140,8 +176,10 @@ export class DiffParser {
    * advancing the internal state. Returns null if advancing
    * would mean reaching the end of the diff.
    */
+
   private peek(): string | null {
     const p = this.le + 1
+
     return p < this.text.length ? this.text[p] : null
   }
 
@@ -162,21 +200,30 @@ export class DiffParser {
    * the end of the diff was reached before the +++ line could be
    * found (which is a valid state).
    */
+
   private parseDiffHeader(): IDiffHeaderInfo | null {
     // TODO: There's information in here that we might want to
+
     // capture, such as mode changes
+
     while (this.nextLine()) {
       if (this.lineStartsWith('Binary files ') && this.lineEndsWith('differ')) {
-        return { isBinary: true }
+        return {
+          isBinary: true,
+        }
       }
 
       if (this.lineStartsWith('+++')) {
-        return { isBinary: false }
+        return {
+          isBinary: false,
+        }
       }
     }
 
     // It's not an error to not find the +++ line, see the
+
     // 'parses diff of empty file' test in diff-parser-tests.ts
+
     return null
   }
 
@@ -187,12 +234,14 @@ export class DiffParser {
    * an error if no default value was provided. If the captured
    * string can't be converted to a number an error will be thrown.
    */
+
   private numberFromGroup(
     m: RegExpMatchArray,
     group: number,
     defaultValue: number | null = null
   ): number {
     const str = m[group]
+
     if (!str) {
       if (!defaultValue) {
         throw new Error(
@@ -227,16 +276,22 @@ export class DiffParser {
    *
    * Where everything after the last @@ is what's known as the hunk, or section, heading
    */
+
   private parseHunkHeader(line: string): DiffHunkHeader {
     const m = diffHeaderRe.exec(line)
+
     if (!m) {
       throw new Error(`Invalid hunk header format: '${line}'`)
     }
 
     // If endLines are missing default to 1, see diffHeaderRe docs
+
     const oldStartLine = this.numberFromGroup(m, 1)
+
     const oldLineCount = this.numberFromGroup(m, 2, 1)
+
     const newStartLine = this.numberFromGroup(m, 3)
+
     const newLineCount = this.numberFromGroup(m, 4, 1)
 
     return new DiffHunkHeader(
@@ -255,10 +310,14 @@ export class DiffParser {
    * of that string is one of the allowed prefix characters for diff
    * lines (ie lines in between hunk headers).
    */
+
   private parseLinePrefix(c: string | null): DiffLinePrefix | null {
     // Since we know that DiffLinePrefixChars and the DiffLinePrefix type
+
     // include the same characters we can tell the type system that we
+
     // now know that c[0] is one of the characters in the DifflinePrefix set
+
     if (c && c.length && (DiffLinePrefixChars as Set<string>).has(c[0])) {
       return c[0] as DiffLinePrefix
     }
@@ -280,19 +339,24 @@ export class DiffParser {
    *                      have no real meaning in the context of a diff and
    *                      are only used to aid the app in line-selections.
    */
+
   private parseHunk(linesConsumed: number): DiffHunk {
     const headerLine = this.readLine()
+
     if (!headerLine) {
       throw new Error('Expected hunk header but reached end of diff')
     }
 
     const header = this.parseHunkHeader(headerLine)
+
     const lines = new Array<DiffLine>()
+
     lines.push(new DiffLine(headerLine, DiffLineType.Hunk, null, null))
 
     let c: DiffLinePrefix | null
 
     let rollingDiffBeforeCounter = header.oldStartLine
+
     let rollingDiffAfterCounter = header.newStartLine
 
     while ((c = this.parseLinePrefix(this.peek()))) {
@@ -303,13 +367,20 @@ export class DiffParser {
       }
 
       // A marker indicating that the last line in the original or the new file
+
       // is missing a trailing newline. In other words, the presence of this marker
+
       // means that the new and/or original file lacks a trailing newline.
+
       //
+
       // When we find it we have to look up the previous line and set the
+
       // noTrailingNewLine flag
+
       if (c === DiffPrefixNoNewline) {
         // See https://github.com/git/git/blob/21f862b498925194f8f1ebe8203b7a7df756555b/apply.c#L1725-L1732
+
         if (line.length < 12) {
           throw new Error(
             `Expected no newline at end of file marker but got ${line}`
@@ -317,7 +388,9 @@ export class DiffParser {
         }
 
         const previousLineIndex = lines.length - 1
+
         const previousLine = lines[previousLineIndex]
+
         lines[previousLineIndex] = previousLine.withNoTrailingNewLine(true)
 
         continue
@@ -372,6 +445,7 @@ export class DiffParser {
    *             or any other git plumbing command that produces unified
    *             diffs.
    */
+
   public parse(text: string): IRawDiff {
     this.text = text
 
@@ -379,34 +453,63 @@ export class DiffParser {
       const headerInfo = this.parseDiffHeader()
 
       const headerEnd = this.le
+
       const header = this.text.substring(0, headerEnd)
 
       // empty diff
+
       if (!headerInfo) {
-        return { header, contents: '', hunks: [], isBinary: false }
+        return {
+          header,
+          contents: '',
+
+          hunks: [],
+
+          isBinary: false,
+        }
       }
 
       if (headerInfo.isBinary) {
-        return { header, contents: '', hunks: [], isBinary: true }
+        return {
+          header,
+          contents: '',
+
+          hunks: [],
+
+          isBinary: true,
+        }
       }
 
       const hunks = new Array<DiffHunk>()
+
       let linesConsumed = 0
 
       do {
         const hunk = this.parseHunk(linesConsumed)
+
         hunks.push(hunk)
+
         linesConsumed += hunk.lines.length
       } while (this.peek())
 
       const contents = this.text
+
         .substring(headerEnd + 1, this.le)
+
         // Note that this simply returns a reference to the
+
         // substring if no match is found, it does not create
+
         // a new string instance.
+
         .replace(/\n\\ No newline at end of file/g, '')
 
-      return { header, contents, hunks, isBinary: headerInfo.isBinary }
+      return {
+        header,
+        contents,
+        hunks,
+        isBinary: headerInfo.isBinary,
+      }
     } finally {
       this.reset()
     }

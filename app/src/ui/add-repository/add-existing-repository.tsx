@@ -1,27 +1,40 @@
 import { remote } from 'electron'
+
 import * as React from 'react'
 
 import { Dispatcher } from '../../lib/dispatcher'
+
 import { isGitRepository } from '../../lib/git'
+
 import { Button } from '../lib/button'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { TextBox } from '../lib/text-box'
+
 import { Row } from '../lib/row'
+
 import { Dialog, DialogContent, DialogFooter } from '../dialog'
+
 import { Octicon, OcticonSymbol } from '../octicons'
+
 import { LinkButton } from '../lib/link-button'
+
 import { PopupType } from '../../lib/app-state'
+
 import * as Path from 'path'
 
 import untildify = require('untildify')
 
 interface IAddExistingRepositoryProps {
   readonly dispatcher: Dispatcher
+
   readonly onDismissed: () => void
 
   /** An optional path to prefill the path text box with.
    * Defaults to the empty string if not defined.
    */
+
   readonly path?: string
 }
 
@@ -37,6 +50,7 @@ interface IAddExistingRepositoryState {
    * If set to false the user will be prevented from submitting this dialog
    * and given the option to create a new repository instead.
    */
+
   readonly isRepository: boolean
 
   /**
@@ -47,10 +61,12 @@ interface IAddExistingRepositoryState {
    * we don't toggle visibility of the warning message until it's really necessary, preventing
    * flickering for our users as they type in a path.
    */
+
   readonly showNonGitRepositoryWarning: boolean
 }
 
 /** The component for adding an existing local repository. */
+
 export class AddExistingRepository extends React.Component<
   IAddExistingRepositoryProps,
   IAddExistingRepositoryState
@@ -63,26 +79,36 @@ export class AddExistingRepository extends React.Component<
     this.state = {
       path,
       isRepository: false,
+
       showNonGitRepositoryWarning: false,
     }
   }
 
   public async componentDidMount() {
     const pathToCheck = this.state.path
+
     // We'll only have a path at this point if the dialog was opened with a path
+
     // to prefill.
+
     if (pathToCheck.length < 1) {
       return
     }
 
     const isRepository = await isGitRepository(pathToCheck)
+
     // The path might have changed while we were checking, in which case we
+
     // don't care about the result anymore.
+
     if (this.state.path !== pathToCheck) {
       return
     }
 
-    this.setState({ isRepository, showNonGitRepositoryWarning: !isRepository })
+    this.setState({
+      isRepository,
+      showNonGitRepositoryWarning: !isRepository,
+    })
   }
 
   private renderWarning() {
@@ -152,11 +178,13 @@ export class AddExistingRepository extends React.Component<
     const directory: string[] | null = remote.dialog.showOpenDialog({
       properties: ['createDirectory', 'openDirectory'],
     })
+
     if (!directory) {
       return
     }
 
     const path = directory[0]
+
     const isRepository = await isGitRepository(path)
 
     this.setState({
@@ -174,12 +202,14 @@ export class AddExistingRepository extends React.Component<
     this.props.onDismissed()
 
     const resolvedPath = this.resolvedPath(this.state.path)
+
     const repositories = await this.props.dispatcher.addRepositories([
       resolvedPath,
     ])
 
     if (repositories && repositories.length) {
       const repository = repositories[0]
+
       this.props.dispatcher.selectRepository(repository)
     }
   }
@@ -189,6 +219,7 @@ export class AddExistingRepository extends React.Component<
 
     return this.props.dispatcher.showPopup({
       type: PopupType.CreateRepository,
+
       path: resolvedPath,
     })
   }

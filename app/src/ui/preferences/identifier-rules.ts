@@ -10,6 +10,7 @@ export function disallowedCharacters(values: string): string | null {
       return null
     }
   }
+
   return values
 }
 
@@ -20,17 +21,28 @@ function disallowedCharacter(value: string): boolean {
 
   const disallowedCharacters = [
     '.',
+
     ',',
+
     ':',
+
     ';',
+
     '<',
+
     '>',
+
     '"',
+
     '\\',
+
     "'",
+
     ' ',
   ]
+
   const hasDisallowedCharacter = disallowedCharacters.indexOf(value) >= 0
+
   const hasDisallowedAsciiCharacter = value.charCodeAt(0) <= 32
 
   return hasDisallowedCharacter || hasDisallowedAsciiCharacter

@@ -13,6 +13,7 @@ function getItemId(template: Electron.MenuItemConstructorOptions) {
  * Note that this does not do anything to prevent the case where items have
  * explicitly been given duplicate ids.
  */
+
 export function ensureItemIds(
   template: ReadonlyArray<Electron.MenuItemConstructorOptions>,
   prefix = '@',
@@ -20,24 +21,30 @@ export function ensureItemIds(
 ) {
   for (const item of template) {
     let counter = 0
+
     let id = item.id
 
     // Automatically generate an id if one hasn't been explicitly provided
+
     if (!id) {
       // Ensure that multiple items with the same key gets suffixed with a number
+
       // i.e. @.separator, @.separator1 @.separator2 etc
+
       do {
         id = `${prefix}.${getItemId(item)}${counter++ || ''}`
       } while (seenIds.has(id))
     }
 
     item.id = id
+
     seenIds.add(id)
 
     if (item.submenu) {
       const subMenuTemplate = item.submenu as ReadonlyArray<
         Electron.MenuItemConstructorOptions
       >
+
       ensureItemIds(subMenuTemplate, item.id, seenIds)
     }
   }

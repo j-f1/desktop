@@ -4,9 +4,13 @@ import {
   IGitExecutionOptions,
   gitNetworkArguments,
 } from './core'
+
 import { Repository } from '../../models/repository'
+
 import { PullProgressParser, executionOptionsWithProgress } from '../progress'
+
 import { IPullProgress } from '../app-state'
+
 import {
   IGitAccount,
   envForAuthentication,
@@ -26,6 +30,7 @@ import {
  *                           the '--progress' command line flag for
  *                           'git pull'.
  */
+
 export async function pull(
   repository: Repository,
   account: IGitAccount | null,
@@ -34,21 +39,31 @@ export async function pull(
 ): Promise<void> {
   let opts: IGitExecutionOptions = {
     env: envForAuthentication(account),
+
     expectedErrors: AuthenticationErrors,
   }
 
   if (progressCallback) {
     const title = `Pulling ${remote}`
+
     const kind = 'pull'
 
     opts = await executionOptionsWithProgress(
-      { ...opts, trackLFSProgress: true },
+      {
+        ...opts,
+
+        trackLFSProgress: true,
+      },
       new PullProgressParser(),
       progress => {
         // In addition to progress output from the remote end and from
+
         // git itself, the stderr output from pull contains information
+
         // about ref updates. We don't need to bring those into the progress
+
         // stream so we'll just punt on anything we don't know about for now.
+
         if (progress.kind === 'context') {
           if (!progress.text.startsWith('remote: Counting objects')) {
             return
@@ -65,7 +80,14 @@ export async function pull(
     )
 
     // Initial progress
-    progressCallback({ kind, title, value: 0, remote })
+
+    progressCallback({
+      kind,
+      title,
+      value: 0,
+
+      remote,
+    })
   }
 
   const args = progressCallback

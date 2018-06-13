@@ -1,7 +1,11 @@
 import { git, gitNetworkArguments } from './core'
+
 import { getBranches } from './for-each-ref'
+
 import { Repository } from '../../models/repository'
+
 import { Branch, BranchType } from '../../models/branch'
+
 import { IGitAccount, envForAuthentication } from './authentication'
 
 /**
@@ -13,6 +17,7 @@ import { IGitAccount, envForAuthentication } from './authentication'
  *                     on, or undefined if the branch should be created based
  *                     off of the current state of HEAD
  */
+
 export async function createBranch(
   repository: Repository,
   name: string,
@@ -22,17 +27,21 @@ export async function createBranch(
 
   try {
     await git(args, repository.path, 'createBranch')
+
     const branches = await getBranches(repository, `refs/heads/${name}`)
+
     if (branches.length > 0) {
       return branches[0]
     }
   } catch (err) {
     log.error('createBranch failed', err)
   }
+
   return null
 }
 
 /** Rename the given branch to a new name. */
+
 export async function renameBranch(
   repository: Repository,
   branch: Branch,
@@ -49,6 +58,7 @@ export async function renameBranch(
  * Delete the branch. If the branch has a remote branch and `includeRemote` is true, it too will be
  * deleted. Silently deletes local branch if remote one is already deleted.
  */
+
 export async function deleteBranch(
   repository: Repository,
   branch: Branch,
@@ -79,15 +89,22 @@ export async function deleteBranch(
   if (branchExistsOnRemote) {
     const args = [
       ...gitNetworkArguments,
+
       'push',
+
       remote,
+
       `:${branch.nameWithoutRemote}`,
     ]
 
-    const opts = { env: envForAuthentication(account) }
+    const opts = {
+      env: envForAuthentication(account),
+    }
 
     // If the user is not authenticated, the push is going to fail
+
     // Let this propagate and leave it to the caller to handle
+
     await git(args, repository.path, 'deleteRemoteBranch', opts)
   }
 
@@ -102,17 +119,26 @@ async function checkIfBranchExistsOnRemote(
 ): Promise<boolean> {
   const args = [
     ...gitNetworkArguments,
+
     'ls-remote',
+
     '--heads',
+
     remote,
+
     branch.nameWithoutRemote,
   ]
-  const opts = { env: envForAuthentication(account) }
+
+  const opts = {
+    env: envForAuthentication(account),
+  }
+
   const result = await git(
     args,
     repository.path,
     'checkRemoteBranchExistence',
     opts
   )
+
   return result.stdout.length > 0
 }

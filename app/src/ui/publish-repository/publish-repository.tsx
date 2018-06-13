@@ -1,38 +1,53 @@
 import * as React from 'react'
+
 import { Account } from '../../models/account'
+
 import { API, IAPIUser } from '../../lib/api'
+
 import { TextBox } from '../lib/text-box'
+
 import { Select } from '../lib/select'
+
 import { DialogContent } from '../dialog'
+
 import { Row } from '../lib/row'
+
 import { merge } from '../../lib/merge'
+
 import { caseInsensitiveCompare } from '../../lib/compare'
 
 interface IPublishRepositoryProps {
   /** The user to use for publishing. */
+
   readonly account: Account
 
   /** The settings to use when publishing the repository. */
+
   readonly settings: IPublishRepositorySettings
 
   /** The function called when any of the publish settings are changed. */
+
   readonly onSettingsChanged: (settings: IPublishRepositorySettings) => void
 }
 
 export interface IPublishRepositorySettings {
   /** The name to use when publishing the repository. */
+
   readonly name: string
 
   /** The repository's description. */
+
   readonly description: string
 
   /** Should the repository be private? */
+
   readonly private: boolean
 
   /**
    * The org to which this repository belongs. If null, the repository should be
    * published as a personal repository.
    */
+
   readonly org: IAPIUser | null
 }
 
@@ -41,6 +56,7 @@ interface IPublishRepositoryState {
 }
 
 /** The Publish Repository component. */
+
 export class PublishRepository extends React.Component<
   IPublishRepositoryProps,
   IPublishRepositoryState
@@ -48,7 +64,9 @@ export class PublishRepository extends React.Component<
   public constructor(props: IPublishRepositoryProps) {
     super(props)
 
-    this.state = { orgs: [] }
+    this.state = {
+      orgs: [],
+    }
   }
 
   public async componentWillMount() {
@@ -57,7 +75,9 @@ export class PublishRepository extends React.Component<
 
   public componentWillReceiveProps(nextProps: IPublishRepositoryProps) {
     if (this.props.account !== nextProps.account) {
-      this.setState({ orgs: [] })
+      this.setState({
+        orgs: [],
+      })
 
       this.fetchOrgs(nextProps.account)
     }
@@ -65,8 +85,11 @@ export class PublishRepository extends React.Component<
 
   private async fetchOrgs(account: Account) {
     const api = API.fromAccount(account)
+
     const orgs = (await api.fetchOrgs()) as Array<IAPIUser>
+
     orgs.sort((a, b) => caseInsensitiveCompare(a.login, b.login))
+
     this.setState({ orgs })
   }
 
@@ -74,7 +97,9 @@ export class PublishRepository extends React.Component<
     subset: Pick<IPublishRepositorySettings, K>
   ) {
     const existingSettings = this.props.settings
+
     const newSettings = merge(existingSettings, subset)
+
     this.props.onSettingsChanged(newSettings)
   }
 
@@ -87,16 +112,23 @@ export class PublishRepository extends React.Component<
   }
 
   private onPrivateChange = (event: React.FormEvent<HTMLInputElement>) => {
-    this.updateSettings({ private: event.currentTarget.checked })
+    this.updateSettings({
+      private: event.currentTarget.checked,
+    })
   }
 
   private onOrgChange = (event: React.FormEvent<HTMLSelectElement>) => {
     const value = event.currentTarget.value
+
     const index = parseInt(value, 10)
+
     if (index < 0 || isNaN(index)) {
-      this.updateSettings({ org: null })
+      this.updateSettings({
+        org: null,
+      })
     } else {
       const org = this.state.orgs[index]
+
       this.updateSettings({ org })
     }
   }
@@ -107,6 +139,7 @@ export class PublishRepository extends React.Component<
     }
 
     const options = new Array<JSX.Element>()
+
     options.push(
       <option value={-1} key={-1}>
         None
@@ -114,7 +147,9 @@ export class PublishRepository extends React.Component<
     )
 
     let selectedIndex = -1
+
     const selectedOrg = this.props.settings.org
+
     for (const [index, org] of this.state.orgs.entries()) {
       if (selectedOrg && selectedOrg.id === org.id) {
         selectedIndex = index

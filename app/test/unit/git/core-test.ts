@@ -1,8 +1,11 @@
 import { expect } from 'chai'
+
 import { GitError } from 'dugite'
 
 import { Repository } from '../../../src/models/repository'
+
 import { git } from '../../../src/lib/git'
+
 import { setupFixtureRepository } from '../../helpers/repositories'
 
 describe('git/core', () => {
@@ -10,6 +13,7 @@ describe('git/core', () => {
 
   beforeEach(async () => {
     const testRepoPath = await setupFixtureRepository('test-repo')
+
     repository = new Repository(testRepoPath, -1, null, false)
   })
 
@@ -18,10 +22,12 @@ describe('git/core', () => {
       const args = ['rev-list', '--left-right', '--count', 'some-ref', '--']
 
       let threw = false
+
       try {
         const result = await git(args, repository!.path, 'test', {
           expectedErrors: new Set([GitError.BadRevision]),
         })
+
         expect(result.gitError).to.equal(GitError.BadRevision)
       } catch (e) {
         threw = true
@@ -34,6 +40,7 @@ describe('git/core', () => {
       const args = ['rev-list', '--left-right', '--count', 'some-ref', '--']
 
       let threw = false
+
       try {
         await git(args, repository!.path, 'test', {
           expectedErrors: new Set([GitError.SSHKeyAuditUnverified]),
@@ -51,10 +58,12 @@ describe('git/core', () => {
       const args = ['rev-list', '--left-right', '--count', 'some-ref', '--']
 
       let threw = false
+
       try {
         const result = await git(args, repository!.path, 'test', {
           successExitCodes: new Set([128]),
         })
+
         expect(result.exitCode).to.equal(128)
       } catch (e) {
         threw = true
@@ -67,6 +76,7 @@ describe('git/core', () => {
       const args = ['rev-list', '--left-right', '--count', 'some-ref', '--']
 
       let threw = false
+
       try {
         await git(args, repository!.path, 'test', {
           successExitCodes: new Set([2]),

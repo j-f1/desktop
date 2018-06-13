@@ -1,17 +1,26 @@
 /** indicate what a line in the diff represents */
+
 export enum DiffLineType {
   Context,
+
   Add,
+
   Delete,
+
   Hunk,
 }
 
 /** track details related to each line in the diff */
+
 export class DiffLine {
   public readonly text: string
+
   public readonly type: DiffLineType
+
   public readonly oldLineNumber: number | null
+
   public readonly newLineNumber: number | null
+
   public readonly noTrailingNewLine: boolean
 
   public constructor(
@@ -22,9 +31,13 @@ export class DiffLine {
     noTrailingNewLine: boolean = false
   ) {
     this.text = text
+
     this.type = type
+
     this.oldLineNumber = oldLineNumber
+
     this.newLineNumber = newLineNuber
+
     this.noTrailingNewLine = noTrailingNewLine
   }
 
@@ -43,6 +56,7 @@ export class DiffLine {
   }
 
   /** The content of the line, i.e., without the line type marker. */
+
   public get content(): string {
     return this.text.substr(1)
   }

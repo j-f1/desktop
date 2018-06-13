@@ -1,13 +1,16 @@
 import { expect } from 'chai'
 
 import { Repository } from '../../../src/models/repository'
+
 import {
   getConfigValue,
   getGlobalConfigPath,
   getGlobalConfigValue,
   setGlobalConfigValue,
 } from '../../../src/lib/git'
+
 import { GitProcess } from 'dugite'
+
 import { setupFixtureRepository } from '../../helpers/repositories'
 
 describe('git/config', () => {
@@ -15,12 +18,14 @@ describe('git/config', () => {
 
   beforeEach(async () => {
     const testRepoPath = await setupFixtureRepository('test-repo')
+
     repository = new Repository(testRepoPath, -1, null, false)
   })
 
   describe('config', () => {
     it('looks up config values', async () => {
       const bare = await getConfigValue(repository!, 'core.bare')
+
       expect(bare).to.equal('false')
     })
 
@@ -29,6 +34,7 @@ describe('git/config', () => {
         repository!,
         'core.the-meaning-of-life'
       )
+
       expect(value).to.equal(null)
     })
   })
@@ -36,7 +42,9 @@ describe('git/config', () => {
   describe('getGlobalConfigPath', () => {
     it('gets the config path', async () => {
       const path = await getGlobalConfigPath()
+
       expect(path).not.to.equal(null)
+
       expect(path!.length).to.be.greaterThan(0)
     })
   })
@@ -49,6 +57,7 @@ describe('git/config', () => {
         ['config', '--add', '--global', key, 'first'],
         __dirname
       )
+
       await GitProcess.exec(
         ['config', '--add', '--global', key, 'second'],
         __dirname
@@ -57,7 +66,9 @@ describe('git/config', () => {
 
     it('will replace all entries for a global value', async () => {
       await setGlobalConfigValue(key, 'the correct value')
+
       const value = await getGlobalConfigValue(key)
+
       expect(value).to.equal('the correct value')
     })
 

@@ -6,8 +6,10 @@
  * origin/thing/my-branch -> thing/my-branch
  * my-branch              -> null
  */
+
 export function removeRemotePrefix(name: string): string | null {
   const pieces = name.match(/.*?\/(.*)/)
+
   if (!pieces || pieces.length < 2) {
     return null
   }

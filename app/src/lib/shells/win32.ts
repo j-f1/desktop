@@ -1,16 +1,24 @@
 import { spawn, ChildProcess } from 'child_process'
+
 import * as Path from 'path'
+
 import { enumerateValues, HKEY, RegistryValueType } from 'registry-js'
+
 import { pathExists } from 'fs-extra'
 
 import { assertNever } from '../fatal-error'
+
 import { IFoundShell } from './found-shell'
 
 export enum Shell {
   Cmd = 'Command Prompt',
+
   PowerShell = 'PowerShell',
+
   PowerShellCore = 'PowerShell Core',
+
   Hyper = 'Hyper',
+
   GitBash = 'Git Bash',
 }
 
@@ -46,38 +54,47 @@ export async function getAvailableShells(): Promise<
   const shells = [
     {
       shell: Shell.Cmd,
+
       path: process.env.comspec || 'C:\\Windows\\System32\\cmd.exe',
     },
   ]
 
   const powerShellPath = await findPowerShell()
+
   if (powerShellPath != null) {
     shells.push({
       shell: Shell.PowerShell,
+
       path: powerShellPath,
     })
   }
 
   const powerShellCorePath = await findPowerShellCore()
+
   if (powerShellCorePath != null) {
     shells.push({
       shell: Shell.PowerShellCore,
+
       path: powerShellCorePath,
     })
   }
 
   const hyperPath = await findHyper()
+
   if (hyperPath != null) {
     shells.push({
       shell: Shell.Hyper,
+
       path: hyperPath,
     })
   }
 
   const gitBashPath = await findGitBash()
+
   if (gitBashPath != null) {
     shells.push({
       shell: Shell.GitBash,
+
       path: gitBashPath,
     })
   }
@@ -98,9 +115,13 @@ async function findPowerShell(): Promise<string | null> {
   const first = powerShell[0]
 
   // NOTE:
+
   // on Windows 7 these are both REG_SZ, which technically isn't supposed
+
   // to contain unexpanded references to environment variables. But given
+
   // it's also %SystemRoot% and we do the expanding here I think this is
+
   // a fine workaround to do to support the maximum number of setups.
 
   if (
@@ -135,6 +156,7 @@ async function findPowerShellCore(): Promise<string | null> {
   }
 
   const first = powerShellCore[0]
+
   if (first.type === RegistryValueType.REG_SZ) {
     const path = first.data
 
@@ -161,12 +183,16 @@ async function findHyper(): Promise<string | null> {
   }
 
   const first = hyper[0]
+
   if (first.type === RegistryValueType.REG_SZ) {
     // Registry key is structured as "{installationPath}\app-x.x.x\Hyper.exe" "%V"
 
     // This regex is designed to get the path to the version-specific Hyper.
+
     // commandPieces = ['"{installationPath}\app-x.x.x\Hyper.exe"', '"', '{installationPath}\app-x.x.x\Hyper.exe', ...]
+
     const commandPieces = first.data.match(/(["'])(.*?)\1/)
+
     const localAppData = process.env.LocalAppData
 
     const path = commandPieces
@@ -200,6 +226,7 @@ async function findGitBash(): Promise<string | null> {
   }
 
   const installPathEntry = registryPath.find(e => e.name === 'InstallPath')
+
   if (installPathEntry && installPathEntry.type === RegistryValueType.REG_SZ) {
     const path = Path.join(installPathEntry.data, 'git-bash.exe')
 
@@ -224,32 +251,51 @@ export function launch(
   switch (shell) {
     case Shell.PowerShell:
       const psCommand = `"Set-Location -LiteralPath '${path}'"`
+
       return spawn('START', ['powershell', '-NoExit', '-Command', psCommand], {
         shell: true,
+
         cwd: path,
       })
+
     case Shell.PowerShellCore:
       const psCoreCommand = `"Set-Location -LiteralPath '${path}'"`
+
       return spawn('START', ['pwsh', '-NoExit', '-Command', psCoreCommand], {
         shell: true,
+
         cwd: path,
       })
+
     case Shell.Hyper:
       const hyperPath = `"${foundShell.path}"`
+
       log.info(`launching ${shell} at path: ${hyperPath}`)
+
       return spawn(hyperPath, [`"${path}"`], {
         shell: true,
+
         cwd: path,
       })
+
     case Shell.GitBash:
       const gitBashPath = `"${foundShell.path}"`
+
       log.info(`launching ${shell} at path: ${gitBashPath}`)
+
       return spawn(gitBashPath, [`--cd="${path}"`], {
         shell: true,
+
         cwd: path,
       })
+
     case Shell.Cmd:
-      return spawn('START', ['cmd'], { shell: true, cwd: path })
+      return spawn('START', ['cmd'], {
+        shell: true,
+
+        cwd: path,
+      })
+
     default:
       return assertNever(shell, `Unknown shell: ${shell}`)
   }

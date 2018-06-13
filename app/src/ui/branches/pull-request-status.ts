@@ -1,12 +1,16 @@
 import { PullRequestStatus, ICommitStatus } from '../../models/pull-request'
+
 import { APIRefState } from '../../lib/api'
+
 import { assertNever } from '../../lib/fatal-error'
 
 function formatState(state: APIRefState): string {
   switch (state) {
     case 'failure':
       return 'Commit status: failed'
+
     case 'pending':
+
     case 'success':
       return `Commit status: ${state}`
 
@@ -17,8 +21,13 @@ function formatState(state: APIRefState): string {
 
 function formatSingleStatus(status: ICommitStatus) {
   const word = status.state
+
   const sentenceCaseWord =
-    word.charAt(0).toUpperCase() + word.substring(1, word.length)
+    word
+
+      .charAt(0)
+
+      .toUpperCase() + word.substring(1, word.length)
 
   return `${sentenceCaseWord}: ${status.description}`
 }
@@ -30,6 +39,7 @@ function formatSingleStatus(status: ICommitStatus) {
  * the number of successful statuses. Oteherwise, it will fall back
  * to the `state` value reported by the GitHub API.
  */
+
 export function getPRStatusSummary(prStatus: PullRequestStatus): string {
   const statusCount = prStatus.statuses.length || 0
 

@@ -6,7 +6,11 @@ describe('main-process menu', () => {
   describe('ensureItemIds', () => {
     it('leaves explicitly specified ids', () => {
       const template: Electron.MenuItemConstructorOptions[] = [
-        { label: 'File', id: 'foo' },
+        {
+          label: 'File',
+
+          id: 'foo',
+        },
       ]
 
       ensureItemIds(template)
@@ -16,7 +20,9 @@ describe('main-process menu', () => {
 
     it('assigns ids to items which lack it', () => {
       const template: Electron.MenuItemConstructorOptions[] = [
-        { label: 'File' },
+        {
+          label: 'File',
+        },
       ]
 
       ensureItemIds(template)
@@ -28,13 +34,26 @@ describe('main-process menu', () => {
       const template: Electron.MenuItemConstructorOptions[] = [
         {
           label: 'File',
+
           id: 'foo',
+
           submenu: [
-            { label: 'Open' },
-            { label: 'Close' },
+            {
+              label: 'Open',
+            },
+
+            {
+              label: 'Close',
+            },
+
             {
               label: 'More',
-              submenu: [{ label: 'Even more' }],
+
+              submenu: [
+                {
+                  label: 'Even more',
+                },
+              ],
             },
           ],
         },
@@ -48,7 +67,9 @@ describe('main-process menu', () => {
         .submenu! as Electron.MenuItemConstructorOptions[]
 
       expect(firstSubmenu[0].id).to.equal('foo.Open')
+
       expect(firstSubmenu[1].id).to.equal('foo.Close')
+
       expect(firstSubmenu[2].id).to.equal('foo.More')
 
       const secondSubmenu = firstSubmenu[2]
@@ -59,13 +80,19 @@ describe('main-process menu', () => {
 
     it('handles duplicate generated ids', () => {
       const template: Electron.MenuItemConstructorOptions[] = [
-        { label: 'foo' },
-        { label: 'foo' },
+        {
+          label: 'foo',
+        },
+
+        {
+          label: 'foo',
+        },
       ]
 
       ensureItemIds(template)
 
       expect(template[0].id).to.equal('@.foo')
+
       expect(template[1].id).to.equal('@.foo1')
     })
   })

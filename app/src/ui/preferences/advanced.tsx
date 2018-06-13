@@ -1,40 +1,68 @@
 import * as React from 'react'
+
 import { DialogContent } from '../dialog'
+
 import { Checkbox, CheckboxValue } from '../lib/checkbox'
+
 import { LinkButton } from '../lib/link-button'
+
 import { Row } from '../../ui/lib/row'
+
 import { SamplesURL } from '../../lib/stats'
+
 import { Select } from '../lib/select'
+
 import { ExternalEditor, parse as parseEditor } from '../../lib/editors'
+
 import { Shell, parse as parseShell } from '../../lib/shells'
+
 import { TextBox } from '../lib/text-box'
+
 import { enableMergeTool } from '../../lib/feature-flag'
+
 import { IMergeTool } from '../../lib/git/config'
 
 interface IAdvancedPreferencesProps {
   readonly optOutOfUsageTracking: boolean
+
   readonly confirmRepositoryRemoval: boolean
+
   readonly confirmDiscardChanges: boolean
+
   readonly availableEditors: ReadonlyArray<ExternalEditor>
+
   readonly selectedExternalEditor?: ExternalEditor
+
   readonly availableShells: ReadonlyArray<Shell>
+
   readonly selectedShell: Shell
+
   readonly onOptOutofReportingchanged: (checked: boolean) => void
+
   readonly onConfirmDiscardChangesChanged: (checked: boolean) => void
+
   readonly onConfirmRepositoryRemovalChanged: (checked: boolean) => void
+
   readonly onSelectedEditorChanged: (editor: ExternalEditor) => void
+
   readonly onSelectedShellChanged: (shell: Shell) => void
 
   readonly mergeTool: IMergeTool | null
+
   readonly onMergeToolNameChanged: (name: string) => void
+
   readonly onMergeToolCommandChanged: (command: string) => void
 }
 
 interface IAdvancedPreferencesState {
   readonly optOutOfUsageTracking: boolean
+
   readonly selectedExternalEditor?: ExternalEditor
+
   readonly selectedShell: Shell
+
   readonly confirmRepositoryRemoval: boolean
+
   readonly confirmDiscardChanges: boolean
 }
 
@@ -47,40 +75,49 @@ export class Advanced extends React.Component<
 
     this.state = {
       optOutOfUsageTracking: this.props.optOutOfUsageTracking,
+
       confirmRepositoryRemoval: this.props.confirmRepositoryRemoval,
+
       confirmDiscardChanges: this.props.confirmDiscardChanges,
+
       selectedExternalEditor: this.props.selectedExternalEditor,
+
       selectedShell: this.props.selectedShell,
     }
   }
 
   public async componentWillReceiveProps(nextProps: IAdvancedPreferencesProps) {
     const editors = nextProps.availableEditors
+
     let selectedExternalEditor = nextProps.selectedExternalEditor
+
     if (editors.length) {
       const indexOf = selectedExternalEditor
         ? editors.indexOf(selectedExternalEditor)
         : -1
+
       if (indexOf === -1) {
         selectedExternalEditor = editors[0]
+
         nextProps.onSelectedEditorChanged(selectedExternalEditor)
       }
     }
 
     const shells = nextProps.availableShells
+
     let selectedShell = nextProps.selectedShell
+
     if (shells.length) {
       const indexOf = shells.indexOf(selectedShell)
+
       if (indexOf === -1) {
         selectedShell = shells[0]
+
         nextProps.onSelectedShellChanged(selectedShell)
       }
     }
 
-    this.setState({
-      selectedExternalEditor,
-      selectedShell,
-    })
+    this.setState({ selectedExternalEditor, selectedShell })
   }
 
   private onReportingOptOutChanged = (
@@ -88,7 +125,10 @@ export class Advanced extends React.Component<
   ) => {
     const value = !event.currentTarget.checked
 
-    this.setState({ optOutOfUsageTracking: value })
+    this.setState({
+      optOutOfUsageTracking: value,
+    })
+
     this.props.onOptOutofReportingchanged(value)
   }
 
@@ -97,7 +137,10 @@ export class Advanced extends React.Component<
   ) => {
     const value = event.currentTarget.checked
 
-    this.setState({ confirmDiscardChanges: value })
+    this.setState({
+      confirmDiscardChanges: value,
+    })
+
     this.props.onConfirmDiscardChangesChanged(value)
   }
 
@@ -106,7 +149,10 @@ export class Advanced extends React.Component<
   ) => {
     const value = event.currentTarget.checked
 
-    this.setState({ confirmRepositoryRemoval: value })
+    this.setState({
+      confirmRepositoryRemoval: value,
+    })
+
     this.props.onConfirmRepositoryRemovalChanged(value)
   }
 
@@ -114,8 +160,12 @@ export class Advanced extends React.Component<
     event: React.FormEvent<HTMLSelectElement>
   ) => {
     const value = parseEditor(event.currentTarget.value)
+
     if (value) {
-      this.setState({ selectedExternalEditor: value })
+      this.setState({
+        selectedExternalEditor: value,
+      })
+
       this.props.onSelectedEditorChanged(value)
     }
   }
@@ -124,7 +174,11 @@ export class Advanced extends React.Component<
     event: React.FormEvent<HTMLSelectElement>
   ) => {
     const value = parseShell(event.currentTarget.value)
-    this.setState({ selectedShell: value })
+
+    this.setState({
+      selectedShell: value,
+    })
+
     this.props.onSelectedShellChanged(value)
   }
 
@@ -139,14 +193,20 @@ export class Advanced extends React.Component<
 
   private renderExternalEditor() {
     const options = this.props.availableEditors
+
     const label = __DARWIN__ ? 'External Editor' : 'External editor'
 
     if (options.length === 0) {
       // this is emulating the <Select/> component's UI so the styles are
+
       // consistent for either case.
+
       //
+
       // TODO: see whether it makes sense to have a fallback UI
+
       // which we display when the select list is empty
+
       return (
         <div className="select-component no-options-found">
           <label>{label}</label>

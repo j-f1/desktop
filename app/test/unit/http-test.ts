@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
 import { getAbsoluteUrl } from '../../src/lib/http'
+
 import { getDotComAPIEndpoint } from '../../src/lib/api'
 
 describe('getAbsoluteUrl', () => {
@@ -9,11 +10,13 @@ describe('getAbsoluteUrl', () => {
 
     it('handles leading slashes', () => {
       const result = getAbsoluteUrl(dotcomEndpoint, '/user/repos')
+
       expect(result).to.equal('https://api.github.com/user/repos')
     })
 
     it('handles missing leading slash', () => {
       const result = getAbsoluteUrl(dotcomEndpoint, 'user/repos')
+
       expect(result).to.equal('https://api.github.com/user/repos')
     })
   })
@@ -23,11 +26,13 @@ describe('getAbsoluteUrl', () => {
 
     it('handles leading slash', () => {
       const result = getAbsoluteUrl(enterpriseEndpoint, '/user/repos')
+
       expect(result).to.equal(`${enterpriseEndpoint}/user/repos`)
     })
 
     it('handles missing leading slash', () => {
       const result = getAbsoluteUrl(enterpriseEndpoint, 'user/repos')
+
       expect(result).to.equal(`${enterpriseEndpoint}/user/repos`)
     })
 
@@ -36,6 +41,7 @@ describe('getAbsoluteUrl', () => {
         enterpriseEndpoint,
         '/api/v3/user/repos?page=2'
       )
+
       expect(result).to.equal(`${enterpriseEndpoint}/user/repos?page=2`)
     })
   })

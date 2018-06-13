@@ -1,26 +1,38 @@
 import * as React from 'react'
+
 import * as moment from 'moment'
+
 import * as classNames from 'classnames'
+
 import { Octicon, OcticonSymbol } from '../octicons'
+
 import { CIStatus } from './ci-status'
+
 import { PullRequestStatus } from '../../models/pull-request'
+
 import { HighlightText } from '../lib/highlight-text'
+
 import { IMatches } from '../../lib/fuzzy-find'
 
 export interface IPullRequestListItemProps {
   /** The title. */
+
   readonly title: string
 
   /** The number as received from the API. */
+
   readonly number: number
 
   /** The date on which the PR was opened. */
+
   readonly created: Date
 
   /** The author login. */
+
   readonly author: string
 
   /** The CI status. */
+
   readonly status: PullRequestStatus | null
 
   /**
@@ -30,13 +42,16 @@ export interface IPullRequestListItemProps {
    * to the container and prevents any text from rendering
    * inside the list item.
    */
+
   readonly loading?: boolean
 
   /** The characters in the PR title to highlight */
+
   readonly matches: IMatches
 }
 
 /** Pull requests as rendered in the Pull Requests list. */
+
 export class PullRequestListItem extends React.Component<
   IPullRequestListItemProps
 > {
@@ -46,13 +61,17 @@ export class PullRequestListItem extends React.Component<
     }
 
     const timeAgo = moment(this.props.created).fromNow()
+
     return `#${this.props.number} opened ${timeAgo} by ${this.props.author}`
   }
 
   public render() {
     const title = this.props.loading === true ? undefined : this.props.title
+
     const subtitle = this.getSubtitle()
+
     const matches = this.props.matches
+
     const className = classNames('pull-request-item', {
       loading: this.props.loading === true,
     })

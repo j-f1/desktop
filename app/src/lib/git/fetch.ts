@@ -1,7 +1,11 @@
 import { git, IGitExecutionOptions, gitNetworkArguments } from './core'
+
 import { Repository } from '../../models/repository'
+
 import { FetchProgressParser, executionOptionsWithProgress } from '../progress'
+
 import { IFetchProgress } from '../app-state'
+
 import { IGitAccount, envForAuthentication } from './authentication'
 
 /**
@@ -19,6 +23,7 @@ import { IGitAccount, envForAuthentication } from './authentication'
  *                           the '--progress' command line flag for
  *                           'git fetch'.
  */
+
 export async function fetch(
   repository: Repository,
   account: IGitAccount | null,
@@ -27,21 +32,31 @@ export async function fetch(
 ): Promise<void> {
   let opts: IGitExecutionOptions = {
     successExitCodes: new Set([0]),
+
     env: envForAuthentication(account),
   }
 
   if (progressCallback) {
     const title = `Fetching ${remote}`
+
     const kind = 'fetch'
 
     opts = await executionOptionsWithProgress(
-      { ...opts, trackLFSProgress: true },
+      {
+        ...opts,
+
+        trackLFSProgress: true,
+      },
       new FetchProgressParser(),
       progress => {
         // In addition to progress output from the remote end and from
+
         // git itself, the stderr output from pull contains information
+
         // about ref updates. We don't need to bring those into the progress
+
         // stream so we'll just punt on anything we don't know about for now.
+
         if (progress.kind === 'context') {
           if (!progress.text.startsWith('remote: Counting objects')) {
             return
@@ -50,6 +65,7 @@ export async function fetch(
 
         const description =
           progress.kind === 'progress' ? progress.details.text : progress.text
+
         const value = progress.percent
 
         progressCallback({ kind, title, description, value, remote })
@@ -57,7 +73,14 @@ export async function fetch(
     )
 
     // Initial progress
-    progressCallback({ kind, title, value: 0, remote })
+
+    progressCallback({
+      kind,
+      title,
+      value: 0,
+
+      remote,
+    })
   }
 
   const args = progressCallback
@@ -68,6 +91,7 @@ export async function fetch(
 }
 
 /** Fetch a given refspec from the given remote. */
+
 export async function fetchRefspec(
   repository: Repository,
   account: IGitAccount | null,
@@ -76,6 +100,7 @@ export async function fetchRefspec(
 ): Promise<void> {
   const options = {
     successExitCodes: new Set([0, 128]),
+
     env: envForAuthentication(account),
   }
 

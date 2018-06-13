@@ -1,8 +1,11 @@
 import * as React from 'react'
+
 import { ICommonImageDiffProperties } from './modified-image-diff'
+
 import { ImageContainer } from './image-container'
 
 /** How much bigger the slider should be than the images. */
+
 const SliderOverflow = 14
 
 interface ISwipeState {
@@ -16,17 +19,21 @@ export class Swipe extends React.Component<
   public constructor(props: ICommonImageDiffProperties) {
     super(props)
 
-    this.state = { percentage: 1 }
+    this.state = {
+      percentage: 1,
+    }
   }
 
   public render() {
     const style: React.CSSProperties = {
       height: this.props.maxSize.height,
+
       width: this.props.maxSize.width,
     }
 
     const maxSize: React.CSSProperties = {
       maxHeight: this.props.maxSize.height,
+
       maxWidth: this.props.maxSize.width,
     }
 
@@ -45,6 +52,7 @@ export class Swipe extends React.Component<
               className="swiper"
               style={{
                 width: this.props.maxSize.width * (1 - this.state.percentage),
+
                 height: this.props.maxSize.height,
               }}
             >
@@ -76,6 +84,7 @@ export class Swipe extends React.Component<
 
   private onValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const percentage = e.currentTarget.valueAsNumber
+
     this.setState({ percentage })
   }
 }

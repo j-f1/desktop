@@ -1,10 +1,15 @@
 import { remote } from 'electron'
 
 let app: Electron.App | null = null
+
 let version: string | null = null
+
 let name: string | null = null
+
 let path: string | null = null
+
 let userDataPath: string | null = null
+
 let documentsPath: string | null = null
 
 function getApp(): Electron.App {
@@ -20,6 +25,7 @@ function getApp(): Electron.App {
  *
  * This is preferrable to using `remote` directly because we cache the result.
  */
+
 export function getVersion(): string {
   if (!version) {
     version = getApp().getVersion()
@@ -33,6 +39,7 @@ export function getVersion(): string {
  *
  * This is preferrable to using `remote` directly because we cache the result.
  */
+
 export function getName(): string {
   if (!name) {
     name = getApp().getName()
@@ -46,6 +53,7 @@ export function getName(): string {
  *
  * This is preferrable to using `remote` directly because we cache the result.
  */
+
 export function getAppPath(): string {
   if (!path) {
     path = getApp().getAppPath()
@@ -59,6 +67,7 @@ export function getAppPath(): string {
  *
  * This is preferrable to using `remote` directly because we cache the result.
  */
+
 export function getUserDataPath(): string {
   if (!userDataPath) {
     userDataPath = getApp().getPath('userData')
@@ -72,13 +81,16 @@ export function getUserDataPath(): string {
  *
  * This is preferrable to using `remote` directly because we cache the result.
  */
+
 export function getDocumentsPath(): string {
   if (!documentsPath) {
     const app = getApp()
+
     try {
       documentsPath = app.getPath('documents')
     } catch (ex) {
       // a user profile may not have the Documents folder defined on Windows
+
       documentsPath = app.getPath('home')
     }
   }

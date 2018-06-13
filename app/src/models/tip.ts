@@ -2,8 +2,11 @@ import { Branch } from './branch'
 
 export enum TipState {
   Unknown,
+
   Unborn,
+
   Detached,
+
   Valid,
 }
 
@@ -20,22 +23,27 @@ export interface IUnbornRepository {
    * Typically this will be "master" but a user can easily create orphaned
    * branches externally.
    */
+
   readonly ref: string
 }
 
 export interface IDetachedHead {
   readonly kind: TipState.Detached
+
   /**
    * The commit identifier of the current tip of the repository.
    */
+
   readonly currentSha: string
 }
 
 export interface IValidBranch {
   readonly kind: TipState.Valid
+
   /**
    * The branch information associated with the current tip of the repository.
    */
+
   readonly branch: Branch
 }
 

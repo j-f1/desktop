@@ -1,19 +1,27 @@
 import * as React from 'react'
+
 import * as moment from 'moment'
+
 import {
   FilterList,
   IFilterListGroup,
   IFilterListItem,
   SelectionSource,
 } from '../lib/filter-list'
+
 import { PullRequestListItem } from './pull-request-list-item'
+
 import { PullRequest, PullRequestStatus } from '../../models/pull-request'
+
 import { NoPullRequests } from './no-pull-requests'
+
 import { IMatches } from '../../lib/fuzzy-find'
 
 interface IPullRequestListItem extends IFilterListItem {
   readonly id: string
+
   readonly text: ReadonlyArray<string>
+
   readonly pullRequest: PullRequest
 }
 
@@ -21,36 +29,47 @@ export const RowHeight = 47
 
 interface IPullRequestListProps {
   /** The pull requests to display. */
+
   readonly pullRequests: ReadonlyArray<PullRequest>
 
   /** The currently selected pull request */
+
   readonly selectedPullRequest: PullRequest | null
 
   /** The name of the repository. */
+
   readonly repositoryName: string
 
   /** Is the default branch currently checked out? */
+
   readonly isOnDefaultBranch: boolean
 
   /** The current filter text to render */
+
   readonly filterText: string
 
   /** Called when the user clicks on a pull request. */
+
   readonly onItemClick: (pullRequest: PullRequest) => void
 
   /** Called when the user wants to dismiss the foldout. */
+
   readonly onDismiss: () => void
 
   /** Callback to fire when the filter text is changed */
+
   readonly onFilterTextChanged: (filterText: string) => void
 
   /** Called when the user opts to create a branch */
+
   readonly onCreateBranch: () => void
 
   /** Called when the user opts to create a pull request */
+
   readonly onCreatePullRequest: () => void
 
   /** Callback fired when user selects a new pull request */
+
   readonly onSelectionChanged?: (
     pullRequest: PullRequest | null,
     source: SelectionSource
@@ -60,6 +79,7 @@ interface IPullRequestListProps {
    * Called when a key down happens in the filter field. Users have a chance to
    * respond or cancel the default behavior by calling `preventDefault`.
    */
+
   readonly onFilterKeyDown?: (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => void
@@ -67,6 +87,7 @@ interface IPullRequestListProps {
 
 interface IPullRequestListState {
   readonly groupedItems: ReadonlyArray<IFilterListGroup<IPullRequestListItem>>
+
   readonly selectedItem: IPullRequestListItem | null
 }
 
@@ -92,6 +113,7 @@ function resolveSelectedItem(
 }
 
 /** The list of open pull requests. */
+
 export class PullRequestList extends React.Component<
   IPullRequestListProps,
   IPullRequestListState
@@ -100,22 +122,30 @@ export class PullRequestList extends React.Component<
     super(props)
 
     const group = createListItems(props.pullRequests)
+
     const selectedItem = resolveSelectedItem(group, props, null)
 
     this.state = {
       groupedItems: [group],
+
       selectedItem,
     }
   }
 
   public componentWillReceiveProps(nextProps: IPullRequestListProps) {
     const group = createListItems(nextProps.pullRequests)
+
     const selectedItem = resolveSelectedItem(
       group,
       nextProps,
       this.state.selectedItem
     )
-    this.setState({ groupedItems: [group], selectedItem })
+
+    this.setState({
+      groupedItems: [group],
+
+      selectedItem,
+    })
   }
 
   public render() {
@@ -154,7 +184,9 @@ export class PullRequestList extends React.Component<
     matches: IMatches
   ) => {
     const pr = item.pullRequest
+
     const refStatuses = pr.status != null ? pr.status.statuses : []
+
     const status =
       pr.status != null
         ? new PullRequestStatus(
@@ -199,6 +231,7 @@ export class PullRequestList extends React.Component<
 
 function getSubtitle(pr: PullRequest) {
   const timeAgo = moment(pr.created).fromNow()
+
   return `#${pr.number} opened ${timeAgo} by ${pr.author}`
 }
 
@@ -207,12 +240,15 @@ function createListItems(
 ): IFilterListGroup<IPullRequestListItem> {
   const items = pullRequests.map(pr => ({
     text: [pr.title, getSubtitle(pr)],
+
     id: pr.number.toString(),
+
     pullRequest: pr,
   }))
 
   return {
     identifier: 'pull-requests',
+
     items,
   }
 }

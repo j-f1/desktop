@@ -13,8 +13,11 @@ function isTestTag(version: SemVer) {
 function tryGetBetaNumber(version: SemVer): number | null {
   if (isBetaTag(version)) {
     const tag = version.prerelease[0]
+
     const text = tag.substr(4)
+
     const betaNumber = parseInt(text, 10)
+
     return isNaN(betaNumber) ? null : betaNumber
   }
 
@@ -46,6 +49,7 @@ export function getNextVersionNumber(
       }
 
       const nextVersion = inc(version, 'patch')
+
       if (nextVersion == null) {
         throw new Error(
           `Unable to increment next production version from release version '${version}'`
@@ -70,7 +74,9 @@ export function getNextVersionNumber(
         )
       } else {
         const nextVersion = inc(semanticVersion, 'patch')
+
         const firstBeta = `${nextVersion}-beta1`
+
         return firstBeta
       }
 

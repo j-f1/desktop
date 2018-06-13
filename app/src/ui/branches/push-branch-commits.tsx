@@ -1,23 +1,35 @@
 import * as React from 'react'
+
 import { Dispatcher } from '../../lib/dispatcher'
+
 import { Branch } from '../../models/branch'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Button } from '../lib/button'
+
 import { Dialog, DialogContent, DialogFooter } from '../dialog'
+
 import { Repository } from '../../models/repository'
+
 import { Ref } from '../lib/ref'
 
 interface IPushBranchCommitsProps {
   readonly dispatcher: Dispatcher
+
   readonly repository: Repository
+
   readonly branch: Branch
+
   readonly onConfirm: (repository: Repository, branch: Branch) => void
+
   readonly onDismissed: () => void
 
   /**
    * Used to show the number of commits a branch is ahead by.
    * If this value is undefined, component defaults to publish view.
    */
+
   readonly unPushedCommits?: number
 }
 
@@ -28,6 +40,7 @@ interface IPushBranchCommitsState {
    * the dialog to apply the loading and disabled state which adds a
    * spinner and disables form controls for the duration of the operation.
    */
+
   readonly isPushingOrPublishing: boolean
 }
 
@@ -42,6 +55,7 @@ interface IPushBranchCommitsState {
  *                        to it can be paired with a zero digit or a number
  *                        greater than one.
  */
+
 function pluralize(numberOfCommits: number, unit: string) {
   return numberOfCommits === 1
     ? `${numberOfCommits} ${unit}`
@@ -53,6 +67,7 @@ function pluralize(numberOfCommits: number, unit: string) {
  * this.props.unPushedCommits === undefined checks with
  * renderPublishView(this.props.unPushedCommits).
  */
+
 function renderPublishView(
   unPushedCommits: number | undefined
 ): unPushedCommits is undefined {
@@ -67,6 +82,7 @@ function renderPublishView(
  * In both cases, this asks the user if they'd like to push/publish the branch.
  * If they confirm we push/publish then open the PR page on dotcom.
  */
+
 export class PushBranchCommits extends React.Component<
   IPushBranchCommitsProps,
   IPushBranchCommitsState
@@ -74,7 +90,9 @@ export class PushBranchCommits extends React.Component<
   public constructor(props: IPushBranchCommitsProps) {
     super(props)
 
-    this.state = { isPushingOrPublishing: false }
+    this.state = {
+      isPushingOrPublishing: false,
+    }
   }
 
   public render() {
@@ -161,6 +179,7 @@ export class PushBranchCommits extends React.Component<
 
   private onCreateWithoutPushButtonClick = () => {
     this.props.onConfirm(this.props.repository, this.props.branch)
+
     this.props.onDismissed()
   }
 
@@ -171,15 +190,20 @@ export class PushBranchCommits extends React.Component<
 
     const { repository, branch } = this.props
 
-    this.setState({ isPushingOrPublishing: true })
+    this.setState({
+      isPushingOrPublishing: true,
+    })
 
     try {
       await this.props.dispatcher.push(repository)
     } finally {
-      this.setState({ isPushingOrPublishing: false })
+      this.setState({
+        isPushingOrPublishing: false,
+      })
     }
 
     this.props.onConfirm(repository, branch)
+
     this.props.onDismissed()
   }
 }

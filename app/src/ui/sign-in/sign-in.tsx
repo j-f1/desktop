@@ -1,5 +1,7 @@
 import * as React from 'react'
+
 import { Dispatcher } from '../../lib/dispatcher'
+
 import {
   SignInState,
   SignInStep,
@@ -7,27 +9,40 @@ import {
   IAuthenticationState,
   ITwoFactorAuthenticationState,
 } from '../../lib/stores'
+
 import { assertNever } from '../../lib/fatal-error'
+
 import { Button } from '../lib/button'
+
 import { LinkButton } from '../lib/link-button'
+
 import { Octicon, OcticonSymbol } from '../octicons'
+
 import { Row } from '../lib/row'
+
 import { TextBox } from '../lib/text-box'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Dialog, DialogError, DialogContent, DialogFooter } from '../dialog'
 
 import { getWelcomeMessage } from '../../lib/2fa'
 
 interface ISignInProps {
   readonly dispatcher: Dispatcher
+
   readonly signInState: SignInState | null
+
   readonly onDismissed: () => void
 }
 
 interface ISignInState {
   readonly endpoint: string
+
   readonly username: string
+
   readonly password: string
+
   readonly otpToken: string
 }
 
@@ -37,8 +52,11 @@ export class SignIn extends React.Component<ISignInProps, ISignInState> {
 
     this.state = {
       endpoint: '',
+
       username: '',
+
       password: '',
+
       otpToken: '',
     }
   }
@@ -66,7 +84,9 @@ export class SignIn extends React.Component<ISignInProps, ISignInState> {
     switch (state.kind) {
       case SignInStep.EndpointEntry:
         this.props.dispatcher.setSignInEndpoint(this.state.endpoint)
+
         break
+
       case SignInStep.Authentication:
         if (!state.supportsBasicAuth) {
           this.props.dispatcher.requestBrowserAuthentication()
@@ -76,13 +96,19 @@ export class SignIn extends React.Component<ISignInProps, ISignInState> {
             this.state.password
           )
         }
+
         break
+
       case SignInStep.TwoFactorAuthentication:
         this.props.dispatcher.setSignInOTP(this.state.otpToken)
+
         break
+
       case SignInStep.Success:
         this.props.onDismissed()
+
         break
+
       default:
         assertNever(state, `Unknown sign in step ${stepKind}`)
     }
@@ -118,19 +144,28 @@ export class SignIn extends React.Component<ISignInProps, ISignInState> {
     let disableSubmit = false
 
     let primaryButtonText: string
+
     const stepKind = state.kind
 
     switch (state.kind) {
       case SignInStep.EndpointEntry:
         disableSubmit = this.state.endpoint.length === 0
+
         primaryButtonText = 'Continue'
+
         break
+
       case SignInStep.TwoFactorAuthentication:
         // ensure user has entered non-whitespace characters
+
         const codeProvided = /\S+/.test(this.state.otpToken)
+
         disableSubmit = !codeProvided
+
         primaryButtonText = 'Sign in'
+
         break
+
       case SignInStep.Authentication:
         if (!state.supportsBasicAuth) {
           primaryButtonText = __DARWIN__
@@ -138,11 +173,16 @@ export class SignIn extends React.Component<ISignInProps, ISignInState> {
             : 'Continue with browser'
         } else {
           const validUserName = this.state.username.length > 0
+
           const validPassword = this.state.password.length > 0
+
           disableSubmit = !validUserName || !validPassword
+
           primaryButtonText = 'Sign in'
         }
+
         break
+
       default:
         return assertNever(state, `Unknown sign in step ${stepKind}`)
     }
@@ -264,12 +304,16 @@ export class SignIn extends React.Component<ISignInProps, ISignInState> {
     switch (state.kind) {
       case SignInStep.EndpointEntry:
         return this.renderEndpointEntryStep(state)
+
       case SignInStep.Authentication:
         return this.renderAuthenticationStep(state)
+
       case SignInStep.TwoFactorAuthentication:
         return this.renderTwoFactorAuthenticationStep(state)
+
       case SignInStep.Success:
         return null
+
       default:
         return assertNever(state, `Unknown sign in step ${stepKind}`)
     }

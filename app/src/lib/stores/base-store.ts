@@ -12,6 +12,7 @@ export abstract class BaseStore {
   }
 
   /** Register a function to be called when the store updates. */
+
   public onDidUpdate(fn: () => void): Disposable {
     return this.emitter.on('did-update', fn)
   }
@@ -22,6 +23,7 @@ export abstract class BaseStore {
    * that some error are handled in the flow and passed along in
    * the sign in state for inline presentation to the user.
    */
+
   public onDidError(fn: (e: Error) => void): Disposable {
     return this.emitter.on('did-error', fn)
   }
@@ -39,6 +41,7 @@ export class TypedBaseStore<T> {
   }
 
   /** Register a function to be called when the store updates. */
+
   public onDidUpdate(fn: (data: T) => void): Disposable {
     return this.emitter.on('did-update', fn)
   }
@@ -49,6 +52,7 @@ export class TypedBaseStore<T> {
    * that some error are handled in the flow and passed along in
    * the sign in state for inline presentation to the user.
    */
+
   public onDidError(fn: (e: Error) => void): Disposable {
     return this.emitter.on('did-error', fn)
   }

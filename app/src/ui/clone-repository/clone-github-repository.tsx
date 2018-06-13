@@ -1,64 +1,87 @@
 import * as React from 'react'
 
 import { Account } from '../../models/account'
+
 import { DialogContent } from '../dialog'
+
 import { TextBox } from '../lib/text-box'
+
 import { Row } from '../lib/row'
+
 import { Button } from '../lib/button'
+
 import { Loading } from '../lib/loading'
+
 import { Octicon } from '../octicons'
+
 import { FilterList } from '../lib/filter-list'
+
 import { API } from '../../lib/api'
+
 import { IFilterListGroup } from '../lib/filter-list'
+
 import { IMatches } from '../../lib/fuzzy-find'
+
 import {
   IClonableRepositoryListItem,
   groupRepositories,
   YourRepositoriesIdentifier,
 } from './group-repositories'
+
 import { HighlightText } from '../lib/highlight-text'
 
 interface ICloneGithubRepositoryProps {
   /** The account to clone from. */
+
   readonly account: Account
 
   /** The path to clone to. */
+
   readonly path: string
 
   /** Called when the destination path changes. */
+
   readonly onPathChanged: (path: string) => void
 
   /**
    * Called when the user should be prompted to choose a destination directory.
    */
+
   readonly onChooseDirectory: () => Promise<string | undefined>
 
   /** Called when a repository is selected. */
+
   readonly onGitHubRepositorySelected: (url: string) => void
 
   /** Should the component clear the filter text on render? */
+
   readonly shouldClearFilter: boolean
 }
 
 interface ICloneGithubRepositoryState {
   /** Are we currently loading the repositories list? */
+
   readonly loading: boolean
 
   /** The list of clonable repositories. */
+
   readonly repositories: ReadonlyArray<
     IFilterListGroup<IClonableRepositoryListItem>
   >
 
   /** The currently selected item. */
+
   readonly selectedItem: IClonableRepositoryListItem | null
 
   /** The currently entered filter text. */
+
   readonly filterText: string
 }
 
 const ClonableRepositoryFilterList: new () => FilterList<
   IClonableRepositoryListItem
 > = FilterList as any
+
 const RowHeight = 31
 
 export class CloneGithubRepository extends React.Component<
@@ -72,8 +95,11 @@ export class CloneGithubRepository extends React.Component<
 
     this.state = {
       loading: false,
+
       repositories: [],
+
       selectedItem: null,
+
       filterText: '',
     }
   }
@@ -94,9 +120,11 @@ export class CloneGithubRepository extends React.Component<
     })
 
     const api = API.fromAccount(account)
+
     const result = await api.fetchRepositories()
 
     // The account could have changed while we were working. Bail if it did.
+
     if (account.id !== this.props.account.id) {
       return
     }
@@ -175,7 +203,10 @@ export class CloneGithubRepository extends React.Component<
   }
 
   private onItemClicked = (item: IClonableRepositoryListItem) => {
-    this.setState({ selectedItem: item })
+    this.setState({
+      selectedItem: item,
+    })
+
     this.props.onGitHubRepositorySelected(item.url)
   }
 
@@ -193,9 +224,11 @@ export class CloneGithubRepository extends React.Component<
 
   private renderGroupHeader = (identifier: string) => {
     let header = identifier
+
     if (identifier === YourRepositoriesIdentifier) {
       header = __DARWIN__ ? 'Your Repositories' : 'Your repositories'
     }
+
     return (
       <div className="clone-repository-list-content clone-repository-list-group-header">
         {header}

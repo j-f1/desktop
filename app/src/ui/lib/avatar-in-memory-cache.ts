@@ -1,4 +1,5 @@
 import { generateGravatarUrl } from '../../lib/gravatar'
+
 import { IAvatarUser } from '../../models/avatar'
 
 const inMemoryCache = new Map<string, string | null>()
@@ -7,8 +8,11 @@ const defaultHeaders = new Headers()
 
 const defaultInit: RequestInit = {
   method: 'GET',
+
   headers: defaultHeaders,
+
   mode: 'cors',
+
   cache: 'default',
 }
 
@@ -22,17 +26,21 @@ const defaultInit: RequestInit = {
  *
  * @param requestUrl The source URL to fetch
  */
+
 async function fetchAndCache(requestUrl: string): Promise<string | null> {
   let url: string | null = null
 
   try {
     const response = await fetch(requestUrl, defaultInit)
+
     if (response.ok) {
       const contentType = response.headers.get('Content-Type')
+
       if (contentType && contentType.startsWith('text/html')) {
         // we're encountering a request to sign in, let's skip this
       } else {
         const blob = await response.blob()
+
         url = URL.createObjectURL(blob)
       }
     }
@@ -52,32 +60,40 @@ async function fetchAndCache(requestUrl: string): Promise<string | null> {
  * @param avatarURL The GitHub avatar URL to lookup first
  * @param email The email address to translate into a Gravatar URL as a fallback
  */
+
 export async function lookupAvatar(
   avatarURL: string,
   email: string
 ): Promise<string | null> {
   const cachedAccountAvatar = inMemoryCache.get(avatarURL)
+
   if (cachedAccountAvatar) {
     return cachedAccountAvatar
   }
 
   if (cachedAccountAvatar === undefined) {
     // no cache entry found for GitHub avatar
+
     const accountAvatar = await fetchAndCache(avatarURL)
+
     if (accountAvatar) {
       return accountAvatar
     }
   }
 
   const gravatarURL = generateGravatarUrl(email)
+
   const cachedGravatarAvatar = inMemoryCache.get(gravatarURL)
+
   if (cachedGravatarAvatar) {
     return cachedGravatarAvatar
   }
 
   if (cachedGravatarAvatar === undefined) {
     // no cache entry found for Gravatar avatar
+
     const gravatarAvatar = await fetchAndCache(gravatarURL)
+
     if (gravatarAvatar) {
       return gravatarAvatar
     }
@@ -92,6 +108,7 @@ export async function lookupAvatar(
  * @param defaultURL default avatar to render
  * @param user current user to inspect
  */
+
 export async function fetchAvatarUrl(
   defaultURL: string,
   user?: IAvatarUser
@@ -101,5 +118,6 @@ export async function fetchAvatarUrl(
   }
 
   const avatar = await lookupAvatar(user.avatarURL, user.email)
+
   return avatar || defaultURL
 }

@@ -1,24 +1,42 @@
 import * as React from 'react'
+
 import { Commit } from '../../models/commit'
+
 import { GitHubRepository } from '../../models/github-repository'
+
 import { IAvatarUser, getAvatarUsersForCommit } from '../../models/avatar'
+
 import { RichText } from '../lib/rich-text'
+
 import { RelativeTime } from '../relative-time'
+
 import { getDotComAPIEndpoint } from '../../lib/api'
+
 import { clipboard } from 'electron'
+
 import { showContextualMenu } from '../main-process-proxy'
+
 import { CommitAttribution } from '../lib/commit-attribution'
+
 import { IGitHubUser } from '../../lib/databases/github-user-database'
+
 import { AvatarStack } from '../lib/avatar-stack'
+
 import { IMenuItem } from '../../lib/menu-item'
 
 interface ICommitProps {
   readonly gitHubRepository: GitHubRepository | null
+
   readonly commit: Commit
+
   readonly emoji: Map<string, string>
+
   readonly isLocal: boolean
+
   readonly onRevertCommit?: (commit: Commit) => void
+
   readonly onViewCommitOnGitHub?: (sha: string) => void
+
   readonly gitHubUsers: Map<string, IGitHubUser> | null
 }
 
@@ -27,6 +45,7 @@ interface ICommitListItemState {
 }
 
 /** A component which displays a single commit in a commit list. */
+
 export class CommitListItem extends React.Component<
   ICommitProps,
   ICommitListItemState
@@ -57,6 +76,7 @@ export class CommitListItem extends React.Component<
 
   public render() {
     const commit = this.props.commit
+
     const author = commit.author
 
     return (
@@ -101,6 +121,7 @@ export class CommitListItem extends React.Component<
     event.preventDefault()
 
     let viewOnGitHubLabel = 'View on GitHub'
+
     const gitHubRepository = this.props.gitHubRepository
 
     if (
@@ -113,20 +134,29 @@ export class CommitListItem extends React.Component<
     const items: IMenuItem[] = [
       {
         label: __DARWIN__ ? 'Revert This Commit' : 'Revert this commit',
+
         action: () => {
           if (this.props.onRevertCommit) {
             this.props.onRevertCommit(this.props.commit)
           }
         },
       },
-      { type: 'separator' },
+
+      {
+        type: 'separator',
+      },
+
       {
         label: 'Copy SHA',
+
         action: this.onCopySHA,
       },
+
       {
         label: viewOnGitHubLabel,
+
         action: this.onViewOnGitHub,
+
         enabled: !this.props.isLocal && !!gitHubRepository,
       },
     ]

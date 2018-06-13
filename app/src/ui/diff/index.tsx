@@ -1,17 +1,23 @@
 import * as React from 'react'
+
 import { Editor } from 'codemirror'
 
 import { assertNever } from '../../lib/fatal-error'
+
 import { encodePathAsUrl } from '../../lib/path'
+
 import { ImageDiffType } from '../../lib/app-state'
+
 import { Dispatcher } from '../../lib/dispatcher/dispatcher'
 
 import { Repository } from '../../models/repository'
+
 import {
   CommittedFileChange,
   WorkingDirectoryFileChange,
   AppFileStatus,
 } from '../../models/status'
+
 import {
   DiffSelection,
   DiffType,
@@ -28,20 +34,27 @@ import {
   ModifiedImageDiff,
   DeletedImageDiff,
 } from './image-diffs'
+
 import { BinaryFile } from './binary-file'
+
 import { diffLineForIndex } from './diff-explorer'
+
 import { DiffLineGutter } from './diff-line-gutter'
+
 import { DiffSyntaxMode } from './diff-syntax-mode'
 
 import { ISelectionStrategy } from './selection/selection-strategy'
+
 import { TextDiff } from './text-diff'
 
 // image used when no diff is displayed
+
 const NoDiffImage = encodePathAsUrl(__dirname, 'static/ufo-alert.svg')
 
 type ChangedFile = WorkingDirectoryFileChange | CommittedFileChange
 
 /** The props for the Diff component. */
+
 interface IDiffProps {
   readonly repository: Repository
 
@@ -50,21 +63,27 @@ interface IDiffProps {
    * diff's lines can be selected, e.g., displaying a change in the working
    * directory.
    */
+
   readonly readOnly: boolean
 
   /** The file whose diff should be displayed. */
+
   readonly file: ChangedFile
 
   /** Called when the includedness of lines or a range of lines has changed. */
+
   readonly onIncludeChanged?: (diffSelection: DiffSelection) => void
 
   /** The diff that should be rendered */
+
   readonly diff: IDiff
 
   /** propagate errors up to the main application */
+
   readonly dispatcher: Dispatcher
 
   /** The type of image diff to display. */
+
   readonly imageDiffType: ImageDiffType
 }
 
@@ -73,17 +92,20 @@ interface IDiffState {
 }
 
 /** A component which renders a diff for a file. */
+
 export class Diff extends React.Component<IDiffProps, IDiffState> {
   private codeMirror: Editor | null = null
 
   /**
    * Maintain the current state of the user interacting with the diff gutter
    */
+
   private selection: ISelectionStrategy | null = null
 
   /**
    *  a local cache of gutter elements, keyed by the row in the diff
    */
+
   private cachedGutterElements = new Map<number, DiffLineGutter>()
 
   public constructor(props: IDiffProps) {
@@ -103,35 +125,47 @@ export class Diff extends React.Component<IDiffProps, IDiffState> {
       (this.props.diff.kind !== DiffType.Text ||
         this.props.diff.text !== nextProps.diff.text)
     ) {
-      codeMirror.setOption('mode', { name: DiffSyntaxMode.ModeName })
+      codeMirror.setOption('mode', {
+        name: DiffSyntaxMode.ModeName,
+      })
     }
 
     // HACK: This entire section is a hack. Whenever we receive
+
     // props we update all currently visible gutter elements with
+
     // the selection state from the file.
+
     if (nextProps.file instanceof WorkingDirectoryFileChange) {
       const selection = nextProps.file.selection
+
       const oldSelection =
         this.props.file instanceof WorkingDirectoryFileChange
           ? this.props.file.selection
           : null
 
       // Nothing has changed
+
       if (oldSelection === selection) {
         return
       }
 
       const diff = nextProps.diff
+
       this.cachedGutterElements.forEach((element, index) => {
         if (!element) {
           console.error('expected DOM element for diff gutter not found')
+
           return
         }
 
         if (diff.kind === DiffType.Text) {
           const line = diffLineForIndex(diff.hunks, index)
+
           const isIncludable = line ? line.isIncludeableLine() : false
+
           const isSelected = selection.isSelected(index) && isIncludable
+
           element.setSelected(isSelected)
         }
       })
@@ -144,17 +178,22 @@ export class Diff extends React.Component<IDiffProps, IDiffState> {
     switch (diff.kind) {
       case DiffType.Text:
         return this.renderText(diff)
+
       case DiffType.Binary:
         return this.renderBinaryFile()
+
       case DiffType.Image:
         return this.renderImage(diff)
+
       case DiffType.LargeText: {
         return this.state.forceShowLargeDiff
           ? this.renderLargeText(diff)
           : this.renderLargeTextDiff()
       }
+
       case DiffType.Unrenderable:
         return this.renderUnrenderableDiff()
+
       default:
         return assertNever(diff, `Unsupported diff type: ${diff}`)
     }
@@ -170,15 +209,19 @@ export class Diff extends React.Component<IDiffProps, IDiffState> {
    * of the 'once' option in addEventListener, see
    * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
    */
+
   private onDocumentMouseUp = (ev: MouseEvent) => {
     ev.preventDefault()
+
     document.removeEventListener('mouseup', this.onDocumentMouseUp)
+
     this.endSelection()
   }
 
   /**
    * complete the selection gesture and apply the change to the diff
    */
+
   private endSelection = () => {
     if (!this.props.onIncludeChanged || !this.selection) {
       return
@@ -187,6 +230,7 @@ export class Diff extends React.Component<IDiffProps, IDiffState> {
     this.props.onIncludeChanged(this.selection.done())
 
     // operation is completed, clean this up
+
     this.selection = null
   }
 
@@ -248,10 +292,14 @@ export class Diff extends React.Component<IDiffProps, IDiffState> {
 
   private renderLargeText(diff: ILargeTextDiff) {
     // guaranteed to be set since this function won't be called if text or hunks are null
+
     const textDiff: ITextDiff = {
       text: diff.text,
+
       hunks: diff.hunks,
+
       kind: DiffType.Text,
+
       lineEndingsChange: diff.lineEndingsChange,
     }
 
@@ -302,6 +350,8 @@ export class Diff extends React.Component<IDiffProps, IDiffState> {
   }
 
   private showLargeDiff = () => {
-    this.setState({ forceShowLargeDiff: true })
+    this.setState({
+      forceShowLargeDiff: true,
+    })
   }
 }

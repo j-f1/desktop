@@ -4,9 +4,13 @@ import {
   gitNetworkArguments,
   GitError,
 } from './core'
+
 import { Repository } from '../../models/repository'
+
 import { PushProgressParser, executionOptionsWithProgress } from '../progress'
+
 import { IPushProgress } from '../app-state'
+
 import {
   IGitAccount,
   envForAuthentication,
@@ -35,6 +39,7 @@ import {
  *                           the '--progress' command line flag for
  *                           'git push'.
  */
+
 export async function push(
   repository: Repository,
   account: IGitAccount | null,
@@ -45,8 +50,11 @@ export async function push(
 ): Promise<void> {
   const args = [
     ...gitNetworkArguments,
+
     'push',
+
     remote,
+
     remoteBranch ? `${localBranch}:${remoteBranch}` : localBranch,
   ]
 
@@ -56,20 +64,28 @@ export async function push(
 
   let opts: IGitExecutionOptions = {
     env: envForAuthentication(account),
+
     expectedErrors: AuthenticationErrors,
   }
 
   if (progressCallback) {
     args.push('--progress')
+
     const title = `Pushing to ${remote}`
+
     const kind = 'push'
 
     opts = await executionOptionsWithProgress(
-      { ...opts, trackLFSProgress: true },
+      {
+        ...opts,
+
+        trackLFSProgress: true,
+      },
       new PushProgressParser(),
       progress => {
         const description =
           progress.kind === 'progress' ? progress.details.text : progress.text
+
         const value = progress.percent
 
         progressCallback({
@@ -84,10 +100,13 @@ export async function push(
     )
 
     // Initial progress
+
     progressCallback({
       kind: 'push',
+
       title,
       value: 0,
+
       remote,
       branch: localBranch,
     })

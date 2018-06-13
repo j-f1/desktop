@@ -7,6 +7,7 @@ export class TestPullRequestDatabase extends PullRequestDatabase {
 
   public async reset(): Promise<void> {
     await this.delete()
+
     await this.open()
   }
 }

@@ -1,5 +1,7 @@
 import * as React from 'react'
+
 import { ICommonImageDiffProperties } from './modified-image-diff'
+
 import { ImageContainer } from './image-container'
 
 interface IOnionSkinState {
@@ -13,17 +15,21 @@ export class OnionSkin extends React.Component<
   public constructor(props: ICommonImageDiffProperties) {
     super(props)
 
-    this.state = { crossfade: 1 }
+    this.state = {
+      crossfade: 1,
+    }
   }
 
   public render() {
     const style: React.CSSProperties = {
       height: this.props.maxSize.height,
+
       width: this.props.maxSize.width,
     }
 
     const maxSize: React.CSSProperties = {
       maxHeight: this.props.maxSize.height,
+
       maxWidth: this.props.maxSize.width,
     }
 
@@ -43,6 +49,7 @@ export class OnionSkin extends React.Component<
               className="image-diff-current"
               style={{
                 ...style,
+
                 opacity: this.state.crossfade,
               }}
             >
@@ -72,6 +79,8 @@ export class OnionSkin extends React.Component<
   }
 
   private onValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ crossfade: e.currentTarget.valueAsNumber })
+    this.setState({
+      crossfade: e.currentTarget.valueAsNumber,
+    })
   }
 }

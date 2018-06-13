@@ -1,20 +1,30 @@
 import { IGitHubUser } from '../lib/databases/github-user-database'
+
 import { Commit } from './commit'
+
 import { CommitIdentity } from './commit-identity'
+
 import { GitAuthor } from './git-author'
+
 import { generateGravatarUrl } from '../lib/gravatar'
+
 import { getDotComAPIEndpoint } from '../lib/api'
+
 import { GitHubRepository } from './github-repository'
 
 /** The minimum properties we need in order to display a user's avatar. */
+
 export interface IAvatarUser {
   /** The user's email. */
+
   readonly email: string
 
   /** The user's avatar URL. */
+
   readonly avatarURL: string
 
   /** The user's name. */
+
   readonly name: string
 }
 
@@ -50,7 +60,9 @@ function getAvatarUserFromAuthor(
 
   return {
     email: author.email,
+
     name: author.name,
+
     avatarURL,
   }
 }
@@ -67,6 +79,7 @@ function getAvatarUserFromAuthor(
  * @param gitHubUsers
  * @param commit
  */
+
 export function getAvatarUsersForCommit(
   gitHubRepository: GitHubRepository | null,
   gitHubUsers: Map<string, IGitHubUser> | null,
@@ -77,6 +90,7 @@ export function getAvatarUsersForCommit(
   avatarUsers.push(
     getAvatarUserFromAuthor(gitHubRepository, gitHubUsers, commit.author)
   )
+
   avatarUsers.push(
     ...commit.coAuthors.map(x =>
       getAvatarUserFromAuthor(gitHubRepository, gitHubUsers, x)

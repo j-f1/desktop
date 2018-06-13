@@ -5,11 +5,17 @@ export async function getLogLines(
 ): Promise<ReadonlyArray<string>> {
   const log = await spawn('git', [
     'log',
+
     `...${previousVersion}`,
+
     '--merges',
+
     '--grep="Merge pull request"',
+
     '--format=format:%s',
+
     '-z',
+
     '--',
   ])
 

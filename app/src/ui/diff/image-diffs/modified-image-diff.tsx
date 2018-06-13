@@ -1,36 +1,52 @@
 import * as React from 'react'
 
 import { ImageDiffType } from '../../../lib/app-state'
+
 import { Image } from '../../../models/diff'
+
 import { TabBar, TabBarType } from '../../tab-bar'
+
 import { TwoUp } from './two-up'
+
 import { DifferenceBlend } from './difference-blend'
+
 import { OnionSkin } from './onion-skin'
+
 import { Swipe } from './swipe'
+
 import { assertNever } from '../../../lib/fatal-error'
+
 import { ISize, getMaxFitSize } from './sizing'
 
 interface IModifiedImageDiffProps {
   readonly previous: Image
+
   readonly current: Image
+
   readonly diffType: ImageDiffType
+
   readonly onChangeDiffType: (type: ImageDiffType) => void
 }
 
 export interface ICommonImageDiffProperties {
   /** The biggest size to fit both the previous and current images. */
+
   readonly maxSize: ISize
 
   /** The previous image. */
+
   readonly previous: Image
 
   /** The current image. */
+
   readonly current: Image
 
   /** A function to call when the previous image has loaded. */
+
   readonly onPreviousImageLoad: (img: HTMLImageElement) => void
 
   /** A function to call when the current image has loaded. */
+
   readonly onCurrentImageLoad: (img: HTMLImageElement) => void
 
   /**
@@ -38,21 +54,26 @@ export interface ICommonImageDiffProperties {
    * images. This container element is used to measure the available space for
    * the images, which is then used to calculate the aspect fit size.
    */
+
   readonly onContainerRef: (e: HTMLElement | null) => void
 }
 
 interface IModifiedImageDiffState {
   /** The size of the previous image. */
+
   readonly previousImageSize: ISize | null
 
   /** The size of the current image. */
+
   readonly currentImageSize: ISize | null
 
   /** The size of the container element. */
+
   readonly containerSize: ISize | null
 }
 
 /** A component which renders the changes to an image in the repository */
+
 export class ModifiedImageDiff extends React.Component<
   IModifiedImageDiffProps,
   IModifiedImageDiffState
@@ -60,6 +81,7 @@ export class ModifiedImageDiff extends React.Component<
   private container: HTMLElement | null = null
 
   private readonly resizeObserver: ResizeObserver
+
   private resizedTimeoutID: number | null = null
 
   public constructor(props: IModifiedImageDiffProps) {
@@ -69,8 +91,11 @@ export class ModifiedImageDiff extends React.Component<
       for (const entry of entries) {
         if (entry.target === this.container) {
           // We might end up causing a recursive update by updating the state
+
           // when we're reacting to a resize so we'll defer it until after
+
           // react is done with this frame.
+
           if (this.resizedTimeoutID !== null) {
             clearImmediate(this.resizedTimeoutID)
           }
@@ -86,19 +111,35 @@ export class ModifiedImageDiff extends React.Component<
 
     this.state = {
       previousImageSize: null,
+
       currentImageSize: null,
+
       containerSize: null,
     }
   }
 
   private onPreviousImageLoad = (img: HTMLImageElement) => {
-    const size = { width: img.naturalWidth, height: img.naturalHeight }
-    this.setState({ previousImageSize: size })
+    const size = {
+      width: img.naturalWidth,
+
+      height: img.naturalHeight,
+    }
+
+    this.setState({
+      previousImageSize: size,
+    })
   }
 
   private onCurrentImageLoad = (img: HTMLImageElement) => {
-    const size = { width: img.naturalWidth, height: img.naturalHeight }
-    this.setState({ currentImageSize: size })
+    const size = {
+      width: img.naturalWidth,
+
+      height: img.naturalHeight,
+    }
+
+    this.setState({
+      currentImageSize: size,
+    })
   }
 
   private onResized = (target: HTMLElement, contentRect: ClientRect) => {
@@ -106,19 +147,30 @@ export class ModifiedImageDiff extends React.Component<
 
     const containerSize = {
       width: contentRect.width,
+
       height: contentRect.height,
     }
+
     this.setState({ containerSize })
   }
 
   private getMaxSize(): ISize {
-    const zeroSize = { width: 0, height: 0, containerWidth: 0 }
+    const zeroSize = {
+      width: 0,
+
+      height: 0,
+
+      containerWidth: 0,
+    }
+
     const containerSize = this.state.containerSize
+
     if (!containerSize) {
       return zeroSize
     }
 
     const { previousImageSize, currentImageSize } = this.state
+
     if (!previousImageSize || !currentImageSize) {
       return zeroSize
     }
@@ -163,7 +215,9 @@ export class ModifiedImageDiff extends React.Component<
 
   private renderCurrentDiffType() {
     const maxSize = this.getMaxSize()
+
     const type = this.props.diffType
+
     switch (type) {
       case ImageDiffType.TwoUp:
         return (
@@ -195,9 +249,13 @@ export class ModifiedImageDiff extends React.Component<
     return {
       maxSize,
       previous: this.props.previous,
+
       current: this.props.current,
+
       onPreviousImageLoad: this.onPreviousImageLoad,
+
       onCurrentImageLoad: this.onCurrentImageLoad,
+
       onContainerRef: this.onContainerRef,
     }
   }

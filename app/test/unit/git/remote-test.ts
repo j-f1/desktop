@@ -1,12 +1,14 @@
 import { expect } from 'chai'
 
 import { Repository } from '../../../src/models/repository'
+
 import {
   getRemotes,
   getDefaultRemote,
   addRemote,
   removeRemote,
 } from '../../../src/lib/git/remote'
+
 import {
   setupFixtureRepository,
   setupEmptyRepository,
@@ -18,18 +20,23 @@ describe('git/remote', () => {
       const testRepoPath = await setupFixtureRepository(
         'repo-with-multiple-remotes'
       )
+
       const repository = new Repository(testRepoPath, -1, null, false)
 
       // NB: We don't check for exact URL equality because CircleCI's git config
+
       // rewrites HTTPS URLs to SSH.
+
       const nwo = 'shiftkey/friendly-bassoon.git'
 
       const result = await getRemotes(repository)
 
       expect(result[0].name).to.equal('bassoon')
+
       expect(result[0].url.endsWith(nwo)).to.equal(true)
 
       expect(result[1].name).to.equal('origin')
+
       expect(result[1].url.endsWith(nwo)).to.equal(true)
     })
   })
@@ -39,6 +46,7 @@ describe('git/remote', () => {
       const testRepoPath = await setupFixtureRepository(
         'repo-with-multiple-remotes'
       )
+
       const repository = new Repository(testRepoPath, -1, null, false)
 
       const result = await getDefaultRemote(repository)
@@ -50,7 +58,9 @@ describe('git/remote', () => {
       const testRepoPath = await setupFixtureRepository(
         'repo-with-multiple-remotes'
       )
+
       const repository = new Repository(testRepoPath, -1, null, false)
+
       await removeRemote(repository, 'origin')
 
       const result = await getDefaultRemote(repository)
@@ -70,6 +80,7 @@ describe('git/remote', () => {
   describe('addRemote', () => {
     it('can set origin and return it as default', async () => {
       const repository = await setupEmptyRepository()
+
       await addRemote(
         repository,
         'origin',
@@ -85,6 +96,7 @@ describe('git/remote', () => {
   describe('removeRemote', () => {
     it('silently fails when remote not defined', async () => {
       const repository = await setupEmptyRepository()
+
       await removeRemote(repository, 'origin')
     })
   })

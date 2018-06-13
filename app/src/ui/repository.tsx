@@ -1,49 +1,81 @@
 import * as React from 'react'
+
 import { Repository as Repo } from '../models/repository'
+
 import { Commit } from '../models/commit'
+
 import { TipState } from '../models/tip'
+
 import { UiView } from './ui-view'
+
 import { Changes, ChangesSidebar } from './changes'
+
 import { NoChanges } from './changes/no-changes'
+
 import { MultipleSelection } from './changes/multiple-selection'
+
 import { FilesChangedBadge } from './changes/files-changed-badge'
+
 import { History, HistorySidebar, CompareSidebar } from './history'
+
 import { Resizable } from './resizable'
+
 import { TabBar } from './tab-bar'
+
 import {
   IRepositoryState,
   RepositorySectionTab,
   ImageDiffType,
 } from '../lib/app-state'
+
 import { Dispatcher } from '../lib/dispatcher'
+
 import { IssuesStore, GitHubUserStore } from '../lib/stores'
+
 import { assertNever } from '../lib/fatal-error'
+
 import { Octicon, OcticonSymbol } from './octicons'
+
 import { Account } from '../models/account'
+
 import {
   enableCompareSidebar,
   enableNotificationOfBranchUpdates,
 } from '../lib/feature-flag'
+
 import { FocusContainer } from './lib/focus-container'
 
 /** The widest the sidebar can be with the minimum window size. */
+
 const MaxSidebarWidth = 495
 
 interface IRepositoryViewProps {
   readonly repository: Repo
+
   readonly state: IRepositoryState
+
   readonly dispatcher: Dispatcher
+
   readonly emoji: Map<string, string>
+
   readonly sidebarWidth: number
+
   readonly commitSummaryWidth: number
+
   readonly issuesStore: IssuesStore
+
   readonly gitHubUserStore: GitHubUserStore
+
   readonly onViewCommitOnGitHub: (SHA: string) => void
+
   readonly imageDiffType: ImageDiffType
+
   readonly askForConfirmationOnDiscardChanges: boolean
+
   readonly accounts: ReadonlyArray<Account>
 
   /** The name of the currently selected external editor */
+
   readonly externalEditorLabel?: string
 
   /**
@@ -61,6 +93,7 @@ interface IRepositoryViewState {
 
 const enum Tab {
   Changes = 0,
+
   History = 1,
 }
 
@@ -110,17 +143,21 @@ export class RepositoryView extends React.Component<
 
   private renderChangesSidebar(): JSX.Element {
     const tip = this.props.state.branchesState.tip
+
     const branch = tip.kind === TipState.Valid ? tip.branch : null
 
     const localCommitSHAs = this.props.state.localCommitSHAs
+
     const mostRecentLocalCommitSHA =
       localCommitSHAs.length > 0 ? localCommitSHAs[0] : null
+
     const mostRecentLocalCommit =
       (mostRecentLocalCommitSHA
         ? this.props.state.commitLookup.get(mostRecentLocalCommitSHA)
         : null) || null
 
     // -1 Because of right hand side border
+
     const availableWidth = this.props.sidebarWidth - 1
 
     return (
@@ -166,6 +203,7 @@ export class RepositoryView extends React.Component<
 
   private renderCompareSidebar(): JSX.Element {
     const tip = this.props.state.branchesState.tip
+
     const currentBranch = tip.kind === TipState.Valid ? tip.branch : null
 
     return (
@@ -225,6 +263,7 @@ export class RepositoryView extends React.Component<
 
   private onSidebarFocusWithinChanged = (sidebarHasFocusWithin: boolean) => {
     // this lets us know that focus is somewhere within the sidebar
+
     this.setState({ sidebarHasFocusWithin })
 
     if (
@@ -242,6 +281,7 @@ export class RepositoryView extends React.Component<
 
     if (selectedSection === RepositorySectionTab.Changes) {
       const changesState = this.props.state.changesState
+
       const selectedFileIDs = changesState.selectedFileIDs
 
       if (selectedFileIDs.length > 1) {
@@ -256,6 +296,7 @@ export class RepositoryView extends React.Component<
         return <NoChanges repository={this.props.repository} />
       } else {
         const workingDirectory = changesState.workingDirectory
+
         const selectedFile = workingDirectory.findFileWithID(selectedFileIDs[0])
 
         if (!selectedFile) {
@@ -307,8 +348,11 @@ export class RepositoryView extends React.Component<
 
   private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     // Toggle tab selection on Ctrl+Tab. Note that we don't care
+
     // about the shift key here, we can get away with that as long
+
     // as there's only two tabs.
+
     if (e.ctrlKey && e.key === 'Tab') {
       const section =
         this.props.state.selectedSection === RepositorySectionTab.History
@@ -319,6 +363,7 @@ export class RepositoryView extends React.Component<
         this.props.repository,
         section
       )
+
       e.preventDefault()
     }
   }

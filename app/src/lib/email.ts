@@ -13,6 +13,7 @@ import { IAPIEmail } from './api'
  *
  * @param emails array of email addresses associated with an account
  */
+
 export function lookupPreferredEmail(
   emails: ReadonlyArray<IAPIEmail>
 ): IAPIEmail | null {
@@ -21,13 +22,19 @@ export function lookupPreferredEmail(
   }
 
   const primary = emails.find(e => e.primary)
+
   if (primary && isEmailPublic(primary)) {
     return primary
   }
 
   const noReply = emails.find(e =>
-    e.email.toLowerCase().endsWith('@users.noreply.github.com')
+    e.email
+
+      .toLowerCase()
+
+      .endsWith('@users.noreply.github.com')
   )
+
   if (noReply) {
     return noReply
   }
@@ -38,8 +45,11 @@ export function lookupPreferredEmail(
 /**
  * Is the email public?
  */
+
 function isEmailPublic(email: IAPIEmail): boolean {
   // If an email doesn't have a visibility setting it means it's coming from an
+
   // older Enterprise server which doesn't have the concept of visiblity.
+
   return email.visibility === 'public' || !email.visibility
 }

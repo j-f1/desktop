@@ -1,22 +1,35 @@
 import * as React from 'react'
+
 import {
   PublishRepository,
   IPublishRepositorySettings,
 } from './publish-repository'
+
 import { Dispatcher } from '../../lib/dispatcher'
+
 import { Account } from '../../models/account'
+
 import { Repository } from '../../models/repository'
+
 import { ButtonGroup } from '../lib/button-group'
+
 import { Button } from '../lib/button'
+
 import { Dialog, DialogFooter, DialogContent, DialogError } from '../dialog'
+
 import { TabBar } from '../tab-bar'
+
 import { getDotComAPIEndpoint } from '../../lib/api'
+
 import { assertNever, fatalError } from '../../lib/fatal-error'
+
 import { CallToAction } from '../lib/call-to-action'
+
 import { getGitDescription } from '../../lib/git'
 
 enum PublishTab {
   DotCom = 0,
+
   Enterprise,
 }
 
@@ -24,20 +37,25 @@ interface IPublishProps {
   readonly dispatcher: Dispatcher
 
   /** The repository being published. */
+
   readonly repository: Repository
 
   /** The signed in accounts. */
+
   readonly accounts: ReadonlyArray<Account>
 
   /** The function to call when the dialog should be dismissed. */
+
   readonly onDismissed: () => void
 }
 
 interface IPublishState {
   /** The currently selected tab. */
+
   readonly currentTab: PublishTab
 
   /** The settings for publishing the repository. */
+
   readonly publishSettings: IPublishRepositorySettings
 
   /**
@@ -45,37 +63,48 @@ interface IPublishState {
    * user in close proximity to the actions or input fields
    * related to the current step.
    */
+
   readonly error: Error | null
 
   /** Is the repository currently being published? */
+
   readonly publishing: boolean
 }
 
 /**
  * The Publish component.
  */
+
 export class Publish extends React.Component<IPublishProps, IPublishState> {
   public constructor(props: IPublishProps) {
     super(props)
 
     const dotComAccount = this.getAccountForTab(PublishTab.DotCom)
+
     const enterpriseAccount = this.getAccountForTab(PublishTab.Enterprise)
+
     let startingTab = PublishTab.DotCom
+
     if (!dotComAccount && enterpriseAccount) {
       startingTab = PublishTab.Enterprise
     }
 
     const publishSettings = {
       name: props.repository.name,
+
       description: '',
+
       private: true,
+
       org: null,
     }
 
     this.state = {
       currentTab: startingTab,
+
       publishSettings,
       error: null,
+
       publishing: false,
     }
   }
@@ -111,12 +140,16 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
   public async componentDidMount() {
     try {
       const description = await getGitDescription(this.props.repository.path)
+
       const settings = {
         ...this.state.publishSettings,
+
         description,
       }
 
-      this.setState({ publishSettings: settings })
+      this.setState({
+        publishSettings: settings,
+      })
     } catch (error) {
       log.warn(`Couldn't get the repository's description`, error)
     }
@@ -124,7 +157,9 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
 
   private renderContent() {
     const tab = this.state.currentTab
+
     const account = this.getAccountForTab(tab)
+
     if (account) {
       return (
         <PublishRepository
@@ -139,16 +174,21 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
   }
 
   private onSettingsChanged = (settings: IPublishRepositorySettings) => {
-    this.setState({ publishSettings: settings })
+    this.setState({
+      publishSettings: settings,
+    })
   }
 
   private getAccountForTab(tab: PublishTab): Account | null {
     const accounts = this.props.accounts
+
     switch (tab) {
       case PublishTab.DotCom:
         return accounts.find(a => a.endpoint === getDotComAPIEndpoint()) || null
+
       case PublishTab.Enterprise:
         return accounts.find(a => a.endpoint !== getDotComAPIEndpoint()) || null
+
       default:
         return assertNever(tab, `Unknown tab: ${tab}`)
     }
@@ -156,6 +196,7 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
 
   private renderSignInTab(tab: PublishTab) {
     const signInTitle = __DARWIN__ ? 'Sign In' : 'Sign in'
+
     switch (tab) {
       case PublishTab.DotCom:
         return (
@@ -165,6 +206,7 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
             </div>
           </CallToAction>
         )
+
       case PublishTab.Enterprise:
         return (
           <CallToAction
@@ -177,6 +219,7 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
             </div>
           </CallToAction>
         )
+
       default:
         return assertNever(tab, `Unknown tab: ${tab}`)
     }
@@ -184,8 +227,11 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
 
   private renderFooter() {
     const disabled = !this.state.publishSettings.name.length
+
     const tab = this.state.currentTab
+
     const user = this.getAccountForTab(tab)
+
     if (user) {
       return (
         <DialogFooter>
@@ -211,12 +257,19 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
   }
 
   private publishRepository = async () => {
-    this.setState({ error: null, publishing: true })
+    this.setState({
+      error: null,
+
+      publishing: true,
+    })
 
     const tab = this.state.currentTab
+
     const account = this.getAccountForTab(tab)
+
     if (!account) {
       fatalError(`Tried to publish with no user. That seems impossible!`)
+
       return
     }
 
@@ -234,14 +287,29 @@ export class Publish extends React.Component<IPublishProps, IPublishState> {
 
       this.props.onDismissed()
     } catch (e) {
-      this.setState({ error: e, publishing: false })
+      this.setState({
+        error: e,
+
+        publishing: false,
+      })
     }
   }
 
   private onTabClicked = (index: PublishTab) => {
     // Clear the selected org since dot com and Enterprise will have a different
+
     // set of orgs.
-    const settings = { ...this.state.publishSettings, org: null }
-    this.setState({ currentTab: index, publishSettings: settings })
+
+    const settings = {
+      ...this.state.publishSettings,
+
+      org: null,
+    }
+
+    this.setState({
+      currentTab: index,
+
+      publishSettings: settings,
+    })
   }
 }

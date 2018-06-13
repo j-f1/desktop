@@ -7,6 +7,7 @@ export class TestGitHubUserDatabase extends GitHubUserDatabase {
 
   public async reset(): Promise<void> {
     await this.delete()
+
     await this.open()
   }
 }

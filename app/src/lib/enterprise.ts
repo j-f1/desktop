@@ -9,4 +9,5 @@
  * running on our internal GitHub Enterprise instance at the time
  * we implemented Enterprise sign in (desktop/desktop#664)
  */
+
 export const minimumSupportedEnterpriseVersion = '2.8.0'
